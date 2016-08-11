@@ -9,10 +9,7 @@ import gherkin.ast.GherkinDocument;
 
 import java.io.*;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Compilador {
     private List<File> arquivos = new ArrayList<>();
@@ -100,7 +97,7 @@ public class Compilador {
     }
 
     public void compilarPasta(String dir){
-        Map<String, List<String>> menu = new HashMap<>();
+        Map<String, List<String>> menu = new TreeMap<>();
         String htmlTemplate = "";
         String htmlJavascript = "";
         String htmlCss = "";
@@ -139,9 +136,12 @@ public class Compilador {
 
             // monta menu
             String htmlMenu = "";
-            final String HTML_MENU_PAI = "<li><a href=\"#\">%s</a><ul>%s</ul></li>";
+            final String HTML_MENU_PAI = "<li><a href=\"javascript:;\" data-toggle=\"collapse\" data-target=\"#menu-%s\">" +
+            "%s</a><ul id=\"menu-%s\" class=\"collapse\">%s</ul></li>";
+
             final String HTML_MENU_FILHO = "<li><a href=\"#/feature/%s\">%s</a></li>";
 
+            int menuIdx = 0;
             for (Map.Entry<String, List<String>> entry : menu.entrySet()) {
                 String filhos = "";
 
@@ -149,7 +149,9 @@ public class Compilador {
                     filhos += String.format(HTML_MENU_FILHO, item, item);
                 }
 
-                htmlMenu += String.format(HTML_MENU_PAI, entry.getKey(), filhos);
+                htmlMenu += String.format(HTML_MENU_PAI, menuIdx, entry.getKey(), menuIdx, filhos);
+
+                menuIdx++;
             }
 
 

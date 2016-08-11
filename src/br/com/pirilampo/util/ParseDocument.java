@@ -15,12 +15,12 @@ public class ParseDocument {
     private final String HTML_CODE = "<pre>%s</pre>\n";
 
     private final String HTML_CHILDREN = "<div class=\"panel panel-default\">\n" +
-            "<div class=\"panel-heading\"><strong>%s</strong></div>\n%s\n</div>\n";
-    private final String HTML_CHILDREN_BODY = "<div class=\"panel-body\">%s</div>\n";
+            "<div class=\"panel-heading\" style=\"cursor: pointer;\" data-toggle=\"collapse\" data-target=\"#scenario-%s\"><strong>%s</strong></div>\n%s\n</div>\n";
+    private final String HTML_CHILDREN_BODY = "<div id=\"scenario-%s\" class=\"panel-body collapse in\">%s</div>\n";
     private final String HTML_CHILDREN_TABLE = "<div class=\"table-responsive\">\n" +
             "<table class=\"table table-condensed table-bordered table-hover table-striped\">\n" +
-            "<thead>\n<tr>%s</tr>\n</thead>\n" +
-            "<tbody>\n<tr>%s</tr>\n</tbody>\n" +
+            "<thead>\n%s\n</thead>\n" +
+            "<tbody>\n%s\n</tbody>\n" +
             "</table>\n</div>\n";
     private final String HTML_CHILDREN_TABLE_TR = "<tr>%s</tr>\n";
     private final String HTML_CHILDREN_TABLE_TH = "<th>%s</th>\n";
@@ -33,6 +33,7 @@ public class ParseDocument {
             html += String.format(HTML_TITULO, gd.getFeature().getName());
             html += String.format(HTML_PARAGRAFO, gd.getFeature().getDescription());
 
+            int scenarioIdx = 0;
             for (ScenarioDefinition sd : gd.getFeature().getChildren()){
                 String body  = "";
 
@@ -77,8 +78,10 @@ public class ParseDocument {
                     }
                 }
 
-                body = String.format(HTML_CHILDREN_BODY, body);
-                html += String.format(HTML_CHILDREN, sd.getName(), body);
+                body = String.format(HTML_CHILDREN_BODY, scenarioIdx, body);
+                html += String.format(HTML_CHILDREN, scenarioIdx, (sd.getName().equals("") ? sd.getKeyword() : sd.getName()), body);
+
+                scenarioIdx++;
             }
         }
 
