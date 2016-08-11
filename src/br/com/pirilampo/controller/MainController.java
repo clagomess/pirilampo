@@ -1,5 +1,7 @@
 package br.com.pirilampo.controller;
 
+import br.com.pirilampo.util.Compilador;
+import javafx.scene.control.Alert;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -41,10 +43,24 @@ public class MainController extends MainForm {
     }
 
     public void pastaGerarHtml(){
+        Compilador compilador = new Compilador();
 
+        if(txtPastaSrc.getText() != null && !txtPastaSrc.getText().trim().equals("")) {
+            compilador.compilarPasta(txtPastaSrc.getText());
+        }else{
+            alertWarning(null, "É necessário selecionar uma pasta!");
+        }
     }
 
     public void pastaGerarPdf(){
 
+    }
+
+    private void alertWarning(String title, String msg){
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        alert.setHeaderText(title);
+        alert.setContentText(msg);
+
+        alert.showAndWait();
     }
 }
