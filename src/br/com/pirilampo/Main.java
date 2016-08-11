@@ -1,5 +1,6 @@
 package br.com.pirilampo;
 
+import br.com.pirilampo.util.ParseDocument;
 import gherkin.*;
 import gherkin.ast.GherkinDocument;
 

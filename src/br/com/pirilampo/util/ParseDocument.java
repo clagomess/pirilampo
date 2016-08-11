@@ -1,4 +1,4 @@
-package br.com.pirilampo;
+package br.com.pirilampo.util;
 
 import gherkin.ast.*;
 
