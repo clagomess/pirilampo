@@ -3,13 +3,15 @@ package br.com.pirilampo.util;
 import br.com.pirilampo.main.Main;
 import gherkin.AstBuilder;
 import gherkin.Parser;
-import gherkin.ParserException;
 import gherkin.TokenMatcher;
 import gherkin.ast.GherkinDocument;
 
 import java.io.*;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class Compilador {
     private List<File> arquivos = new ArrayList<>();
@@ -17,7 +19,7 @@ public class Compilador {
     private final String HTML_JAVASCRIPT = "<script type=\"text/javascript\">%s</script>\n";
     private final String HTML_CSS = "<style>%s</style>\n";
 
-    private void listarPasta(File curDir){
+    private void listarPasta(File curDir) throws Exception {
         File[] filesList = curDir.listFiles();
 
         if(filesList != null) {
@@ -27,76 +29,65 @@ public class Compilador {
                 }
 
                 if (f.isFile()) {
-                    arquivos.add(f);
+                    if(f.getName().contains(".feature")) {
+                        arquivos.add(f);
+                    }
                 }
             }
+        }else{
+            throw new Exception("Pasta não localizada!");
         }
     }
 
-    private String getFeatureHtml(String pathFeature){
+    private String getFeatureHtml(String pathFeature) throws UnsupportedEncodingException, FileNotFoundException {
         Parser<GherkinDocument> parser = new Parser<>(new AstBuilder());
         TokenMatcher matcher = new TokenMatcher();
-        Reader in =  null;
         String html = null;
 
-        try {
-            in = new InputStreamReader(new FileInputStream(pathFeature), "UTF-8");
-        }catch (IOException e){
-            e.printStackTrace();
-        }
+        Reader in = new InputStreamReader(new FileInputStream(pathFeature), "UTF-8");
 
-        try {
-            if(in != null) {
-                GherkinDocument gherkinDocument = parser.parse(in, matcher);
+        GherkinDocument gherkinDocument = parser.parse(in, matcher);
 
-                if(gherkinDocument != null){
-                    ParseDocument pd = new ParseDocument(gherkinDocument);
-                    html = pd.getHtml();
-                }
-            }
-        } catch (ParserException e) {
-            e.printStackTrace();
+        if(gherkinDocument != null){
+            ParseDocument pd = new ParseDocument(gherkinDocument);
+            html = pd.getHtml();
         }
 
         return html;
     }
 
-    private void compilarPastaItem(File pathPasta, File pathFeature){
+    private void compilarPastaItem(File pathPasta, File pathFeature) throws IOException {
         String html = getFeatureHtml(pathFeature.getAbsolutePath());
 
-        try {
-            File hmtlDir;
-            String outDir = pathPasta.getParent();
+        File hmtlDir;
+        String outDir = pathPasta.getParent();
 
-            // Cria Diretório se não existir */html/feature/
-            outDir += "/html/";
-            hmtlDir = new File(outDir);
+        // Cria Diretório se não existir */html/feature/
+        outDir += "/html/";
+        hmtlDir = new File(outDir);
 
-            if(!hmtlDir.exists()){
-                hmtlDir.mkdir();
-            }
-
-            outDir += "feature/";
-            hmtlDir = new File(outDir);
-
-            if(!hmtlDir.exists()) {
-                hmtlDir.mkdir();
-            }
-
-            // Grava HTMLs
-            outDir += pathFeature.getName().replace(".feature", ".html");
-
-            File feature = new File(outDir);
-            FileWriter fwrite = new FileWriter(feature);
-            fwrite.write(html);
-            fwrite.flush();
-            fwrite.close();
-        }catch (IOException e){
-            e.printStackTrace();
+        if(!hmtlDir.exists()){
+            hmtlDir.mkdir();
         }
+
+        outDir += "feature/";
+        hmtlDir = new File(outDir);
+
+        if(!hmtlDir.exists()) {
+            hmtlDir.mkdir();
+        }
+
+        // Grava HTMLs
+        outDir += pathFeature.getName().replace(".feature", ".html");
+
+        File feature = new File(outDir);
+        FileWriter fwrite = new FileWriter(feature);
+        fwrite.write(html);
+        fwrite.flush();
+        fwrite.close();
     }
 
-    public void compilarPasta(String dir){
+    public void compilarPasta(String dir) throws Exception {
         Map<String, List<String>> menu = new TreeMap<>();
         String htmlTemplate = "";
         String htmlJavascript = "";
@@ -174,19 +165,15 @@ public class Compilador {
             html = html.replace("#HTML_TEMPLATE#", htmlTemplate);
 
             // Grava
-            try {
-                File feature = new File(curDir.getParent() + "/index.html");
-                FileWriter fwrite = new FileWriter(feature);
-                fwrite.write(html);
-                fwrite.flush();
-                fwrite.close();
-            }catch (IOException e){
-                e.printStackTrace();
-            }
+            File feature = new File(curDir.getParent() + "/index.html");
+            FileWriter fwrite = new FileWriter(feature);
+            fwrite.write(html);
+            fwrite.flush();
+            fwrite.close();
         }
     }
 
-    public void compilarFeature(String featurePath){
+    public void compilarFeature(String featurePath) throws IOException {
         // Abre feature
         File feature = new File(featurePath);
 
@@ -202,18 +189,14 @@ public class Compilador {
         html = html.replace("#HTML_TEMPLATE#", featureHtml);
 
         // Grava
-        try {
-            File fFeature = new File(feature.getParent() + String.format("/%s.html", feature.getName().replace(".feature", "")));
-            FileWriter fwrite = new FileWriter(fFeature);
-            fwrite.write(html);
-            fwrite.flush();
-            fwrite.close();
-        }catch (IOException e){
-            e.printStackTrace();
-        }
+        File fFeature = new File(feature.getParent() + String.format("/%s.html", feature.getName().replace(".feature", "")));
+        FileWriter fwrite = new FileWriter(fFeature);
+        fwrite.write(html);
+        fwrite.flush();
+        fwrite.close();
     }
 
-    public void compilarFeaturePdf(String featurePath){
+    public void compilarFeaturePdf(String featurePath) throws Exception {
         // Abre feature
         File feature = new File(featurePath);
 
@@ -228,14 +211,10 @@ public class Compilador {
 
         String path = feature.getParent() + String.format("/%s.pdf", feature.getName().replace(".feature", ""));
 
-        try {
-            pp.buildHtml(path, html, css);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        pp.buildHtml(path, html, css);
     }
 
-    public void compilarPastaPdf(String dir){
+    public void compilarPastaPdf(String dir) throws Exception {
         String html = "";
 
         // Abre pasta root
@@ -260,31 +239,23 @@ public class Compilador {
 
             ParsePdf pp = new ParsePdf();
 
-            try {
-                pp.buildHtml(curDir.getParent() + "/index.pdf", html, css);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            pp.buildHtml(curDir.getParent() + "/index.pdf", html, css);
         }
     }
 
-    private String loadResource(String src){
+    private String loadResource(String src) throws IOException {
         String buffer = "";
         String linha;
 
         URL url = Thread.currentThread().getContextClassLoader().getResource(Main.SYS_PATH + src);
 
-        try{
-            BufferedReader br = new BufferedReader(new FileReader(url.getFile()), 200 * 1024);
+        BufferedReader br = new BufferedReader(new FileReader(url.getFile()), 200 * 1024);
 
-            while ((linha = br.readLine()) != null) {
-                buffer += linha + "\n";
-            }
-
-            br.close();
-        }catch(IOException e){
-            e.printStackTrace();
+        while ((linha = br.readLine()) != null) {
+            buffer += linha + "\n";
         }
+
+        br.close();
 
         return buffer;
     }

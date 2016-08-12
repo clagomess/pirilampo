@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+
 <GridPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="br.com.pirilampo.controller.MainController">
     <columnConstraints>
         <ColumnConstraints hgrow="ALWAYS" />
@@ -22,7 +25,7 @@
         <RowConstraints prefHeight="30.0" vgrow="ALWAYS" />
         <RowConstraints prefHeight="30.0" vgrow="ALWAYS" />
         <RowConstraints prefHeight="50.0" vgrow="ALWAYS" />
-        <RowConstraints prefHeight="100.0" vgrow="ALWAYS" />
+        <RowConstraints prefHeight="40.0" vgrow="ALWAYS" />
       <RowConstraints />
     </rowConstraints>
     <children>
@@ -33,34 +36,33 @@
         <TextField fx:id="txtVersao" text="1.0" GridPane.rowIndex="4" />
         <Label style="-fx-font-size: 14px; -fx-font-weight: bolder" text="Compilar Feature Individual" GridPane.rowIndex="5" />
         <Label text="Feature:" GridPane.rowIndex="6" />
-        <TextField fx:id="txtFeatureSrc" GridPane.rowIndex="7" maxWidth="400.0"/>
-        <Button onAction="#selecionarFeature" text="Selecionar" GridPane.rowIndex="7">
+        <TextField fx:id="txtFeatureSrc" maxWidth="400.0" GridPane.rowIndex="7" />
+        <Button fx:id="btnSelecionarFeature" onAction="#selecionarFeature" text="Selecionar" GridPane.rowIndex="7">
             <GridPane.margin>
                 <Insets left="414.0" />
             </GridPane.margin>
         </Button>
-        <Button onAction="#featureGerarHtml" text="Gerar HTML" GridPane.rowIndex="8" />
-        <Button onAction="#featureGerarPdf" text="Gerar PDF" GridPane.rowIndex="8">
+        <Button fx:id="btnFeatureGerarHtml" onAction="#featureGerarHtml" text="Gerar HTML" GridPane.rowIndex="8" />
+        <Button fx:id="btnFeatureGerarPdf" onAction="#featureGerarPdf" text="Gerar PDF" GridPane.rowIndex="8">
              <GridPane.margin>
                 <Insets left="100.0" />
              </GridPane.margin>
         </Button>
         <Label style="-fx-font-size: 14px; -fx-font-weight: bolder" text="Compilar Várias Feature" GridPane.rowIndex="9" />
         <Label text="Pasta:" GridPane.rowIndex="10" />
-        <TextField fx:id="txtPastaSrc" GridPane.rowIndex="11" maxWidth="400.0"/>
-        <Button onAction="#selecionarPasta" text="Selecionar" GridPane.rowIndex="11">
+        <TextField fx:id="txtPastaSrc" maxWidth="400.0" GridPane.rowIndex="11" />
+        <Button fx:id="btnSelecionarPasta" onAction="#selecionarPasta" text="Selecionar" GridPane.rowIndex="11">
             <GridPane.margin>
                 <Insets left="414.0" />
             </GridPane.margin>
         </Button>
-        <Button onAction="#pastaGerarHtml" text="Gerar HTML" GridPane.rowIndex="12" />
-        <Button onAction="#pastaGerarPdf" layoutX="200.0" text="Gerar PDF" GridPane.rowIndex="12">
+        <Button fx:id="btnPastaGerarHtml" onAction="#pastaGerarHtml" text="Gerar HTML" GridPane.rowIndex="12" />
+        <Button fx:id="btnPastaGerarPdf" layoutX="200.0" onAction="#pastaGerarPdf" text="Gerar PDF" GridPane.rowIndex="12">
              <GridPane.margin>
                 <Insets left="100.0" />
              </GridPane.margin>
         </Button>
-        <Label style="-fx-font-size: 14px; -fx-font-weight: bolder" text="Console" GridPane.rowIndex="13" />
-        <TextArea fx:id="txtConsole" GridPane.rowIndex="14" />
+        <ProgressBar fx:id="progressBar" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" progress="0.0" GridPane.rowIndex="14" />
     </children>
    <padding>
       <Insets bottom="14.0" left="14.0" right="14.0" top="14.0" />

@@ -6,16 +6,9 @@ import javafx.scene.control.Alert;
 public class ExceptionUtil {
     public static void showDialog(Exception e){
         Alert alert = new Alert(Alert.AlertType.WARNING);
-        alert.setHeaderText(e.getMessage());
-
-        String trace = "";
-        if(e.getStackTrace().length > 0){
-            for (StackTraceElement traceItem : e.getStackTrace()) {
-                trace += traceItem.toString() + "\n";
-            }
-        }
-
-        alert.setContentText(trace);
+        alert.setHeaderText("Erro ao executar a operação.");
+        alert.setContentText(e.getMessage());
+        alert.setResizable(true);
 
         alert.showAndWait();
     }

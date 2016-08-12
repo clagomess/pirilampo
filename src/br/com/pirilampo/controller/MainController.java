@@ -1,6 +1,8 @@
 package br.com.pirilampo.controller;
 
 import br.com.pirilampo.util.Compilador;
+import br.com.pirilampo.util.ExceptionUtil;
+import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
@@ -9,6 +11,10 @@ import javafx.stage.Stage;
 import java.io.File;
 
 public class MainController extends MainForm {
+    private final String MSG_SELECIONAR_PASTA = "É necessário selecionar uma pasta!";
+    private final String MSG_SELECIONAR_FEATURE = "É necessário selecionar uma feature!";
+    private final String MSG_OPE_SUCESSO = "Operação realizada com sucesso!";
+
     public void selecionarFeature(){
         FileChooser chooser = new FileChooser();
         chooser.setTitle("Selecionar Feature");
@@ -26,10 +32,24 @@ public class MainController extends MainForm {
     public void featureGerarHtml(){
         Compilador compilador = new Compilador();
 
-        if(txtFeatureSrc.getText() != null && !txtFeatureSrc.getText().trim().equals("")) {
-            compilador.compilarFeature(txtFeatureSrc.getText());
-        }else{
-            alertWarning(null, "É necessário selecionar uma feature!");
+        if (txtFeatureSrc.getText() != null && !txtFeatureSrc.getText().trim().equals("")) {
+            new Thread(() -> {
+                Platform.runLater(() -> progressBar.setProgress(-1));
+                Platform.runLater(this::desabilitarBotoes);
+
+                try {
+                    compilador.compilarFeature(txtFeatureSrc.getText());
+
+                    Platform.runLater(() -> alertInfo(null, MSG_OPE_SUCESSO));
+                } catch (Exception e) {
+                    Platform.runLater(() -> ExceptionUtil.showDialog(e));
+                }
+
+                Platform.runLater(() -> progressBar.setProgress(0));
+                Platform.runLater(this::habilitarBotoes);
+            }).start();
+        } else {
+            alertWarning(null, MSG_SELECIONAR_FEATURE);
         }
     }
 
@@ -37,9 +57,23 @@ public class MainController extends MainForm {
         Compilador compilador = new Compilador();
 
         if(txtFeatureSrc.getText() != null && !txtFeatureSrc.getText().trim().equals("")) {
-            compilador.compilarFeaturePdf(txtFeatureSrc.getText());
+            new Thread(() -> {
+                Platform.runLater(() -> progressBar.setProgress(-1));
+                Platform.runLater(this::desabilitarBotoes);
+
+                try {
+                    compilador.compilarFeaturePdf(txtFeatureSrc.getText());
+
+                    Platform.runLater(() -> alertInfo(null, MSG_OPE_SUCESSO));
+                } catch (Exception e) {
+                    Platform.runLater(() -> ExceptionUtil.showDialog(e));
+                }
+
+                Platform.runLater(() -> progressBar.setProgress(0));
+                Platform.runLater(this::habilitarBotoes);
+            }).start();
         }else{
-            alertWarning(null, "É necessário selecionar uma feature!");
+            alertWarning(null, MSG_SELECIONAR_FEATURE);
         }
     }
 
@@ -58,9 +92,23 @@ public class MainController extends MainForm {
         Compilador compilador = new Compilador();
 
         if(txtPastaSrc.getText() != null && !txtPastaSrc.getText().trim().equals("")) {
-            compilador.compilarPasta(txtPastaSrc.getText());
+            new Thread(() -> {
+                Platform.runLater(() -> progressBar.setProgress(-1));
+                Platform.runLater(this::desabilitarBotoes);
+
+                try {
+                    compilador.compilarPasta(txtPastaSrc.getText());
+
+                    Platform.runLater(() -> alertInfo(null, MSG_OPE_SUCESSO));
+                } catch (Exception e) {
+                    Platform.runLater(() -> ExceptionUtil.showDialog(e));
+                }
+
+                Platform.runLater(() -> progressBar.setProgress(0));
+                Platform.runLater(this::habilitarBotoes);
+            }).start();
         }else{
-            alertWarning(null, "É necessário selecionar uma pasta!");
+            alertWarning(null, MSG_SELECIONAR_PASTA);
         }
     }
 
@@ -68,9 +116,23 @@ public class MainController extends MainForm {
         Compilador compilador = new Compilador();
 
         if(txtPastaSrc.getText() != null && !txtPastaSrc.getText().trim().equals("")) {
-            compilador.compilarPastaPdf(txtPastaSrc.getText());
+            new Thread(() -> {
+                Platform.runLater(() -> progressBar.setProgress(-1));
+                Platform.runLater(this::desabilitarBotoes);
+
+                try {
+                    compilador.compilarPastaPdf(txtPastaSrc.getText());
+
+                    Platform.runLater(() -> alertInfo(null, MSG_OPE_SUCESSO));
+                } catch (Exception e) {
+                    Platform.runLater(() -> ExceptionUtil.showDialog(e));
+                }
+
+                Platform.runLater(() -> progressBar.setProgress(0));
+                Platform.runLater(this::habilitarBotoes);
+            }).start();
         }else{
-            alertWarning(null, "É necessário selecionar uma pasta!");
+            alertWarning(null, MSG_SELECIONAR_PASTA);
         }
     }
 
@@ -80,5 +142,31 @@ public class MainController extends MainForm {
         alert.setContentText(msg);
 
         alert.showAndWait();
+    }
+
+    private void alertInfo(String title, String msg){
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setHeaderText(title);
+        alert.setContentText(msg);
+
+        alert.showAndWait();
+    }
+
+    private void desabilitarBotoes(){
+        btnSelecionarFeature.setDisable(true);
+        btnFeatureGerarHtml.setDisable(true);
+        btnFeatureGerarPdf.setDisable(true);
+        btnSelecionarPasta.setDisable(true);
+        btnPastaGerarHtml.setDisable(true);
+        btnPastaGerarPdf.setDisable(true);
+    }
+
+    private void habilitarBotoes(){
+        btnSelecionarFeature.setDisable(false);
+        btnFeatureGerarHtml.setDisable(false);
+        btnFeatureGerarPdf.setDisable(false);
+        btnSelecionarPasta.setDisable(false);
+        btnPastaGerarHtml.setDisable(false);
+        btnPastaGerarPdf.setDisable(false);
     }
 }
