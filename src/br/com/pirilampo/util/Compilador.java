@@ -283,7 +283,13 @@ public class Compilador {
 
         URL url = Thread.currentThread().getContextClassLoader().getResource(Main.SYS_PATH + src);
 
-        BufferedReader br = new BufferedReader(new FileReader(url.getFile()), 200 * 1024);
+        BufferedReader br;
+
+        try {
+            br = new BufferedReader(new FileReader(url.getFile()), 200 * 1024);
+        }catch (Exception ea){
+            br = new BufferedReader(new InputStreamReader(url.openStream()), 200 * 1024);
+        }
 
         while ((linha = br.readLine()) != null) {
             buffer += linha + "\n";
