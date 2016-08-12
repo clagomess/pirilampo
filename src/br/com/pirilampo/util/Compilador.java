@@ -19,6 +19,8 @@ public class Compilador {
     private final String HTML_TEMPLATE = "<script type=\"text/ng-template\" id=\"%s\">%s</script>\n";
     private final String HTML_JAVASCRIPT = "<script type=\"text/javascript\">%s</script>\n";
     private final String HTML_CSS = "<style>%s</style>\n";
+    private final String HTML_FEATURE_PDF = "<h1 class=\"page-header\">%s <small>%s</small> <em>%s</em></h1>\n" +
+            "%s\n<span style=\"page-break-after: always\"></span>";
 
     public Compilador(){
         Compilador.LOG = "";
@@ -99,7 +101,7 @@ public class Compilador {
         fwrite.close();
     }
 
-    public void compilarPasta(String dir) throws Exception {
+    public void compilarPasta(String dir, String projectName, String projecVersion) throws Exception {
         Map<String, List<String>> menu = new TreeMap<>();
         String htmlTemplate = "";
         String htmlJavascript = "";
@@ -171,6 +173,8 @@ public class Compilador {
             htmlJavascript += String.format(HTML_JAVASCRIPT, loadResource("htmlTemplate/lib/angular-resource.min.js"));
             htmlJavascript += String.format(HTML_JAVASCRIPT, loadResource("htmlTemplate/lib/angular-ui-router.min.js"));
 
+            html = html.replace("#PROJECT_NAME#", projectName);
+            html = html.replace("#PROJECT_VERSION#", projecVersion);
             html = html.replace("#HTML_MENU#", htmlMenu);
             html = html.replace("#HTML_CSS#", htmlCss);
             html = html.replace("#HTML_JAVASCRIPT#", htmlJavascript);
@@ -185,7 +189,7 @@ public class Compilador {
         }
     }
 
-    public void compilarFeature(String featurePath) throws IOException {
+    public void compilarFeature(String featurePath, String projectName, String projecVersion) throws IOException {
         // Abre feature
         File feature = new File(featurePath);
 
@@ -197,6 +201,9 @@ public class Compilador {
 
         String htmlCss = String.format(HTML_CSS, loadResource("htmlTemplate/css/bootstrap.min.css"));
 
+        html = html.replace("#PROJECT_NAME#", projectName);
+        html = html.replace("#PROJECT_VERSION#", projecVersion);
+        html = html.replace("#PROJECT_FEATURE#", feature.getName().replace(".feature", ""));
         html = html.replace("#HTML_CSS#", htmlCss);
         html = html.replace("#HTML_TEMPLATE#", featureHtml);
 
@@ -208,7 +215,7 @@ public class Compilador {
         fwrite.close();
     }
 
-    public void compilarFeaturePdf(String featurePath) throws Exception {
+    public void compilarFeaturePdf(String featurePath, String projectName, String projecVersion) throws Exception {
         // Abre feature
         File feature = new File(featurePath);
 
@@ -217,6 +224,13 @@ public class Compilador {
         String css = loadResource("htmlTemplate/css/bootstrap.min.css");
 
         String html = getFeatureHtml(feature.getAbsolutePath());
+        html = String.format(
+                HTML_FEATURE_PDF,
+                projectName,
+                feature.getName().replace(".feature", ""),
+                projecVersion,
+                html
+        );
         html = htmlTemplate.replace("#HTML_TEMPLATE#", html);
 
         ParsePdf pp = new ParsePdf();
@@ -226,7 +240,7 @@ public class Compilador {
         pp.buildHtml(path, html, css);
     }
 
-    public void compilarPastaPdf(String dir) throws Exception {
+    public void compilarPastaPdf(String dir, String projectName, String projecVersion) throws Exception {
         String html = "";
 
         // Abre pasta root
@@ -239,7 +253,15 @@ public class Compilador {
         if(arquivos.size() > 0) {
             for (File f : arquivos) {
                 if (f.getName().contains(".feature")) {
-                    html += getFeatureHtml(f.getAbsolutePath());
+                    String rawHtml = getFeatureHtml(f.getAbsolutePath());
+
+                    html += String.format(
+                            HTML_FEATURE_PDF,
+                            projectName,
+                            f.getName().replace(".feature", ""),
+                            projecVersion,
+                            rawHtml
+                    );
                 }
             }
 

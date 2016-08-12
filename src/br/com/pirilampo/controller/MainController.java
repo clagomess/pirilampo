@@ -38,7 +38,7 @@ public class MainController extends MainForm {
                 Platform.runLater(this::desabilitarBotoes);
 
                 try {
-                    compilador.compilarFeature(txtFeatureSrc.getText());
+                    compilador.compilarFeature(txtFeatureSrc.getText(), txtNome.getText(), txtVersao.getText());
 
                     Platform.runLater(() -> alertInfo(null, MSG_OPE_SUCESSO));
                 } catch (Exception e) {
@@ -62,7 +62,7 @@ public class MainController extends MainForm {
                 Platform.runLater(this::desabilitarBotoes);
 
                 try {
-                    compilador.compilarFeaturePdf(txtFeatureSrc.getText());
+                    compilador.compilarFeaturePdf(txtFeatureSrc.getText(), txtNome.getText(), txtVersao.getText());
 
                     Platform.runLater(() -> alertInfo(null, MSG_OPE_SUCESSO));
                 } catch (Exception e) {
@@ -97,7 +97,7 @@ public class MainController extends MainForm {
                 Platform.runLater(this::desabilitarBotoes);
 
                 try {
-                    compilador.compilarPasta(txtPastaSrc.getText());
+                    compilador.compilarPasta(txtPastaSrc.getText(), txtNome.getText(), txtVersao.getText());
 
                     Platform.runLater(() -> alertInfo(null, MSG_OPE_SUCESSO));
                 } catch (Exception e) {
@@ -121,7 +121,7 @@ public class MainController extends MainForm {
                 Platform.runLater(this::desabilitarBotoes);
 
                 try {
-                    compilador.compilarPastaPdf(txtPastaSrc.getText());
+                    compilador.compilarPastaPdf(txtPastaSrc.getText(), txtNome.getText(), txtVersao.getText());
 
                     Platform.runLater(() -> alertInfo(null, MSG_OPE_SUCESSO));
                 } catch (Exception e) {

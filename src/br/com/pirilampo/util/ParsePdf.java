@@ -11,7 +11,7 @@ import java.io.FileOutputStream;
 public class ParsePdf {
     public void buildHtml(String path, String html, String css) throws Exception {
         // Apply preferences and build metadata.
-        Document document = new Document(PageSize.A4);
+        Document document = new Document(PageSize.A4.rotate());
         PdfWriter pw = PdfWriter.getInstance(document, new FileOutputStream(path));
 
         // Build PDF document.
