@@ -24,11 +24,23 @@ public class MainController extends MainForm {
     }
 
     public void featureGerarHtml(){
+        Compilador compilador = new Compilador();
 
+        if(txtFeatureSrc.getText() != null && !txtFeatureSrc.getText().trim().equals("")) {
+            compilador.compilarFeature(txtFeatureSrc.getText());
+        }else{
+            alertWarning(null, "É necessário selecionar uma feature!");
+        }
     }
 
     public void featureGerarPdf(){
+        Compilador compilador = new Compilador();
 
+        if(txtFeatureSrc.getText() != null && !txtFeatureSrc.getText().trim().equals("")) {
+            compilador.compilarFeaturePdf(txtFeatureSrc.getText());
+        }else{
+            alertWarning(null, "É necessário selecionar uma feature!");
+        }
     }
 
     public void selecionarPasta(){
@@ -53,7 +65,13 @@ public class MainController extends MainForm {
     }
 
     public void pastaGerarPdf(){
+        Compilador compilador = new Compilador();
 
+        if(txtPastaSrc.getText() != null && !txtPastaSrc.getText().trim().equals("")) {
+            compilador.compilarPastaPdf(txtPastaSrc.getText());
+        }else{
+            alertWarning(null, "É necessário selecionar uma pasta!");
+        }
     }
 
     private void alertWarning(String title, String msg){

@@ -183,8 +183,88 @@ public class Compilador {
             }catch (IOException e){
                 e.printStackTrace();
             }
+        }
+    }
 
-            System.out.println(menu);
+    public void compilarFeature(String featurePath){
+        // Abre feature
+        File feature = new File(featurePath);
+
+        // compila
+        String featureHtml = getFeatureHtml(feature.getAbsolutePath());
+
+        //------------------ BUILD -----------------
+        String html = loadResource("htmlTemplate/template_feature.html");
+
+        String htmlCss = String.format(HTML_CSS, loadResource("htmlTemplate/css/bootstrap.min.css"));
+
+        html = html.replace("#HTML_CSS#", htmlCss);
+        html = html.replace("#HTML_TEMPLATE#", featureHtml);
+
+        // Grava
+        try {
+            File fFeature = new File(feature.getParent() + String.format("/%s.html", feature.getName().replace(".feature", "")));
+            FileWriter fwrite = new FileWriter(fFeature);
+            fwrite.write(html);
+            fwrite.flush();
+            fwrite.close();
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+
+    public void compilarFeaturePdf(String featurePath){
+        // Abre feature
+        File feature = new File(featurePath);
+
+        //------------------ BUILD -----------------
+        String htmlTemplate = loadResource("htmlTemplate/template_feature_pdf.html");
+        String css = loadResource("htmlTemplate/css/bootstrap.min.css");
+
+        String html = getFeatureHtml(feature.getAbsolutePath());
+        html = htmlTemplate.replace("#HTML_TEMPLATE#", html);
+
+        ParsePdf pp = new ParsePdf();
+
+        String path = feature.getParent() + String.format("/%s.pdf", feature.getName().replace(".feature", ""));
+
+        try {
+            pp.buildHtml(path, html, css);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void compilarPastaPdf(String dir){
+        String html = "";
+
+        // Abre pasta root
+        File curDir = new File(dir);
+
+        // Popula com arquivos feature
+        arquivos = new ArrayList<>();
+        listarPasta(curDir);
+
+        if(arquivos.size() > 0) {
+            for (File f : arquivos) {
+                if (f.getName().contains(".feature")) {
+                    html += getFeatureHtml(f.getAbsolutePath());
+                }
+            }
+
+            //------------------ BUILD -----------------
+            String htmlTemplate = loadResource("htmlTemplate/template_feature_pdf.html");
+            String css = loadResource("htmlTemplate/css/bootstrap.min.css");
+
+            html = htmlTemplate.replace("#HTML_TEMPLATE#", html);
+
+            ParsePdf pp = new ParsePdf();
+
+            try {
+                pp.buildHtml(curDir.getParent() + "/index.pdf", html, css);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
