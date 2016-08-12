@@ -14,10 +14,15 @@ import java.util.Map;
 import java.util.TreeMap;
 
 public class Compilador {
+    public static String LOG;
     private List<File> arquivos = new ArrayList<>();
     private final String HTML_TEMPLATE = "<script type=\"text/ng-template\" id=\"%s\">%s</script>\n";
     private final String HTML_JAVASCRIPT = "<script type=\"text/javascript\">%s</script>\n";
     private final String HTML_CSS = "<style>%s</style>\n";
+
+    public Compilador(){
+        Compilador.LOG = "";
+    }
 
     private void listarPasta(File curDir) throws Exception {
         File[] filesList = curDir.listFiles();
@@ -44,13 +49,20 @@ public class Compilador {
         TokenMatcher matcher = new TokenMatcher();
         String html = null;
 
-        Reader in = new InputStreamReader(new FileInputStream(pathFeature), "UTF-8");
+        try {
+            Reader in = new InputStreamReader(new FileInputStream(pathFeature), "UTF-8");
 
-        GherkinDocument gherkinDocument = parser.parse(in, matcher);
+            GherkinDocument gherkinDocument = parser.parse(in, matcher);
 
-        if(gherkinDocument != null){
-            ParseDocument pd = new ParseDocument(gherkinDocument);
-            html = pd.getHtml();
+            if (gherkinDocument != null) {
+                ParseDocument pd = new ParseDocument(gherkinDocument);
+                html = pd.getHtml();
+            }
+
+            Compilador.LOG += "OK: " + pathFeature + "\n";
+        }catch (Exception e){
+            Compilador.LOG += "ERRRROU: " + pathFeature + "\n";
+            throw e;
         }
 
         return html;
