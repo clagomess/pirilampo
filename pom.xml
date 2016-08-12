@@ -98,9 +98,18 @@
                     <archive>
                         <manifestEntries>
                             <JavaFX-Version>2.0</JavaFX-Version>
-                            <Main-Class>br.com.pirilampo.Main</Main-Class>
+                            <Main-Class>br.com.pirilampo.main.Main</Main-Class>
                             <Class-Path>
                                 br/com/pirilampo/
+                                ./lib/commons-imaging-1.0-SNAPSHOT.jar
+                                ./lib/commons-io-2.4.jar
+                                ./lib/commons-lang-2.3.jar
+                                ./lib/gherkin.jar
+                                ./lib/gherkin-jvm-deps-1.0.4.jar
+                                ./lib/itextpdf-5.5.9.jar
+                                ./lib/itext-pdfa-5.5.9.jar
+                                ./lib/itext-xtra-5.5.9.jar
+                                ./lib/xmlworker-5.5.9.jar
                             </Class-Path>
                             <implementation-vendor>gomespro</implementation-vendor>
                             <implementation-title>${project.name}</implementation-title>
