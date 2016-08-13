@@ -1,4 +1,4 @@
-# pirilampo
+# Pirilampo
 
 Pirilampo é um sistema gerador de documentação com base features escritos na linguagem Gherkin ([Cucumber](https://cucumber.io/docs/reference)) e com suporte a markedown ([CommonMark](http://commonmark.org/)).
 
