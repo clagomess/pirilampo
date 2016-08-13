@@ -199,11 +199,9 @@ public class Compilador {
                 outDirF.mkdir();
             }
 
-            File feature = new File(outDir + "index.html");
-            FileWriter fwrite = new FileWriter(feature);
-            fwrite.write(html);
-            fwrite.flush();
-            fwrite.close();
+            Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outDir + "index.html"), "UTF-8"));
+            out.write(html);
+            out.close();
         }
     }
 
@@ -226,11 +224,11 @@ public class Compilador {
         html = html.replace("#HTML_TEMPLATE#", featureHtml);
 
         // Grava
-        File fFeature = new File(feature.getParent() + String.format("/%s.html", feature.getName().replace(".feature", "")));
-        FileWriter fwrite = new FileWriter(fFeature);
-        fwrite.write(html);
-        fwrite.flush();
-        fwrite.close();
+        String outDir = feature.getParent() + String.format("/%s.html", feature.getName().replace(".feature", ""));
+
+        Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outDir), "UTF-8"));
+        out.write(html);
+        out.close();
     }
 
     public void compilarFeaturePdf(String featurePath, String projectName, String projecVersion, String layout) throws Exception {
