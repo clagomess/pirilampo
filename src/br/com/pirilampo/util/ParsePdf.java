@@ -9,9 +9,9 @@ import java.io.ByteArrayInputStream;
 import java.io.FileOutputStream;
 
 public class ParsePdf {
-    public void buildHtml(String path, String html, String css) throws Exception {
+    public void buildHtml(String path, String html, String css, String layout) throws Exception {
         // Apply preferences and build metadata.
-        Document document = new Document(PageSize.A4.rotate());
+        Document document = new Document(layout.equals("R") ? PageSize.A4 : PageSize.A4.rotate());
         PdfWriter pw = PdfWriter.getInstance(document, new FileOutputStream(path));
 
         // Build PDF document.

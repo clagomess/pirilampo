@@ -221,7 +221,7 @@ public class Compilador {
         fwrite.close();
     }
 
-    public void compilarFeaturePdf(String featurePath, String projectName, String projecVersion) throws Exception {
+    public void compilarFeaturePdf(String featurePath, String projectName, String projecVersion, String layout) throws Exception {
         // Abre feature
         File feature = new File(featurePath);
 
@@ -243,10 +243,10 @@ public class Compilador {
 
         String path = feature.getParent() + String.format("/%s.pdf", feature.getName().replace(".feature", ""));
 
-        pp.buildHtml(path, html, css);
+        pp.buildHtml(path, html, css, layout);
     }
 
-    public void compilarPastaPdf(String dir, String projectName, String projecVersion) throws Exception {
+    public void compilarPastaPdf(String dir, String projectName, String projecVersion, String layout) throws Exception {
         String html = "";
 
         // Abre pasta root
@@ -279,7 +279,7 @@ public class Compilador {
 
             ParsePdf pp = new ParsePdf();
 
-            pp.buildHtml(curDir.getParent() + "/index.pdf", html, css);
+            pp.buildHtml(curDir.getParent() + "/index.pdf", html, css, layout);
         }
     }
 

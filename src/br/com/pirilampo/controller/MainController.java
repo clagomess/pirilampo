@@ -62,7 +62,12 @@ public class MainController extends MainForm {
                 Platform.runLater(this::desabilitarBotoes);
 
                 try {
-                    compilador.compilarFeaturePdf(txtFeatureSrc.getText(), txtNome.getText(), txtVersao.getText());
+                    compilador.compilarFeaturePdf(
+                            txtFeatureSrc.getText(),
+                            txtNome.getText(),
+                            txtVersao.getText(),
+                            (String) rdoLayoutPdf.getSelectedToggle().getUserData()
+                    );
 
                     Platform.runLater(() -> alertInfo(null, MSG_OPE_SUCESSO));
                 } catch (Exception e) {
@@ -121,7 +126,12 @@ public class MainController extends MainForm {
                 Platform.runLater(this::desabilitarBotoes);
 
                 try {
-                    compilador.compilarPastaPdf(txtPastaSrc.getText(), txtNome.getText(), txtVersao.getText());
+                    compilador.compilarPastaPdf(
+                            txtPastaSrc.getText(),
+                            txtNome.getText(),
+                            txtVersao.getText(),
+                            (String) rdoLayoutPdf.getSelectedToggle().getUserData()
+                    );
 
                     Platform.runLater(() -> alertInfo(null, MSG_OPE_SUCESSO));
                 } catch (Exception e) {
