@@ -5,6 +5,7 @@ import gherkin.AstBuilder;
 import gherkin.Parser;
 import gherkin.TokenMatcher;
 import gherkin.ast.GherkinDocument;
+import org.apache.commons.io.input.BOMInputStream;
 
 import java.io.*;
 import java.net.URL;
@@ -46,13 +47,16 @@ public class Compilador {
         }
     }
 
-    private String getFeatureHtml(String pathFeature) throws UnsupportedEncodingException, FileNotFoundException {
+    private String getFeatureHtml(String pathFeature) throws IOException {
         Parser<GherkinDocument> parser = new Parser<>(new AstBuilder());
         TokenMatcher matcher = new TokenMatcher();
         String html = null;
 
         try {
-            Reader in = new InputStreamReader(new FileInputStream(pathFeature), "UTF-8");
+            // BOMInputStream para caso o arquivo possuir BOM
+            BOMInputStream bis = new BOMInputStream(new FileInputStream(pathFeature));
+
+            Reader in = new InputStreamReader(bis, "UTF-8");
 
             GherkinDocument gherkinDocument = parser.parse(in, matcher);
 
