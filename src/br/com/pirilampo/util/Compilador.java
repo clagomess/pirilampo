@@ -126,6 +126,10 @@ public class Compilador {
                     menuPai = menuPai.replace(f.getName(), "");
                     menuPai = menuPai.replace("\\", "");
 
+                    if(menuPai.trim().equals("")){
+                        menuPai = "Features";
+                    }
+
                     if(!menu.containsKey(menuPai)){
                         menu.put(menuPai, new ArrayList<>());
                     }

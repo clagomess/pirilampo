@@ -101,6 +101,10 @@
     background: none;
 }
 
+.sidebar-nav ul {
+    list-style: none;
+}
+
 @media(min-width:768px) {
     #wrapper {
         padding-left: 400px;
@@ -127,4 +131,15 @@
         position: relative;
         margin-right: 0;
     }
+}
+
+#menu-toggle {
+    position: absolute;
+    background: #000 !important;
+    z-index: 999999;
+    padding: 5px 10px;
+    display: block;
+    color: #fff;
+    left: 0;
+    text-decoration: initial;
 }
