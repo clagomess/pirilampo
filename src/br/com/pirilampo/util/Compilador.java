@@ -187,7 +187,15 @@ public class Compilador {
             html = html.replace("#HTML_TEMPLATE#", htmlTemplate);
 
             // Grava
-            File feature = new File(curDir.getParent() + "/index.html");
+            // Cria Diretório se não existir */html/feature/
+            String outDir = curDir.getParent() + "/html/";
+            File outDirF = new File(outDir);
+
+            if(!outDirF.exists()){
+                outDirF.mkdir();
+            }
+
+            File feature = new File(outDir + "index.html");
             FileWriter fwrite = new FileWriter(feature);
             fwrite.write(html);
             fwrite.flush();
@@ -279,7 +287,14 @@ public class Compilador {
 
             ParsePdf pp = new ParsePdf();
 
-            pp.buildHtml(curDir.getParent() + "/index.pdf", html, css, layout);
+            String outDir = curDir.getParent() + "/html/";
+            File outDirF = new File(outDir);
+
+            if(!outDirF.exists()){
+                outDirF.mkdir();
+            }
+
+            pp.buildHtml(outDir + "index.pdf", html, css, layout);
         }
     }
 
