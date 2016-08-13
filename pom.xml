@@ -53,6 +53,12 @@
             <artifactId>commons-lang</artifactId>
             <version>2.3</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.atlassian.commonmark</groupId>
+            <artifactId>commonmark</artifactId>
+            <version>0.6.0</version>
+        </dependency>
     </dependencies>
 
     <build>

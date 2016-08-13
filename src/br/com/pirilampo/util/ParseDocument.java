@@ -2,6 +2,7 @@ package br.com.pirilampo.util;
 
 import gherkin.ast.*;
 import org.apache.commons.lang.StringEscapeUtils;
+import org.commonmark.html.HtmlRenderer;
 
 public class ParseDocument {
     private GherkinDocument gd;
@@ -31,19 +32,19 @@ public class ParseDocument {
         String html = "";
 
         if(gd != null){
-            html += String.format(HTML_TITULO, StringEscapeUtils.escapeHtml(gd.getFeature().getName()));
-            html += String.format(HTML_PARAGRAFO, StringEscapeUtils.escapeHtml(gd.getFeature().getDescription()));
+            html += String.format(HTML_TITULO, format(gd.getFeature().getName(), false));
+            html += String.format(HTML_PARAGRAFO, format(gd.getFeature().getDescription()));
 
             int scenarioIdx = 0;
             for (ScenarioDefinition sd : gd.getFeature().getChildren()){
                 String body  = "";
 
                 if(sd.getDescription() != null){
-                    body += String.format(HTML_PARAGRAFO, StringEscapeUtils.escapeHtml(sd.getDescription()));
+                    body += String.format(HTML_PARAGRAFO, format(sd.getDescription()));
                 }
 
                 for (Step step : sd.getSteps()){
-                    body += String.format(HTML_STEP, step.getKeyword(), StringEscapeUtils.escapeHtml(step.getText()));
+                    body += String.format(HTML_STEP, step.getKeyword(), format(step.getText()));
 
                     if(step.getArgument() != null){
                         if(step.getArgument() instanceof DataTable) {
@@ -55,9 +56,9 @@ public class ParseDocument {
                                 String htmlTc = "";
                                 for (TableCell tc : tr.getCells()) {
                                     if (i == 0) {
-                                        htmlTc += String.format(HTML_CHILDREN_TABLE_TH, StringEscapeUtils.escapeHtml(tc.getValue()));
+                                        htmlTc += String.format(HTML_CHILDREN_TABLE_TH, format(tc.getValue(), false));
                                     } else {
-                                        htmlTc += String.format(HTML_CHILDREN_TABLE_TD, StringEscapeUtils.escapeHtml(tc.getValue()));
+                                        htmlTc += String.format(HTML_CHILDREN_TABLE_TD, format(tc.getValue()));
                                     }
                                 }
 
@@ -74,7 +75,7 @@ public class ParseDocument {
                         }
 
                         if(step.getArgument() instanceof DocString) {
-                            body += String.format(HTML_CODE, StringEscapeUtils.escapeHtml(((DocString) step.getArgument()).getContent()));
+                            body += String.format(HTML_CODE, format(((DocString) step.getArgument()).getContent(), false));
                         }
                     }
                 }
@@ -87,5 +88,34 @@ public class ParseDocument {
         }
 
         return html;
+    }
+
+    /**
+     * @param txt raw texto
+     * @param md ativar markedow?
+     * @return html
+     */
+    private String format(String txt, boolean md){
+        txt = txt.trim();
+        txt = StringEscapeUtils.escapeHtml(txt);
+
+        if(md) {
+            try {
+                org.commonmark.parser.Parser parser = org.commonmark.parser.Parser.builder().build();
+                org.commonmark.node.Node document = parser.parse(txt);
+                HtmlRenderer renderer = HtmlRenderer.builder().build();
+                txt = renderer.render(document);
+                txt = txt.replace("<p>", "");
+                txt = txt.replace("</p>", "");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        return txt;
+    }
+
+    private String format(String txt){
+        return format(txt, true);
     }
 }
