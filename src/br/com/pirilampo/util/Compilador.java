@@ -170,6 +170,8 @@ public class Compilador {
 
             htmlJavascript += String.format(HTML_JAVASCRIPT, loadResource("htmlTemplate/lib/jquery.js"));
             htmlJavascript += String.format(HTML_JAVASCRIPT, loadResource("htmlTemplate/lib/bootstrap.min.js"));
+            htmlJavascript += String.format(HTML_JAVASCRIPT, loadResource("htmlTemplate/lib/handlebars.min-latest.js"));
+            htmlJavascript += String.format(HTML_JAVASCRIPT, loadResource("htmlTemplate/lib/typeahead.bundle.min.js"));
             htmlJavascript += String.format(HTML_JAVASCRIPT, loadResource("htmlTemplate/lib/angular.min.js"));
             htmlJavascript += String.format(HTML_JAVASCRIPT, loadResource("htmlTemplate/js/app.js"));
             htmlJavascript += String.format(HTML_JAVASCRIPT, loadResource("htmlTemplate/js/featureController.js"));
