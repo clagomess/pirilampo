@@ -20,7 +20,7 @@ public class Compilador {
     private final String HTML_TEMPLATE = "<script type=\"text/ng-template\" id=\"%s\">%s</script>\n";
     private final String HTML_JAVASCRIPT = "<script type=\"text/javascript\">%s</script>\n";
     private final String HTML_CSS = "<style>%s</style>\n";
-    private final String HTML_FEATURE_PDF = "<h1 class=\"page-header\">%s <small>%s</small> <em>%s</em></h1>\n" +
+    private final String HTML_FEATURE_PDF = "<h1 class=\"page-header\">%s <small>%s <em>%s</em></small></h1>\n" +
             "%s\n<span style=\"page-break-after: always\"></span>";
 
     public Compilador(){
