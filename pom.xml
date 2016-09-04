@@ -10,6 +10,16 @@
     <version>1.0.0-BUILD-SNAPSHOT</version>
 
     <dependencies>
+        <!-- Local UCBioBSPJNI -->
+        <!-- Executar o comando a seguir:
+        install:install-file -DgroupId=gherkin -DartifactId=gherkin -Dpackaging=jar -Dversion=1.0 -Dfile=lib/gherkin.jar -DgeneratePom=true
+        -->
+	<dependency>
+            <groupId>gherkin</groupId>
+            <artifactId>gherkin</artifactId>
+            <version>1.0</version>
+        </dependency>
+
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>gherkin-jvm-deps</artifactId>
@@ -64,6 +74,19 @@
     <build>
         <finalName>${project.artifactId}</finalName>
 
+        <resources>
+            <resource>
+                <directory>src/main/java</directory>
+                <includes>
+                    <include>**/*.fxml</include>
+                    <include>**/*.png</include>
+                    <include>**/*.css</include>
+                    <include>**/*.js</include>
+                    <include>**/*.html</include>
+                </includes>
+            </resource>
+        </resources>
+
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -78,55 +101,37 @@
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>2.3</version>
+                <configuration>
+                    <createDependencyReducedPom>false</createDependencyReducedPom>
+                    <filters>
+                        <filter>
+                            <artifact>*:*</artifact>
+                            <excludes>
+                                <exclude>META-INF/*.SF</exclude>
+                                <exclude>META-INF/*.DSA</exclude>
+                                <exclude>META-INF/*.RSA</exclude>
+                            </excludes>
+                        </filter>
+                    </filters>
+                </configuration>
                 <executions>
                     <execution>
-                        <id>copy-dependencies</id>
-                        <phase>prepare-package</phase>
+                        <phase>package</phase>
                         <goals>
-                            <goal>copy-dependencies</goal>
+                            <goal>shade</goal>
                         </goals>
                         <configuration>
-                            <outputDirectory>${project.build.directory}/lib</outputDirectory>
-                            <overWriteReleases>false</overWriteReleases>
-                            <overWriteSnapshots>false</overWriteSnapshots>
-                            <overWriteIfNewer>true</overWriteIfNewer>
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>br.com.pirilampo.main.Main</mainClass>
+                                </transformer>
+                            </transformers>
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>2.3.2</version>
-                <configuration>
-                    <archive>
-                        <manifestEntries>
-                            <JavaFX-Version>2.0</JavaFX-Version>
-                            <Main-Class>br.com.pirilampo.main.Main</Main-Class>
-                            <Class-Path>
-                                br/com/pirilampo/
-                                ./lib/commonmark-0.6.0.jar
-                                ./lib/commons-imaging-1.0-SNAPSHOT.jar
-                                ./lib/commons-io-2.4.jar
-                                ./lib/commons-lang-2.3.jar
-                                ./lib/gherkin.jar
-                                ./lib/gherkin-jvm-deps-1.0.4.jar
-                                ./lib/itextpdf-5.5.9.jar
-                                ./lib/itext-pdfa-5.5.9.jar
-                                ./lib/itext-xtra-5.5.9.jar
-                                ./lib/xmlworker-5.5.9.jar
-                            </Class-Path>
-                            <implementation-vendor>gomespro</implementation-vendor>
-                            <implementation-title>${project.name}</implementation-title>
-                            <implementation-version>1.0</implementation-version>
-                        </manifestEntries>
-                        <manifest>
-                            <addClasspath>true</addClasspath>
-                        </manifest>
-                    </archive>
-                </configuration>
             </plugin>
         </plugins>
     </build>
