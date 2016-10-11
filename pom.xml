@@ -10,7 +10,7 @@
     <version>1.0.0-BUILD-SNAPSHOT</version>
 
     <dependencies>
-        <!-- Local UCBioBSPJNI -->
+        <!-- Local gherkin -->
         <!-- Executar o comando a seguir:
         install:install-file -DgroupId=gherkin -DartifactId=gherkin -Dpackaging=jar -Dversion=1.0 -Dfile=lib/gherkin.jar -DgeneratePom=true
         -->

@@ -4,6 +4,8 @@ import gherkin.ast.*;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.commonmark.html.HtmlRenderer;
 
+import java.util.Calendar;
+
 public class ParseDocument {
     private GherkinDocument gd;
 
@@ -97,7 +99,6 @@ public class ParseDocument {
      */
     private String format(String txt, boolean md){
         txt = txt.trim();
-        txt = StringEscapeUtils.escapeHtml(txt);
 
         if(md) {
             try {
@@ -105,12 +106,19 @@ public class ParseDocument {
                 org.commonmark.node.Node document = parser.parse(txt);
                 HtmlRenderer renderer = HtmlRenderer.builder().build();
                 txt = renderer.render(document);
-                txt = txt.replace("<p>", "");
-                txt = txt.replace("</p>", "");
+                txt = txt.replaceFirst("^<p>(.+)<\\/p>", "$1");
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
+
+        txt = txt.replaceAll(
+                "<img src=\"(.+)\"(.+)>",
+                String.format(
+                        "<br><p><a href=\"$1\" data-lightbox=\"%s\"><img src=\"$1\"$2></a></p>",
+                        Calendar.getInstance().getTime().getTime()
+                )
+        );
 
         return txt;
     }

@@ -171,6 +171,7 @@ public class Compilador {
             // adiciona libs
             htmlCss += String.format(HTML_CSS, loadResource("htmlTemplate/css/bootstrap.min.css"));
             htmlCss += String.format(HTML_CSS, loadResource("htmlTemplate/css/simple-sidebar.css"));
+            htmlCss += String.format(HTML_CSS, loadResource("htmlTemplate/css/lightbox.min.css"));
 
             htmlJavascript += String.format(HTML_JAVASCRIPT, loadResource("htmlTemplate/lib/jquery.js"));
             htmlJavascript += String.format(HTML_JAVASCRIPT, loadResource("htmlTemplate/lib/bootstrap.min.js"));
@@ -182,6 +183,7 @@ public class Compilador {
             htmlJavascript += String.format(HTML_JAVASCRIPT, loadResource("htmlTemplate/lib/angular-route.min.js"));
             htmlJavascript += String.format(HTML_JAVASCRIPT, loadResource("htmlTemplate/lib/angular-resource.min.js"));
             htmlJavascript += String.format(HTML_JAVASCRIPT, loadResource("htmlTemplate/lib/angular-ui-router.min.js"));
+            htmlJavascript += String.format(HTML_JAVASCRIPT, loadResource("htmlTemplate/js/lightbox.min.js"));
 
             html = html.replace("#PROJECT_NAME#", projectName);
             html = html.replace("#PROJECT_VERSION#", projecVersion);
