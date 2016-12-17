@@ -10,14 +10,11 @@
     <version>1.0.0-BUILD-SNAPSHOT</version>
 
     <dependencies>
-        <!-- Local gherkin -->
-        <!-- Executar o comando a seguir:
-        install:install-file -DgroupId=gherkin -DartifactId=gherkin -Dpackaging=jar -Dversion=1.0 -Dfile=lib/gherkin.jar -DgeneratePom=true
-        -->
-	<dependency>
-            <groupId>gherkin</groupId>
+        <!-- https://mvnrepository.com/artifact/io.cucumber/gherkin -->
+        <dependency>
+            <groupId>io.cucumber</groupId>
             <artifactId>gherkin</artifactId>
-            <version>1.0</version>
+            <version>4.0.0</version>
         </dependency>
 
         <dependency>
