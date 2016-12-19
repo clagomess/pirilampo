@@ -5,11 +5,15 @@ var pirilampoApp = angular.module('pirilampoApp', [
 
 pirilampoApp.config(function($routeProvider){
     $routeProvider
-        .when('/feature/:feature', {
+        .when('/feature/:feature/:search?', {
             templateUrl: function(urlattr){
                 return urlattr.feature + '.html';
             },
             controller: 'featureController'
+        })
+        .when('/', {
+            templateUrl: 'index.html',
+            controller: 'indexController'
         })
         .otherwise({
             redirectTo: '/'

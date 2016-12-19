@@ -4,8 +4,8 @@ pirilampoApp.controller('featureController', function($scope, $route){
     var featureId = '[id="'+ $route.current.params.feature +'.feature"]';
     var featureMasterId = '[id="master_'+ $route.current.params.feature +'.feature"]';
 
-    $('#feature-diff-row').hide();
-    $('#feature-master').hide();
+    jQuery('#feature-diff-row').hide();
+    jQuery('#feature-master').hide();
 
     if(jQuery(masterId).is('*')){
         jQuery('#feature-master').html(jQuery(masterId).html());
@@ -23,4 +23,29 @@ pirilampoApp.controller('featureController', function($scope, $route){
         jQuery('#btn-master').hide();
         jQuery('#btn-diff').hide();
     }
+
+    // Quando for busca
+    if($route.current.params.search){
+        var html = jQuery('[ng-view]').html();
+
+        var re = new RegExp($route.current.params.search, 'g');
+
+        html = html.replace(
+            re,
+            '<span class="searched">'+$route.current.params.search+'</span>'
+        );
+
+        jQuery('[ng-view]').html(html);
+
+        jQuery('html, body').animate({
+            scrollTop: jQuery('.searched').offset().top
+        }, 500);
+    }
+});
+
+pirilampoApp.controller('indexController', function($scope){
+    jQuery('#feature-diff-row').hide();
+    jQuery('#feature-master').hide();
+    jQuery('#btn-master').hide();
+    jQuery('#btn-diff').hide();
 });

@@ -64,7 +64,8 @@ public class Main extends Application {
                 compilador.compilarFeature(
                         cmd.getOptionValue("feature"),
                         cmd.getOptionValue("name"),
-                        cmd.getOptionValue("version")
+                        cmd.getOptionValue("version"),
+                        cmd.getOptionValue("output")
                 );
                 System.exit(1);
             }
@@ -74,7 +75,8 @@ public class Main extends Application {
                         cmd.getOptionValue("feature_path"),
                         cmd.getOptionValue("feature_path_master"),
                         cmd.getOptionValue("name"),
-                        cmd.getOptionValue("version")
+                        cmd.getOptionValue("version"),
+                        cmd.getOptionValue("output")
                 );
                 System.exit(1);
             }

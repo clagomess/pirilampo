@@ -94,6 +94,11 @@
         del {
             background-color: #ffc6c6;
         }
+        .searched{
+            color: #FFF;
+            background: #f0ad4e;
+            border-radius: .25em;
+        }
     </style>
 </head>
 
@@ -103,7 +108,7 @@
     <div id="sidebar-wrapper">
         <ul class="sidebar-nav">
             <li class="sidebar-brand">
-                <a href="#">#PROJECT_NAME# <small><em>#PROJECT_VERSION#</em></small></a>
+                <a href="#/">#PROJECT_NAME# <small><em>#PROJECT_VERSION#</em></small></a>
             </li>
             #HTML_MENU#
         </ul>
@@ -121,8 +126,8 @@
             <div class="row">
                 <div class="col-lg-12">
                     <p>
-                        <button id="btn-diff" class="btn btn-xs btn-primary">Diff</button>
-                        <button id="btn-master" class="btn btn-xs btn-primary">Master</button>
+                        <button id="btn-diff" style="display: none" class="btn btn-xs btn-primary">Diff</button>
+                        <button id="btn-master" style="display: none" class="btn btn-xs btn-primary">Master</button>
                     </p>
                 </div>
             </div>
@@ -150,6 +155,7 @@
 
 #HTML_TEMPLATE#
 
+<script type="text/ng-template" id="index.html"></script>
 
 <script type="text/javascript">
     $("#menu-toggle").click(function(e) {
@@ -225,7 +231,6 @@
     };
 
     $('#busca').typeahead({
-        minLength: 3,
         hint: false
     }, {
         limit: -1,
@@ -237,7 +242,7 @@
             suggestion: Handlebars.compile("<div><p><strong>{{feature}}</strong></p>{{txt}}</div>")
         }
     }).bind('typeahead:select', function(ev, suggestion) {
-        window.location = "#/feature/" + suggestion.feature;
+        window.location = "#/feature/" + suggestion.feature + '/' + encodeURIComponent(suggestion.txt);
     });
 </script>
 

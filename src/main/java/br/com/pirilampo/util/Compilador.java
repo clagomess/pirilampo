@@ -79,7 +79,7 @@ public class Compilador {
         return html;
     }
 
-    public void compilarPasta(String dir, String dirMaster, String projectName, String projecVersion) throws Exception {
+    public void compilarPasta(String dir, String dirMaster, String projectName, String projecVersion, String outputDir) throws Exception {
         Map<String, List<String>> menu = new TreeMap<>();
         String htmlTemplate = "";
         String htmlJavascript = "";
@@ -221,7 +221,7 @@ public class Compilador {
 
             // Grava
             // Cria Diretório se não existir */html/feature/
-            String outDir = curDir.getParent() + "/html/";
+            String outDir = (outputDir != null ? outputDir : curDir.getParent() + "/html/");
             File outDirF = new File(outDir);
 
             if(!outDirF.exists()){
@@ -234,7 +234,7 @@ public class Compilador {
         }
     }
 
-    public void compilarFeature(String featurePath, String projectName, String projecVersion) throws IOException {
+    public void compilarFeature(String featurePath, String projectName, String projecVersion, String outputDir) throws IOException {
         // Abre feature
         File feature = new File(featurePath);
 
@@ -253,7 +253,8 @@ public class Compilador {
         html = html.replace("#HTML_TEMPLATE#", featureHtml);
 
         // Grava
-        String outDir = feature.getParent() + String.format("/%s.html", feature.getName().replace(".feature", ""));
+        String outDir = (outputDir != null ? outputDir : feature.getParent());
+        outDir += String.format("/%s.html", feature.getName().replace(".feature", ""));
 
         Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outDir), "UTF-8"));
         out.write(html);

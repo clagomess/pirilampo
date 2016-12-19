@@ -38,7 +38,7 @@ public class MainController extends MainForm {
                 Platform.runLater(this::desabilitarBotoes);
 
                 try {
-                    compilador.compilarFeature(txtFeatureSrc.getText(), txtNome.getText(), txtVersao.getText());
+                    compilador.compilarFeature(txtFeatureSrc.getText(), txtNome.getText(), txtVersao.getText(), null);
 
                     Platform.runLater(() -> alertInfo(null, MSG_OPE_SUCESSO));
                 } catch (Exception e) {
@@ -102,7 +102,7 @@ public class MainController extends MainForm {
                 Platform.runLater(this::desabilitarBotoes);
 
                 try {
-                    compilador.compilarPasta(txtPastaSrc.getText(), null, txtNome.getText(), txtVersao.getText());
+                    compilador.compilarPasta(txtPastaSrc.getText(), null, txtNome.getText(), txtVersao.getText(), null);
 
                     Platform.runLater(() -> alertInfo(null, MSG_OPE_SUCESSO));
                 } catch (Exception e) {
