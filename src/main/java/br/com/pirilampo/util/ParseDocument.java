@@ -35,7 +35,10 @@ public class ParseDocument {
 
         if(gd != null){
             html += String.format(HTML_TITULO, format(gd.getFeature().getName(), false));
-            html += String.format(HTML_PARAGRAFO, format(gd.getFeature().getDescription()));
+
+            if(gd.getFeature().getDescription() != null) {
+                html += String.format(HTML_PARAGRAFO, format(gd.getFeature().getDescription()));
+            }
 
             int scenarioIdx = 0;
             for (ScenarioDefinition sd : gd.getFeature().getChildren()){

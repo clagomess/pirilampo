@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 public class ExceptionUtil {
     private static final Logger logger = LoggerFactory.getLogger(Compilador.class);
     public static void showDialog(Exception e){
-        logger.warn(ExceptionUtil.class.getName(), logger);
+        logger.warn(ExceptionUtil.class.getName(), e);
 
         String msg = e.getMessage();
 
