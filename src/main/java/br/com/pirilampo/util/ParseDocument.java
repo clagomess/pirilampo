@@ -103,6 +103,9 @@ public class ParseDocument {
     private String format(String txt, boolean md){
         txt = txt.trim();
 
+        txt = txt.replaceAll("<", "&lt;");
+        txt = txt.replaceAll(">", "&gt;");
+
         if(md) {
             try {
                 org.commonmark.parser.Parser parser = org.commonmark.parser.Parser.builder().build();
@@ -116,7 +119,7 @@ public class ParseDocument {
         }
 
         txt = txt.replaceAll(
-                "<img src=\"(.+)\"(.+)>",
+                "&lt;img src=&quot;(.*)&quot;(.*)&gt;",
                 String.format(
                         "<br><p><a href=\"$1\" data-lightbox=\"%s\"><img src=\"$1\"$2></a></p>",
                         Calendar.getInstance().getTime().getTime()
