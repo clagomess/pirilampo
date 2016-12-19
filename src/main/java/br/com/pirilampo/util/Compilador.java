@@ -6,15 +6,18 @@ import gherkin.Parser;
 import gherkin.TokenMatcher;
 import gherkin.ast.GherkinDocument;
 import org.apache.commons.io.input.BOMInputStream;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.math.BigInteger;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.*;
 
 public class Compilador {
+    private static final Logger logger = LoggerFactory.getLogger(Compilador.class);
     public static String LOG;
     private List<File> arquivos = new ArrayList<>();
     private final String HTML_TEMPLATE = "<script type=\"text/ng-template\" id=\"%s\">%s</script>\n";
@@ -66,51 +69,35 @@ public class Compilador {
             }
 
             Compilador.LOG += "OK: " + pathFeature + "\n";
+            logger.info("OK: " + pathFeature);
         }catch (Exception e){
             Compilador.LOG += "ERRRROU: " + pathFeature + "\n";
+            logger.warn("ERRRROU: " + pathFeature);
             throw e;
         }
 
         return html;
     }
 
-    private void compilarPastaItem(File pathPasta, File pathFeature) throws IOException {
-        String html = getFeatureHtml(pathFeature.getAbsolutePath());
-
-        File hmtlDir;
-        String outDir = pathPasta.getParent();
-
-        // Cria Diretório se não existir */html/feature/
-        outDir += "/html/";
-        hmtlDir = new File(outDir);
-
-        if(!hmtlDir.exists()){
-            hmtlDir.mkdir();
-        }
-
-        outDir += "feature/";
-        hmtlDir = new File(outDir);
-
-        if(!hmtlDir.exists()) {
-            hmtlDir.mkdir();
-        }
-
-        // Grava HTMLs
-        outDir += pathFeature.getName().replace(".feature", ".html");
-
-        File feature = new File(outDir);
-        FileWriter fwrite = new FileWriter(feature);
-        fwrite.write(html);
-        fwrite.flush();
-        fwrite.close();
-    }
-
-    public void compilarPasta(String dir, String projectName, String projecVersion) throws Exception {
+    public void compilarPasta(String dir, String dirMaster, String projectName, String projecVersion) throws Exception {
         Map<String, List<String>> menu = new TreeMap<>();
         String htmlTemplate = "";
         String htmlJavascript = "";
         String htmlCss = "";
 
+        // -------- MASTER
+        List<File> arquivosMaster = null;
+        if(dirMaster != null) {
+            // Abre pasta root
+            File curDirMaster = new File(dirMaster);
+
+            // Popula com arquivos feature
+            arquivos = new ArrayList<>();
+            listarPasta(curDirMaster);
+            arquivosMaster = arquivos;
+        }
+
+        // -------- NORMAL
         // Abre pasta root
         File curDir = new File(dir);
 
@@ -121,10 +108,43 @@ public class Compilador {
         if(arquivos.size() > 0){
             for(File f : arquivos){
                 if(f.getName().contains(".feature")){
+                    if(dirMaster != null) {
+                        boolean diferente = true;
+                        File fmd = null;
+
+                        if(arquivosMaster.size() > 0) {
+                            for (File fm : arquivosMaster) {
+                                if (fm.getName().equals(f.getName())) {
+                                    if(md5(loadFeature(fm.getAbsolutePath())).equals(md5(loadFeature(f.getAbsolutePath())))){
+                                        diferente = false;
+                                    }else{
+                                        fmd = fm;
+                                    }
+                                    break;
+                                }
+                            }
+                        }
+
+                        // pula para o proximo
+                        if(!diferente){
+                            continue;
+                        }
+
+                        if(fmd != null) {
+                            String featureHtml = getFeatureHtml(fmd.getAbsolutePath());
+                            htmlTemplate += String.format(
+                                    HTML_TEMPLATE,
+                                    "master_" + fmd.getName().replace(".feature", ".html"),
+                                    featureHtml
+                            );
+                            htmlTemplate += String.format(HTML_TEMPLATE, "master_" + fmd.getName(), loadFeature(fmd.getAbsolutePath()));
+                        }
+                    }
+
                     // monta menu
                     String menuPai = f.getAbsolutePath().replace(curDir.getAbsolutePath(), "");
                     menuPai = menuPai.replace(f.getName(), "");
-                    menuPai = menuPai.replace("\\", "");
+                    menuPai = menuPai.replace(File.separator, "");
 
                     if(menuPai.trim().equals("")){
                         menuPai = "Features";
@@ -140,6 +160,11 @@ public class Compilador {
                     String featureHtml = getFeatureHtml(f.getAbsolutePath());
 
                     htmlTemplate += String.format(HTML_TEMPLATE, f.getName().replace(".feature", ".html"), featureHtml);
+
+                    // Salva as feature para diff
+                    if(dirMaster != null){
+                        htmlTemplate += String.format(HTML_TEMPLATE, f.getName(), loadFeature(f.getAbsolutePath()));
+                    }
                 }
             }
 
@@ -177,6 +202,8 @@ public class Compilador {
             htmlJavascript += String.format(HTML_JAVASCRIPT, loadResource("htmlTemplate/lib/bootstrap.min.js"));
             htmlJavascript += String.format(HTML_JAVASCRIPT, loadResource("htmlTemplate/lib/handlebars.min-latest.js"));
             htmlJavascript += String.format(HTML_JAVASCRIPT, loadResource("htmlTemplate/lib/typeahead.bundle.min.js"));
+            htmlJavascript += String.format(HTML_JAVASCRIPT, loadResource("htmlTemplate/lib/diff_match_patch.js"));
+            htmlJavascript += String.format(HTML_JAVASCRIPT, loadResource("htmlTemplate/lib/jquery.pretty-text-diff.min.js"));
             htmlJavascript += String.format(HTML_JAVASCRIPT, loadResource("htmlTemplate/lib/angular.min.js"));
             htmlJavascript += String.format(HTML_JAVASCRIPT, loadResource("htmlTemplate/js/app.js"));
             htmlJavascript += String.format(HTML_JAVASCRIPT, loadResource("htmlTemplate/js/featureController.js"));
@@ -305,23 +332,59 @@ public class Compilador {
     private String loadResource(String src) throws IOException {
         String buffer = "";
         String linha;
+        BufferedReader br;
 
         URL url = Thread.currentThread().getContextClassLoader().getResource(Main.SYS_PATH + src);
 
+        if(url != null) {
+            try {
+                br = new BufferedReader(new FileReader(url.getFile()), 200 * 1024);
+            } catch (Exception ea) {
+                br = new BufferedReader(new InputStreamReader(url.openStream()), 200 * 1024);
+            }
+
+            while ((linha = br.readLine()) != null) {
+                buffer += linha + "\n";
+            }
+
+            br.close();
+        } else {
+            logger.warn("Falha ao carregar Resource");
+        }
+
+        return buffer;
+    }
+
+    private String loadFeature(String pathFeature){
+        String buffer = "";
+        String linha;
         BufferedReader br;
 
         try {
-            br = new BufferedReader(new FileReader(url.getFile()), 200 * 1024);
-        }catch (Exception ea){
-            br = new BufferedReader(new InputStreamReader(url.openStream()), 200 * 1024);
-        }
+            BOMInputStream bis = new BOMInputStream(new FileInputStream(pathFeature));
 
-        while ((linha = br.readLine()) != null) {
-            buffer += linha + "\n";
-        }
+            br = new BufferedReader(new InputStreamReader(bis, "UTF-8"));
 
-        br.close();
+            while ((linha = br.readLine()) != null) {
+                buffer += linha + "\n";
+            }
+        }catch (Exception e){
+            logger.warn(e.getMessage());
+        }
 
         return buffer;
+    }
+
+    private String md5(String str){
+        String md5 = null;
+
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            md5 = String.format("%032x", new BigInteger(1, md.digest(str.getBytes())));
+        } catch (NoSuchAlgorithmException e) {
+            logger.warn(Compilador.class.getName(), e);
+        }
+
+        return md5;
     }
 }

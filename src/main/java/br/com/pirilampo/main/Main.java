@@ -1,5 +1,6 @@
 package br.com.pirilampo.main;
 
+import br.com.pirilampo.util.Compilador;
 import br.com.pirilampo.util.ExceptionUtil;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -49,9 +50,34 @@ public class Main extends Application {
     }
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
         if(args.length > 0){
             CommandLine cmd = consoleOptions(args);
+            Compilador compilador = new Compilador();
+
+            if(cmd.getOptionValue("feature") == null && cmd.getOptionValue("feature_path") == null){
+                logger.warn("É necessário informar {feature} ou {feature_path}");
+                System.exit(1);
+            }
+
+            if(cmd.getOptionValue("feature") != null){
+                compilador.compilarFeature(
+                        cmd.getOptionValue("feature"),
+                        cmd.getOptionValue("name"),
+                        cmd.getOptionValue("version")
+                );
+                System.exit(1);
+            }
+
+            if(cmd.getOptionValue("feature_path") != null){
+                compilador.compilarPasta(
+                        cmd.getOptionValue("feature_path"),
+                        cmd.getOptionValue("feature_path_master"),
+                        cmd.getOptionValue("name"),
+                        cmd.getOptionValue("version")
+                );
+                System.exit(1);
+            }
         }else{
             launch(args);
         }
@@ -62,7 +88,6 @@ public class Main extends Application {
         Option option;
 
         options.addOption(new Option("feature", true, "Arquivo *.feature"));
-        options.addOption(new Option("feature_master", true, "Arquivo *.feature master"));
         options.addOption(new Option("feature_path", true, "Diretório contendo arquivos *.feature"));
         options.addOption(new Option("feature_path_master", true, "Diretório contendo arquivos *.feature master"));
         options.addOption(new Option("output", true, "Diretório de saída"));

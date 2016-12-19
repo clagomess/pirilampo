@@ -6,10 +6,13 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ExceptionUtil {
+    private static final Logger logger = LoggerFactory.getLogger(Compilador.class);
     public static void showDialog(Exception e){
-        e.printStackTrace();
+        logger.warn(ExceptionUtil.class.getName(), logger);
 
         String msg = e.getMessage();
 
