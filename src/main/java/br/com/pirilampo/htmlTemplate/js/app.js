@@ -5,7 +5,7 @@ var pirilampoApp = angular.module('pirilampoApp', [
 
 pirilampoApp.config(function($routeProvider){
     $routeProvider
-        .when('/feature/:feature/:search?', {
+        .when('/feature/:feature/:search*?', {
             templateUrl: function(urlattr){
                 return urlattr.feature + '.html';
             },

@@ -28,7 +28,7 @@ pirilampoApp.controller('featureController', function($scope, $route){
     if($route.current.params.search){
         var html = jQuery('[ng-view]').html();
 
-        var re = new RegExp($route.current.params.search, 'g');
+        var re = new RegExp($route.current.params.search, 'gm');
 
         html = html.replace(
             re,

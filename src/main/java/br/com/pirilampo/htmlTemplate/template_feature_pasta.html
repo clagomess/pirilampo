@@ -182,7 +182,7 @@
 
     $('[type="text/ng-template"]').each(function(){
         var feature = $(this).attr('id');
-        var matches = $(this).html().match(/<(.+)>(.+)<\/(.+)>/g);
+        var matches = $(this).html().match(/(>|\n)([^<>].+?)(<|\n)/gm);
 
         if(feature.indexOf('master_') != -1){
             return;
@@ -190,7 +190,10 @@
 
         for(var i in matches){
             if(matches.hasOwnProperty(i)) {
-                var match = matches[i].replace(/<(|\/)(\w*)>/g, '');
+                var match = matches[i].replace(/^>/, '');
+                match = match.replace(/<$/g, '');
+                match = match.replace(/<(|\/)(\w*)>/g, '');
+                match = match.trim();
 
                 if(match.length >= 3) {
                     var item = {
