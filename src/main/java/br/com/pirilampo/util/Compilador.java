@@ -114,7 +114,7 @@ public class Compilador {
 
                         if(arquivosMaster.size() > 0) {
                             for (File fm : arquivosMaster) {
-                                if (fm.getName().equals(f.getName())) {
+                                if (absoluteNameFeature(dirMaster, fm.getAbsolutePath()).equals(absoluteNameFeature(dir, f.getAbsolutePath()))) {
                                     if(md5(loadFeature(fm.getAbsolutePath())).equals(md5(loadFeature(f.getAbsolutePath())))){
                                         diferente = false;
                                     }else{
@@ -387,5 +387,13 @@ public class Compilador {
         }
 
         return md5;
+    }
+
+    private String absoluteNameFeature(String path, String absolutePath){
+        absolutePath = absolutePath.replace(path, "");
+        absolutePath = absolutePath.replaceFirst("^\\/", "");
+        absolutePath = absolutePath.replaceFirst("^\\\\", "");
+
+        return absolutePath;
     }
 }

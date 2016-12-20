@@ -9,8 +9,9 @@ pirilampoApp.controller('featureController', function($scope, $route){
 
     if(jQuery(masterId).is('*')){
         jQuery('#feature-master').html(jQuery(masterId).html());
+        jQuery('#feature-master').prepend('<span class="master-label">MASTER</span>');
 
-        $('body').prettyTextDiff({
+        jQuery('body').prettyTextDiff({
             cleanup: true,
             originalContent: jQuery(featureMasterId).text(),
             changedContent: jQuery(featureId).text(),
@@ -19,9 +20,11 @@ pirilampoApp.controller('featureController', function($scope, $route){
 
         jQuery('#btn-master').show();
         jQuery('#btn-diff').show();
+        jQuery('[ng-view]').css('background', '#dff0d8');
     }else{
         jQuery('#btn-master').hide();
         jQuery('#btn-diff').hide();
+        jQuery('[ng-view]').css('background', '');
     }
 
     // Quando for busca
