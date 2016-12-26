@@ -210,16 +210,8 @@
                         txt: $('#buscaBuffer').html(match).text()
                     };
 
-                    // veririca repetido
-                    var temRepetido = false;
-                    for (var j in source){
-                        if(source[j].feature == item.feature && source[j].txt == item.txt){
-                            temRepetido = true;
-                            break;
-                        }
-                    }
-
-                    if(!temRepetido) {
+                    // verifica repetido
+                    if(source.indexOf(item) == -1) {
                         source.push(item);
                     }
                 }
@@ -245,7 +237,7 @@
     $('#busca').typeahead({
         hint: false
     }, {
-        limit: -1,
+        limit: 20,
         displayKey: 'txt',
         name: 'txt',
         display: 'txt',
