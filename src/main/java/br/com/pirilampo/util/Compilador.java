@@ -18,13 +18,14 @@ import java.util.*;
 
 public class Compilador {
     private static final Logger logger = LoggerFactory.getLogger(Compilador.class);
-    public static String LOG;
+    static String LOG;
     private List<File> arquivos = new ArrayList<>();
     private final String HTML_TEMPLATE = "<script type=\"text/ng-template\" id=\"%s\">%s</script>\n";
     private final String HTML_JAVASCRIPT = "<script type=\"text/javascript\">%s</script>\n";
     private final String HTML_CSS = "<style>%s</style>\n";
     private final String HTML_FEATURE_PDF = "<h1 class=\"page-header\">%s <small>%s <em>%s</em></small></h1>\n" +
             "%s\n<span style=\"page-break-after: always\"></span>";
+    private final String HTML_MENU_FILHO = "<li><a href=\"#/feature/%s\">%s</a></li>";
 
     public Compilador(){
         Compilador.LOG = "";
@@ -108,6 +109,15 @@ public class Compilador {
         if(arquivos.size() > 0){
             for(File f : arquivos){
                 if(f.getName().contains(".feature")){
+                    // monta nome menu
+                    String menuPai = f.getAbsolutePath().replace(curDir.getAbsolutePath(), "");
+                    menuPai = menuPai.replace(f.getName(), "");
+                    menuPai = menuPai.replace(File.separator, " ");
+                    menuPai = menuPai.trim();
+
+                    String htmlFeatureId = menuPai + "_" + f.getName().replace(".feature", ".html");
+
+                    // Processa Master
                     if(dirMaster != null) {
                         boolean diferente = true;
                         File fmd = null;
@@ -134,18 +144,18 @@ public class Compilador {
                             String featureHtml = getFeatureHtml(fmd.getAbsolutePath());
                             htmlTemplate += String.format(
                                     HTML_TEMPLATE,
-                                    "master_" + fmd.getName().replace(".feature", ".html"),
+                                    "master_" + htmlFeatureId,
                                     featureHtml
                             );
-                            htmlTemplate += String.format(HTML_TEMPLATE, "master_" + fmd.getName(), loadFeature(fmd.getAbsolutePath()));
+                            htmlTemplate += String.format(
+                                    HTML_TEMPLATE,
+                                    "master_" + htmlFeatureId.replace(".html", ".feature"),
+                                    loadFeature(fmd.getAbsolutePath())
+                            );
                         }
                     }
 
-                    // monta menu
-                    String menuPai = f.getAbsolutePath().replace(curDir.getAbsolutePath(), "");
-                    menuPai = menuPai.replace(f.getName(), "");
-                    menuPai = menuPai.replace(File.separator, "");
-
+                    // Adiciona item de menu se deu tudo certo com a master
                     if(menuPai.trim().equals("")){
                         menuPai = "Features";
                     }
@@ -154,16 +164,25 @@ public class Compilador {
                         menu.put(menuPai, new ArrayList<>());
                     }
 
-                    menu.get(menuPai).add(f.getName().replace(".feature", ""));
+                    String menuFilho = String.format(
+                            HTML_MENU_FILHO,
+                            menuPai + "_" + f.getName().replace(".feature", ""),
+                            f.getName().replace(".feature", "")
+                    );
+                    menu.get(menuPai).add(menuFilho);
 
                     // Gera a feture
                     String featureHtml = getFeatureHtml(f.getAbsolutePath());
 
-                    htmlTemplate += String.format(HTML_TEMPLATE, f.getName().replace(".feature", ".html"), featureHtml);
+                    htmlTemplate += String.format(HTML_TEMPLATE, htmlFeatureId, featureHtml);
 
                     // Salva as feature para diff
                     if(dirMaster != null){
-                        htmlTemplate += String.format(HTML_TEMPLATE, f.getName(), loadFeature(f.getAbsolutePath()));
+                        htmlTemplate += String.format(
+                                HTML_TEMPLATE,
+                                htmlFeatureId.replace(".html", ".feature"),
+                                loadFeature(f.getAbsolutePath())
+                        );
                     }
                 }
             }
@@ -177,14 +196,12 @@ public class Compilador {
             final String HTML_MENU_PAI = "<li><a href=\"javascript:;\" data-toggle=\"collapse\" data-target=\"#menu-%s\">" +
             "%s</a><ul id=\"menu-%s\" class=\"collapse\">%s</ul></li>";
 
-            final String HTML_MENU_FILHO = "<li><a href=\"#/feature/%s\">%s</a></li>";
-
             int menuIdx = 0;
             for (Map.Entry<String, List<String>> entry : menu.entrySet()) {
                 String filhos = "";
 
                 for(String item : entry.getValue()){
-                    filhos += String.format(HTML_MENU_FILHO, item, item);
+                    filhos += item;
                 }
 
                 htmlMenu += String.format(HTML_MENU_PAI, menuIdx, entry.getKey(), menuIdx, filhos);

@@ -65,7 +65,6 @@
 }
 
 .sidebar-nav li {
-    text-indent: 15px;
     line-height: 32px;
 }
 
@@ -77,6 +76,8 @@
     display: block;
     text-decoration: none;
     color: #999999;
+    padding: 0 15px;
+    word-wrap: break-word;
 }
 
 .sidebar-nav li a:hover {

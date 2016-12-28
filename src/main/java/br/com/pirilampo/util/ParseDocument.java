@@ -2,7 +2,7 @@ package br.com.pirilampo.util;
 
 import gherkin.ast.*;
 import org.apache.commons.lang.StringEscapeUtils;
-import org.commonmark.html.HtmlRenderer;
+import org.commonmark.renderer.html.HtmlRenderer;
 
 import java.util.Calendar;
 
@@ -106,13 +106,17 @@ public class ParseDocument {
         txt = txt.replaceAll("<", "&lt;");
         txt = txt.replaceAll(">", "&gt;");
 
-        if(md) {
+        if(md && txt.length() >= 3) {
             try {
+                txt = txt.replaceAll("( *)(\\n)( *)", "\n");
+
                 org.commonmark.parser.Parser parser = org.commonmark.parser.Parser.builder().build();
                 org.commonmark.node.Node document = parser.parse(txt);
                 HtmlRenderer renderer = HtmlRenderer.builder().build();
                 txt = renderer.render(document);
+
                 txt = txt.replaceFirst("^<p>(.+)<\\/p>", "$1");
+                txt = txt.trim();
             } catch (Exception e) {
                 e.printStackTrace();
             }

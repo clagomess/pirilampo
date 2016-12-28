@@ -7,7 +7,7 @@
     <name>pirilampo</name>
     <modelVersion>4.0.0</modelVersion>
     <groupId>pirilampo</groupId>
-    <version>1.0.5</version>
+    <version>1.0.6</version>
 
     <dependencies>
         <!-- https://mvnrepository.com/artifact/io.cucumber/gherkin -->
@@ -67,10 +67,11 @@
             <version>2.3</version>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/com.atlassian.commonmark/commonmark -->
         <dependency>
             <groupId>com.atlassian.commonmark</groupId>
             <artifactId>commonmark</artifactId>
-            <version>0.6.0</version>
+            <version>0.8.0</version>
         </dependency>
 
         <!-- https://mvnrepository.com/artifact/commons-cli/commons-cli -->
