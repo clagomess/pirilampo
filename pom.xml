@@ -54,6 +54,12 @@
             <groupId>com.itextpdf</groupId>
             <artifactId>itext-xtra</artifactId>
             <version>5.5.10</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.commons</groupId>
+                    <artifactId>commons-imaging</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.itextpdf.tool</groupId>
