@@ -17,12 +17,12 @@ import java.net.URL;
 
 public class Main extends Application {
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
-    public static final String SYS_TITLE = "Pirilampo";
     public static final String SYS_PATH = "br/com/pirilampo/";
-    public static final String SYS_ICON = SYS_PATH + "resources/img_01.png";
+    private static final String SYS_ICON = SYS_PATH + "resources/img_01.png";
 
     @Override
     public void start(final Stage primaryStage) {
+        Main main = new Main();
         Parent root = null;
 
         try {
@@ -38,7 +38,7 @@ public class Main extends Application {
         }
 
         if(root != null) {
-            primaryStage.setTitle(SYS_TITLE);
+            primaryStage.setTitle("Pirilampo - Ver.: " + main.getVersion());
             primaryStage.setScene(new Scene(root, 600, 600));
             primaryStage.getIcons().add(new Image(SYS_ICON));
             primaryStage.setOnCloseRequest(t -> {
@@ -51,6 +51,9 @@ public class Main extends Application {
 
 
     public static void main(String[] args) throws Exception {
+        Main main = new Main();
+        logger.info("Pirilampo - Ver.: {}", main.getVersion());
+
         if(args.length > 0){
             CommandLine cmd = consoleOptions(args);
             Compilador compilador = new Compilador();
@@ -116,5 +119,9 @@ public class Main extends Application {
         }
 
         return cmd;
+    }
+
+    private synchronized String getVersion(){
+        return getClass().getPackage().getImplementationVersion();
     }
 }

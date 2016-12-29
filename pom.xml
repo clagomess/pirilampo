@@ -7,7 +7,7 @@
     <name>pirilampo</name>
     <modelVersion>4.0.0</modelVersion>
     <groupId>pirilampo</groupId>
-    <version>1.0.6</version>
+    <version>1.0.7</version>
 
     <dependencies>
         <!-- https://mvnrepository.com/artifact/io.cucumber/gherkin -->
@@ -120,6 +120,19 @@
                     <source>1.8</source>
                     <target>1.8</target>
                     <encoding>UTF-8</encoding><!-- try to force encoding -->
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                            <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                        </manifest>
+                    </archive>
                 </configuration>
             </plugin>
 
