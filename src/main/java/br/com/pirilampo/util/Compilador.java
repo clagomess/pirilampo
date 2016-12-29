@@ -109,11 +109,16 @@ public class Compilador {
             for(File f : arquivos){
                 if(f.getName().contains(".feature")){
                     // monta nome menu
-                    String htmlFeatureId = f.getAbsolutePath().replace(curDir.getAbsolutePath(), "");
-                    htmlFeatureId = htmlFeatureId.replace(f.getName(), "");
-                    htmlFeatureId = htmlFeatureId.replace(File.separator, " ");
-                    htmlFeatureId = htmlFeatureId.trim();
-                    htmlFeatureId = htmlFeatureId + "_" + f.getName().replace(".feature", ".html");
+                    String htmlFeatureRoot = f.getAbsolutePath().replace(curDir.getAbsolutePath(), "");
+                    htmlFeatureRoot = htmlFeatureRoot.replace(f.getName(), "");
+                    htmlFeatureRoot = htmlFeatureRoot.replace(File.separator, " ");
+                    htmlFeatureRoot = htmlFeatureRoot.trim();
+
+                    if(htmlFeatureRoot.equals("")){
+                        htmlFeatureRoot = "Features";
+                    }
+
+                    String htmlFeatureId = htmlFeatureRoot + "_" + f.getName().replace(".feature", ".html");
 
                     // Processa Master
                     if(dirMaster != null) {
@@ -154,7 +159,15 @@ public class Compilador {
                     }
 
                     // Adiciona item de menu se deu tudo certo com a master
-                    parseMenu.addMenuItem(f.getAbsolutePath().replace(curDir.getAbsolutePath(), ""));
+                    if("Features".equals(htmlFeatureRoot)){
+                        parseMenu.addMenuItem(
+                                htmlFeatureRoot +
+                                File.separator +
+                                f.getAbsolutePath().replace(curDir.getAbsolutePath(), "")
+                        );
+                    }else{
+                        parseMenu.addMenuItem(f.getAbsolutePath().replace(curDir.getAbsolutePath(), ""));
+                    }
 
                     // Gera a feture
                     String featureHtml = getFeatureHtml(f.getAbsolutePath());
