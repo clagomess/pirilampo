@@ -25,7 +25,6 @@ public class Compilador {
     private final String HTML_CSS = "<style>%s</style>\n";
     private final String HTML_FEATURE_PDF = "<h1 class=\"page-header\">%s <small>%s <em>%s</em></small></h1>\n" +
             "%s\n<span style=\"page-break-after: always\"></span>";
-    private final String HTML_MENU_FILHO = "<li><a href=\"#/feature/%s\">%s</a></li>";
 
     public Compilador(){
         Compilador.LOG = "";
@@ -81,7 +80,7 @@ public class Compilador {
     }
 
     public void compilarPasta(String dir, String dirMaster, String projectName, String projecVersion, String outputDir) throws Exception {
-        Map<String, List<String>> menu = new TreeMap<>();
+        ParseMenu parseMenu = new ParseMenu();
         String htmlTemplate = "";
         String htmlJavascript = "";
         String htmlCss = "";
@@ -110,12 +109,11 @@ public class Compilador {
             for(File f : arquivos){
                 if(f.getName().contains(".feature")){
                     // monta nome menu
-                    String menuPai = f.getAbsolutePath().replace(curDir.getAbsolutePath(), "");
-                    menuPai = menuPai.replace(f.getName(), "");
-                    menuPai = menuPai.replace(File.separator, " ");
-                    menuPai = menuPai.trim();
-
-                    String htmlFeatureId = menuPai + "_" + f.getName().replace(".feature", ".html");
+                    String htmlFeatureId = f.getAbsolutePath().replace(curDir.getAbsolutePath(), "");
+                    htmlFeatureId = htmlFeatureId.replace(f.getName(), "");
+                    htmlFeatureId = htmlFeatureId.replace(File.separator, " ");
+                    htmlFeatureId = htmlFeatureId.trim();
+                    htmlFeatureId = htmlFeatureId + "_" + f.getName().replace(".feature", ".html");
 
                     // Processa Master
                     if(dirMaster != null) {
@@ -156,20 +154,7 @@ public class Compilador {
                     }
 
                     // Adiciona item de menu se deu tudo certo com a master
-                    if(menuPai.trim().equals("")){
-                        menuPai = "Features";
-                    }
-
-                    if(!menu.containsKey(menuPai)){
-                        menu.put(menuPai, new ArrayList<>());
-                    }
-
-                    String menuFilho = String.format(
-                            HTML_MENU_FILHO,
-                            menuPai + "_" + f.getName().replace(".feature", ""),
-                            f.getName().replace(".feature", "")
-                    );
-                    menu.get(menuPai).add(menuFilho);
+                    parseMenu.addMenuItem(f.getAbsolutePath().replace(curDir.getAbsolutePath(), ""));
 
                     // Gera a feture
                     String featureHtml = getFeatureHtml(f.getAbsolutePath());
@@ -189,26 +174,6 @@ public class Compilador {
 
             //------------------ BUILD -----------------
             String html = loadResource("htmlTemplate/template_feature_pasta.html");
-
-
-            // monta menu
-            String htmlMenu = "";
-            final String HTML_MENU_PAI = "<li><a href=\"javascript:;\" data-toggle=\"collapse\" data-target=\"#menu-%s\">" +
-            "%s</a><ul id=\"menu-%s\" class=\"collapse\">%s</ul></li>";
-
-            int menuIdx = 0;
-            for (Map.Entry<String, List<String>> entry : menu.entrySet()) {
-                String filhos = "";
-
-                for(String item : entry.getValue()){
-                    filhos += item;
-                }
-
-                htmlMenu += String.format(HTML_MENU_PAI, menuIdx, entry.getKey(), menuIdx, filhos);
-
-                menuIdx++;
-            }
-
 
             // adiciona libs
             htmlCss += String.format(HTML_CSS, loadResource("htmlTemplate/css/bootstrap.min.css"));
@@ -231,7 +196,7 @@ public class Compilador {
 
             html = html.replace("#PROJECT_NAME#", projectName);
             html = html.replace("#PROJECT_VERSION#", projecVersion);
-            html = html.replace("#HTML_MENU#", htmlMenu);
+            html = html.replace("#HTML_MENU#", parseMenu.getHtml());
             html = html.replace("#HTML_CSS#", htmlCss);
             html = html.replace("#HTML_JAVASCRIPT#", htmlJavascript);
             html = html.replace("#HTML_TEMPLATE#", htmlTemplate);
