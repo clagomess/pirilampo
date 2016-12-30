@@ -1,0 +1,28 @@
+{
+  "name": "pirilampo",
+  "description": "pirilampo",
+  "main": "index.js",
+  "license": "ISC",
+  "homepage": "",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "^2.2.1",
+    "bootstrap": "^3.3.7",
+    "lightbox2": "^2.9.0",
+    "typeahead.js": "^0.11.1",
+    "handlebars": "^4.0.5",
+    "google-diff-match-patch": "lqc/google-diff-match-patch",
+    "jQuery.PrettyTextDiff": "arnab/jQuery.PrettyTextDiff#^1.0.4",
+    "angular": "^1.6.1",
+    "angular-resource": "^1.6.1",
+    "angular-route": "^1.6.1",
+    "angular-ui-router": "^0.3.2"
+  }
+}
