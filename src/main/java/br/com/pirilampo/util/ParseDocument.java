@@ -6,31 +6,31 @@ import org.commonmark.renderer.html.HtmlRenderer;
 
 import java.util.Calendar;
 
-public class ParseDocument {
+class ParseDocument {
     private GherkinDocument gd;
 
-    public ParseDocument(GherkinDocument gd){
+    ParseDocument(GherkinDocument gd){
         this.gd = gd;
     }
 
-    private final String HTML_TITULO = "<h1>%s</h1>\n";
-    private final String HTML_PARAGRAFO = "<p>%s</p>\n";
-    private final String HTML_STEP = "<p><span class=\"keyword\">%s</span> %s</p>\n";
-    private final String HTML_CODE = "<pre>%s</pre>\n";
-
-    private final String HTML_CHILDREN = "<div class=\"panel panel-default\">\n" +
-            "<div class=\"panel-heading\" style=\"cursor: pointer;\" data-toggle=\"collapse\" data-target=\"#scenario-%s\"><strong>%s</strong></div>\n%s\n</div>\n";
-    private final String HTML_CHILDREN_BODY = "<div id=\"scenario-%s\" class=\"panel-body collapse in\">%s</div>\n";
-    private final String HTML_CHILDREN_TABLE = "<div class=\"table-responsive\">\n" +
-            "<table class=\"table table-condensed table-bordered table-hover table-striped\">\n" +
-            "<thead>\n%s\n</thead>\n" +
-            "<tbody>\n%s\n</tbody>\n" +
-            "</table>\n</div>\n";
-    private final String HTML_CHILDREN_TABLE_TR = "<tr>%s</tr>\n";
-    private final String HTML_CHILDREN_TABLE_TH = "<th>%s</th>\n";
-    private final String HTML_CHILDREN_TABLE_TD = "<td>%s</td>\n";
-
     public String getHtml(){
+        final String HTML_TITULO = "<h1>%s</h1>\n";
+        final String HTML_PARAGRAFO = "<p>%s</p>\n";
+        final String HTML_STEP = "<p><span class=\"keyword\">%s</span> %s</p>\n";
+        final String HTML_CODE = "<pre>%s</pre>\n";
+
+        final String HTML_CHILDREN = "<div class=\"panel panel-default\">\n" +
+                "<div class=\"panel-heading\" style=\"cursor: pointer;\" data-toggle=\"collapse\" data-target=\"#scenario-%s\"><strong>%s</strong></div>\n%s\n</div>\n";
+        final String HTML_CHILDREN_BODY = "<div id=\"scenario-%s\" class=\"panel-body collapse in\">%s</div>\n";
+        final String HTML_CHILDREN_TABLE = "<div class=\"table-responsive\">\n" +
+                "<table class=\"table table-condensed table-bordered table-hover table-striped\">\n" +
+                "<thead>\n%s\n</thead>\n" +
+                "<tbody>\n%s\n</tbody>\n" +
+                "</table>\n</div>\n";
+        final String HTML_CHILDREN_TABLE_TR = "<tr>%s</tr>\n";
+        final String HTML_CHILDREN_TABLE_TH = "<th>%s</th>\n";
+        final String HTML_CHILDREN_TABLE_TD = "<td>%s</td>\n";
+
         String html = "";
 
         if(gd != null){
@@ -82,6 +82,34 @@ public class ParseDocument {
                         if(step.getArgument() instanceof DocString) {
                             body += String.format(HTML_CODE, format(((DocString) step.getArgument()).getContent(), false));
                         }
+                    }
+                }
+
+                if(sd instanceof ScenarioOutline) {
+                    for (Examples examples : ((ScenarioOutline) sd).getExamples()){
+                        body += String.format(HTML_STEP, examples.getKeyword(), ":");
+
+                        String htmlTrH = "";
+                        String htmlTrD = "";
+                        String htmlTc = "";
+
+                        for (TableCell tc : examples.getTableHeader().getCells()) {
+                            htmlTc += String.format(HTML_CHILDREN_TABLE_TH, format(tc.getValue(), false));
+                        }
+
+                        htmlTrH += String.format(HTML_CHILDREN_TABLE_TR, htmlTc);
+
+                        for (TableRow tr : examples.getTableBody()) {
+                            htmlTc = "";
+
+                            for (TableCell tc : tr.getCells()) {
+                                htmlTc += String.format(HTML_CHILDREN_TABLE_TD, format(tc.getValue()));
+                            }
+
+                            htmlTrD += String.format(HTML_CHILDREN_TABLE_TR, htmlTc);
+                        }
+
+                        body += String.format(HTML_CHILDREN_TABLE, htmlTrH, htmlTrD);
                     }
                 }
 
