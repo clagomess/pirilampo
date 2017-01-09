@@ -1,54 +1,14 @@
 package br.com.pirilampo.main;
 
 import br.com.pirilampo.util.Compilador;
-import br.com.pirilampo.util.ExceptionUtil;
-import javafx.application.Application;
-import javafx.application.Platform;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.image.Image;
-import javafx.stage.Stage;
 import org.apache.commons.cli.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.URL;
-
-public class Main extends Application {
+public class Main {
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
     public static final String SYS_PATH = "br/com/pirilampo/";
-    private static final String SYS_ICON = SYS_PATH + "resources/img_01.png";
-
-    @Override
-    public void start(final Stage primaryStage) {
-        Main main = new Main();
-        Parent root = null;
-
-        try {
-            root = FXMLLoader.load(getClass().getResource("../fxml/main.fxml"));
-        }catch (Exception ea){
-            try {
-                URL url = Thread.currentThread().getContextClassLoader().getResource(SYS_PATH + "fxml/main.fxml");
-                root = FXMLLoader.load(url);
-            }catch (Exception eb) {
-                ExceptionUtil.showDialog(ea);
-                ExceptionUtil.showDialog(eb);
-            }
-        }
-
-        if(root != null) {
-            primaryStage.setTitle("Pirilampo - Ver.: " + main.getVersion());
-            primaryStage.setScene(new Scene(root, 600, 600));
-            primaryStage.getIcons().add(new Image(SYS_ICON));
-            primaryStage.setOnCloseRequest(t -> {
-                Platform.exit();
-                System.exit(0);
-            });
-            primaryStage.show();
-        }
-    }
-
+    static final String SYS_ICON = SYS_PATH + "resources/img_01.png";
 
     public static void main(String[] args) throws Exception {
         Main main = new Main();
@@ -70,7 +30,7 @@ public class Main extends Application {
                         cmd.getOptionValue("version"),
                         cmd.getOptionValue("output")
                 );
-                System.exit(1);
+                System.exit(0);
             }
 
             if(cmd.getOptionValue("feature_path") != null){
@@ -81,10 +41,10 @@ public class Main extends Application {
                         cmd.getOptionValue("version"),
                         cmd.getOptionValue("output")
                 );
-                System.exit(1);
+                System.exit(0);
             }
         }else{
-            launch(args);
+            MainUi.launch(MainUi.class);
         }
     }
 
