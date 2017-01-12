@@ -197,26 +197,12 @@ public class Compilador {
             }
 
             //------------------ BUILD -----------------
-            String html = loadResource("htmlTemplate/template_feature_pasta.html");
+            String html = loadResource("htmlTemplate/html/template_feature_pasta.html");
 
-            // adiciona libs
-            htmlCss += String.format(HTML_CSS, loadResource("htmlTemplate/css/bootstrap.min.css"));
-            htmlCss += String.format(HTML_CSS, loadResource("htmlTemplate/css/simple-sidebar.css"));
-            htmlCss += String.format(HTML_CSS, loadResource("htmlTemplate/css/lightbox.min.css"));
-
-            htmlJavascript += String.format(HTML_JAVASCRIPT, loadResource("htmlTemplate/lib/jquery.js"));
-            htmlJavascript += String.format(HTML_JAVASCRIPT, loadResource("htmlTemplate/lib/bootstrap.min.js"));
-            htmlJavascript += String.format(HTML_JAVASCRIPT, loadResource("htmlTemplate/lib/handlebars.min-latest.js"));
-            htmlJavascript += String.format(HTML_JAVASCRIPT, loadResource("htmlTemplate/lib/typeahead.bundle.min.js"));
-            htmlJavascript += String.format(HTML_JAVASCRIPT, loadResource("htmlTemplate/lib/diff_match_patch.js"));
-            htmlJavascript += String.format(HTML_JAVASCRIPT, loadResource("htmlTemplate/lib/jquery.pretty-text-diff.min.js"));
-            htmlJavascript += String.format(HTML_JAVASCRIPT, loadResource("htmlTemplate/lib/angular.min.js"));
-            htmlJavascript += String.format(HTML_JAVASCRIPT, loadResource("htmlTemplate/js/app.js"));
-            htmlJavascript += String.format(HTML_JAVASCRIPT, loadResource("htmlTemplate/js/featureController.js"));
-            htmlJavascript += String.format(HTML_JAVASCRIPT, loadResource("htmlTemplate/lib/angular-route.min.js"));
-            htmlJavascript += String.format(HTML_JAVASCRIPT, loadResource("htmlTemplate/lib/angular-resource.min.js"));
-            htmlJavascript += String.format(HTML_JAVASCRIPT, loadResource("htmlTemplate/lib/angular-ui-router.min.js"));
-            htmlJavascript += String.format(HTML_JAVASCRIPT, loadResource("htmlTemplate/js/lightbox.min.js"));
+            // adiciona resources
+            htmlCss += String.format(HTML_CSS, loadResource("htmlTemplate/dist/feature-pasta.min.css"));
+            htmlJavascript += String.format(HTML_JAVASCRIPT, loadResource("htmlTemplate/dist/feature-pasta.min.js"));
+            htmlJavascript += String.format(HTML_JAVASCRIPT, loadResource("htmlTemplate/dist/feature-pasta-angular.js"));
 
             html = html.replace("#PROJECT_NAME#", projectName);
             html = html.replace("#PROJECT_VERSION#", projecVersion);
@@ -248,9 +234,9 @@ public class Compilador {
         String featureHtml = getFeatureHtml(feature.getAbsolutePath());
 
         //------------------ BUILD -----------------
-        String html = loadResource("htmlTemplate/template_feature.html");
+        String html = loadResource("htmlTemplate/html/template_feature.html");
 
-        String htmlCss = String.format(HTML_CSS, loadResource("htmlTemplate/css/bootstrap.min.css"));
+        String htmlCss = String.format(HTML_CSS, loadResource("htmlTemplate/dist/feature.min.css"));
 
         html = html.replace("#PROJECT_NAME#", projectName);
         html = html.replace("#PROJECT_VERSION#", projecVersion);
@@ -272,8 +258,8 @@ public class Compilador {
         File feature = new File(featurePath);
 
         //------------------ BUILD -----------------
-        String htmlTemplate = loadResource("htmlTemplate/template_feature_pdf.html");
-        String css = loadResource("htmlTemplate/css/bootstrap.min.css");
+        String htmlTemplate = loadResource("htmlTemplate/html/template_feature_pdf.html");
+        String css = loadResource("htmlTemplate/dist/feature-pdf.min.css");
 
         String html = getFeatureHtml(feature.getAbsolutePath());
         html = String.format(
@@ -318,8 +304,8 @@ public class Compilador {
             }
 
             //------------------ BUILD -----------------
-            String htmlTemplate = loadResource("htmlTemplate/template_feature_pdf.html");
-            String css = loadResource("htmlTemplate/css/bootstrap.min.css");
+            String htmlTemplate = loadResource("htmlTemplate/html/template_feature_pdf.html");
+            String css = loadResource("htmlTemplate/dist/feature-pdf.min.css");
 
             html = htmlTemplate.replace("#HTML_TEMPLATE#", html);
 
