@@ -15,12 +15,17 @@ gulp.task('js', function () {
         'bower_components/angular-resource/angular-resource.js',
         'bower_components/angular-route/angular-route.js',
         'bower_components/angular-ui-router/release/angular-ui-router.js',
-        'js/app.js',
-        'js/featureController.js',
         'js/template-feature-pasta.js'
     ])
         .pipe(concat('feature-pasta.min.js'))
         .pipe(uglify())
+        .pipe(gulp.dest('dist/'));
+
+    gulp.src([
+        'js/app.js',
+        'js/featureController.js'
+    ])
+        .pipe(concat('feature-pasta-angular.js'))
         .pipe(gulp.dest('dist/'));
 });
 
