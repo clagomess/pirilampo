@@ -202,7 +202,7 @@ public class Compilador {
             // adiciona resources
             htmlCss += String.format(HTML_CSS, loadResource("htmlTemplate/dist/feature-pasta.min.css"));
             htmlJavascript += String.format(HTML_JAVASCRIPT, loadResource("htmlTemplate/dist/feature-pasta.min.js"));
-            htmlJavascript += String.format(HTML_JAVASCRIPT, loadResource("htmlTemplate/dist/feature-pasta-angular.js"));
+            htmlJavascript += String.format(HTML_JAVASCRIPT, loadResource("htmlTemplate/dist/feature-pasta-angular.min.js"));
 
             html = html.replace("#PROJECT_NAME#", projectName);
             html = html.replace("#PROJECT_VERSION#", projecVersion);
@@ -361,6 +361,9 @@ public class Compilador {
             while ((linha = br.readLine()) != null) {
                 buffer += linha + "\n";
             }
+
+            buffer = buffer.replaceAll("\\t", "   ");
+            buffer = buffer.trim();
         }catch (Exception e){
             logger.warn(e.getMessage());
         }
