@@ -39,8 +39,8 @@
         <Label text="Versão:" GridPane.rowIndex="3" />
         <TextField fx:id="txtVersao" text="1.0" GridPane.rowIndex="4" />
         <Label text="Layout PDF:" GridPane.rowIndex="5" />
-        <RadioButton toggleGroup="$rdoLayoutPdf" text="Retrato" userData="R" mnemonicParsing="false" GridPane.rowIndex="6"/>
-        <RadioButton toggleGroup="$rdoLayoutPdf" text="Paisagem" userData="P" mnemonicParsing="false" selected="true" GridPane.rowIndex="6">
+        <RadioButton toggleGroup="$rdoLayoutPdf" text="Retrato" userData="R" mnemonicParsing="false" selected="true" GridPane.rowIndex="6"/>
+        <RadioButton toggleGroup="$rdoLayoutPdf" text="Paisagem" userData="P" mnemonicParsing="false" GridPane.rowIndex="6">
             <GridPane.margin>
                 <Insets left="100.0" />
             </GridPane.margin>
