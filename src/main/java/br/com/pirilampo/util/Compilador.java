@@ -127,11 +127,16 @@ public class Compilador {
 
                         if(arquivosMaster.size() > 0) {
                             for (File fm : arquivosMaster) {
-                                if (absoluteNameFeature(dirMaster, fm.getAbsolutePath()).equals(absoluteNameFeature(dir, f.getAbsolutePath()))) {
+                                String absoluteNFM = absoluteNameFeature(dirMaster, fm.getAbsolutePath());
+                                String absoluteNFB = absoluteNameFeature(dir, f.getAbsolutePath());
+
+                                if (absoluteNFM.equals(absoluteNFB)) {
                                     if(md5(loadFeature(fm.getAbsolutePath())).equals(md5(loadFeature(f.getAbsolutePath())))){
                                         diferente = false;
                                     }else{
                                         fmd = fm;
+                                        // Debug
+                                        logger.info("Diff Master/Branch: {} - {}", absoluteNFM, absoluteNFM);
                                     }
                                     break;
                                 }
