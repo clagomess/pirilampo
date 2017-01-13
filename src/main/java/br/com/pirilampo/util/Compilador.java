@@ -136,7 +136,13 @@ public class Compilador {
                                     }else{
                                         fmd = fm;
                                         // Debug
-                                        logger.info("Diff Master/Branch: {} - {}", absoluteNFM, absoluteNFM);
+                                        logger.info(
+                                                "Diff Master/Branch: {} - {} - {} - {}",
+                                                md5(absoluteNFM),
+                                                md5(absoluteNFB),
+                                                absoluteNFM,
+                                                absoluteNFB
+                                        );
                                     }
                                     break;
                                 }
