@@ -103,10 +103,9 @@
                 <directory>src/main/java</directory>
                 <includes>
                     <include>**/*.fxml</include>
-                    <include>**/*.png</include>
-                    <include>**/*.css</include>
-                    <include>**/*.js</include>
-                    <include>**/*.html</include>
+                    <include>**/resources/img_01.png</include>
+                    <include>**/htmlTemplate/dist/*.*</include>
+                    <include>**/htmlTemplate/html/*.*</include>
                 </includes>
             </resource>
         </resources>
@@ -120,6 +119,12 @@
                     <source>1.8</source>
                     <target>1.8</target>
                     <encoding>UTF-8</encoding><!-- try to force encoding -->
+                    <excludes>
+                        <exclude>**/bower_components/**</exclude>
+                    </excludes>
+                    <testExcludes>
+                        <testExclude>**/bower_components/**</testExclude>
+                    </testExcludes>
                 </configuration>
             </plugin>
 
