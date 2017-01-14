@@ -93,23 +93,29 @@ class ParseDocument {
                         String htmlTrD = "";
                         String htmlTc = "";
 
-                        for (TableCell tc : examples.getTableHeader().getCells()) {
-                            htmlTc += String.format(HTML_CHILDREN_TABLE_TH, format(tc.getValue(), false));
-                        }
-
-                        htmlTrH += String.format(HTML_CHILDREN_TABLE_TR, htmlTc);
-
-                        for (TableRow tr : examples.getTableBody()) {
-                            htmlTc = "";
-
-                            for (TableCell tc : tr.getCells()) {
-                                htmlTc += String.format(HTML_CHILDREN_TABLE_TD, format(tc.getValue()));
+                        if(examples.getTableHeader() != null) {
+                            for (TableCell tc : examples.getTableHeader().getCells()) {
+                                htmlTc += String.format(HTML_CHILDREN_TABLE_TH, format(tc.getValue(), false));
                             }
 
-                            htmlTrD += String.format(HTML_CHILDREN_TABLE_TR, htmlTc);
+                            htmlTrH += String.format(HTML_CHILDREN_TABLE_TR, htmlTc);
                         }
 
-                        body += String.format(HTML_CHILDREN_TABLE, htmlTrH, htmlTrD);
+                        if(examples.getTableBody() != null) {
+                            for (TableRow tr : examples.getTableBody()) {
+                                htmlTc = "";
+
+                                for (TableCell tc : tr.getCells()) {
+                                    htmlTc += String.format(HTML_CHILDREN_TABLE_TD, format(tc.getValue()));
+                                }
+
+                                htmlTrD += String.format(HTML_CHILDREN_TABLE_TR, htmlTc);
+                            }
+                        }
+
+                        if(!htmlTrH.equals("") || !htmlTrD.equals("")) {
+                            body += String.format(HTML_CHILDREN_TABLE, htmlTrH, htmlTrD);
+                        }
                     }
                 }
 
