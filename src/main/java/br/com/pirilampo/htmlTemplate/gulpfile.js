@@ -12,6 +12,7 @@ gulp.task('js', function () {
         'bower_components/typeahead.js/dist/typeahead.bundle.js',
         'bower_components/google-diff-match-patch/javascript/diff_match_patch_uncompressed.js',
         'bower_components/jQuery.PrettyTextDiff/jquery.pretty-text-diff.js',
+        'bower_components/lightbox2/dist/js/lightbox.js',
         'bower_components/angular/angular.js',
         'bower_components/angular-resource/angular-resource.js',
         'bower_components/angular-route/angular-route.js',

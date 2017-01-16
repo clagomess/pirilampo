@@ -156,13 +156,17 @@ class ParseDocument {
             }
         }
 
-        txt = txt.replaceAll(
-                "&lt;img src=&quot;(.*)&quot;(.*)&gt;",
-                String.format(
-                        "<br><p><a href=\"$1\" data-lightbox=\"%s\"><img src=\"$1\"$2></a></p>",
-                        Calendar.getInstance().getTime().getTime()
-                )
+        final String img = String.format(
+                "<br/><p><a href=\"$1\" data-lightbox=\"%s\"><img src=\"$1\" $2/></a></p>",
+                Calendar.getInstance().getTime().getTime()
         );
+
+        txt = txt.replaceAll("<img src=\"(.+?)\"(.*?)>", img);
+        txt = txt.replaceAll("&lt;img src=&quot;(.+?)&quot;(.*?)&gt;", img);
+
+        if(txt.contains("data-lightbox")){
+            txt = txt.replaceAll("&quot;", "\"");
+        }
 
         return txt;
     }
