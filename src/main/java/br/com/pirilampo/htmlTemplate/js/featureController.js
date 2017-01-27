@@ -44,6 +44,38 @@ pirilampoApp.controller('featureController', function($scope, $route){
             scrollTop: jQuery('.searched').offset().top
         }, 500);
     }
+
+    // Quando for scenario
+    if($route.current.params.scenarioid){
+        jQuery('html, body').animate({
+            scrollTop: jQuery('[data-target="#scenario-'+$route.current.params.scenarioid+'"]').offset().top
+        }, 500);
+    }
+
+    // Se houver link para scenario, adicionar opção de pop-up
+    var modalTemplate = Handlebars.compile(jQuery('[id="layout-modal.html"]').html().trim());
+
+    jQuery('[href^="#/scenario"]').click(function(){
+        var matches = jQuery(this).attr('href').match(/#\/scenario\/(.+)\/(\d+)/);
+
+        if(matches.length == 3) {
+            var html = jQuery('[id="' + matches[1] + '.html"]').html();
+
+            if(html) {
+                jQuery('#modal .modal-content *').remove();
+
+                jQuery("#modal .modal-content").html(modalTemplate({
+                    title: jQuery(html).find('[data-target="#scenario-' + matches[2] + '"]').text(),
+                    body: jQuery(html).find('#scenario-' + matches[2]).html().trim(),
+                    href: matches[0]
+                }));
+
+                jQuery('#modal').modal('show');
+
+                return false;
+            }
+        }
+    });
 });
 
 pirilampoApp.controller('indexController', function($scope){

@@ -62,10 +62,30 @@
 
 #HTML_TEMPLATE#
 
+<div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-labelledby="modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content"><!-- modal body --></div>
+    </div>
+</div>
+
 <script type="text/ng-template" id="index.html">
     <div style="text-align: center">
         <h1>#PROJECT_NAME#</h1>
         <small><em>#PROJECT_VERSION#</em></small>
+    </div>
+</script>
+
+<script type="text/ng-template" id="layout-modal.html">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <h4 class="modal-title">{{title}}</h4>
+    </div>
+    <div class="modal-body">{{{body}}}</div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+        <a href="{{href}}" class="btn btn-primary">Acessar Feature</a>
     </div>
 </script>
 
