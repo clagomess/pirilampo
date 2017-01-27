@@ -76,6 +76,17 @@ pirilampoApp.controller('featureController', function($scope, $route){
             }
         }
     });
+
+    // fancyfox
+    jQuery('[src^="data"]').each(function(){
+        var html = '<a href="' + jQuery(this).attr('src') + '" class="fancybox">';
+        html += jQuery(this).parent().html();
+        html += '</a>';
+
+        jQuery(this).replaceWith(html);
+    });
+
+    jQuery(".fancybox").fancybox();
 });
 
 pirilampoApp.controller('indexController', function($scope){

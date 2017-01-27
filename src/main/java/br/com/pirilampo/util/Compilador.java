@@ -50,7 +50,7 @@ public class Compilador {
         }
     }
 
-    private String getFeatureHtml(String pathFeature) throws IOException {
+    private String getFeatureHtml(String pathFeature, List<String> pathList) throws IOException {
         Parser<GherkinDocument> parser = new Parser<>(new AstBuilder());
         TokenMatcher matcher = new TokenMatcher();
         String html = null;
@@ -64,7 +64,7 @@ public class Compilador {
             GherkinDocument gherkinDocument = parser.parse(in, matcher);
 
             if (gherkinDocument != null) {
-                ParseDocument pd = new ParseDocument(gherkinDocument);
+                ParseDocument pd = new ParseDocument(gherkinDocument, pathList);
                 html = pd.getHtml();
             }
 
@@ -155,7 +155,13 @@ public class Compilador {
                         }
 
                         if(fmd != null) {
-                            String featureHtml = getFeatureHtml(fmd.getAbsolutePath());
+                            // PathListMaster
+                            List<String> pathListMaster = new ArrayList<>();
+                            pathListMaster.add(dirMaster);
+                            pathListMaster.add(fmd.getAbsolutePath().replace(fmd.getName(), ""));
+
+                            String featureHtml = getFeatureHtml(fmd.getAbsolutePath(), pathListMaster);
+
                             htmlTemplate += String.format(
                                     HTML_TEMPLATE,
                                     "master_" + htmlFeatureId,
@@ -181,7 +187,11 @@ public class Compilador {
                     }
 
                     // Gera a feture
-                    String featureHtml = getFeatureHtml(f.getAbsolutePath());
+                    List<String> pathList = new ArrayList<>();
+                    pathList.add(dir);
+                    pathList.add(f.getAbsolutePath().replace(f.getName(), ""));
+
+                    String featureHtml = getFeatureHtml(f.getAbsolutePath(), pathList);
 
                     htmlTemplate += String.format(HTML_TEMPLATE, htmlFeatureId, featureHtml);
 
@@ -231,7 +241,9 @@ public class Compilador {
         File feature = new File(featurePath);
 
         // compila
-        String featureHtml = getFeatureHtml(feature.getAbsolutePath());
+        List<String> pathList = new ArrayList<>();
+        pathList.add(feature.getAbsolutePath().replace(feature.getName(), ""));
+        String featureHtml = getFeatureHtml(feature.getAbsolutePath(), pathList);
 
         //------------------ BUILD -----------------
         String html = loadResource("htmlTemplate/html/template_feature.html");
@@ -261,7 +273,10 @@ public class Compilador {
         String htmlTemplate = loadResource("htmlTemplate/html/template_feature_pdf.html");
         String css = loadResource("htmlTemplate/dist/feature-pdf.min.css");
 
-        String html = getFeatureHtml(feature.getAbsolutePath());
+        List<String> pathList = new ArrayList<>();
+        pathList.add(feature.getAbsolutePath().replace(feature.getName(), ""));
+        String html = getFeatureHtml(feature.getAbsolutePath(), pathList);
+
         html = String.format(
                 HTML_FEATURE_PDF,
                 projectName,
@@ -269,6 +284,7 @@ public class Compilador {
                 projecVersion,
                 html
         );
+
         html = htmlTemplate.replace("#HTML_TEMPLATE#", html);
 
         ParsePdf pp = new ParsePdf();
@@ -291,7 +307,11 @@ public class Compilador {
         if(arquivos.size() > 0) {
             for (File f : arquivos) {
                 if (f.getName().contains(".feature")) {
-                    String rawHtml = getFeatureHtml(f.getAbsolutePath());
+                    List<String> pathList = new ArrayList<>();
+                    pathList.add(dir);
+                    pathList.add(f.getAbsolutePath().replace(f.getName(), ""));
+
+                    String rawHtml = getFeatureHtml(f.getAbsolutePath(), pathList);
 
                     html += String.format(
                             HTML_FEATURE_PDF,

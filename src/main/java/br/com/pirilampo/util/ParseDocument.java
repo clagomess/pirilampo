@@ -5,12 +5,17 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.commonmark.renderer.html.HtmlRenderer;
 
 import java.util.Calendar;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 class ParseDocument {
     private GherkinDocument gd;
+    private List<String> pathList;
 
-    ParseDocument(GherkinDocument gd){
+    ParseDocument(GherkinDocument gd, List<String> pathList){
         this.gd = gd;
+        this.pathList = pathList;
     }
 
     public String getHtml(){
@@ -157,7 +162,7 @@ class ParseDocument {
         }
 
         final String img = String.format(
-                "<br/><p><a href=\"$1\" data-lightbox=\"%s\"><img src=\"$1\" $2/></a></p>",
+                "<br/><p><img src=\"$1\" $2/></p>",
                 Calendar.getInstance().getTime().getTime()
         );
 
@@ -166,6 +171,15 @@ class ParseDocument {
 
         if(txt.contains("data-lightbox")){
             txt = txt.replaceAll("&quot;", "\"");
+        }
+
+        // altera imagens para base64
+        Pattern p = Pattern.compile("src=\"(.+?)\"");
+        Matcher m = p.matcher(txt);
+
+        while(m.find()) {
+            String imgSrcBase64 = ParseImage.parse(m.group(1), pathList);
+            txt = txt.replace("src=\""+ m.group(1) +"\"", "src=\"" + imgSrcBase64 + "\"");
         }
 
         return txt;
