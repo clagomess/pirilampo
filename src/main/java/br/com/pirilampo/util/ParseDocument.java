@@ -161,10 +161,7 @@ class ParseDocument {
             }
         }
 
-        final String img = String.format(
-                "<br/><p><img src=\"$1\" $2/></p>",
-                Calendar.getInstance().getTime().getTime()
-        );
+        final String img = "<br/><p><img src=\"$1\" $2/></p>";
 
         txt = txt.replaceAll("<img src=\"(.+?)\"(.*?)>", img);
         txt = txt.replaceAll("&lt;img src=&quot;(.+?)&quot;(.*?)&gt;", img);
