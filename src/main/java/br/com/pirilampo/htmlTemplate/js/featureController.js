@@ -78,12 +78,14 @@ pirilampoApp.controller('featureController', function($scope, $route){
     });
 
     // fancyfox
-    jQuery('[src^="data"]').each(function(){
-        var html = '<a href="' + jQuery(this).attr('src') + '" class="fancybox">';
-        html += jQuery(this).parent().html();
-        html += '</a>';
+    jQuery('div[ng-view] img[src^="data"]').each(function(){
+        if(!jQuery(this).hasClass('logo')) {
+            var html = '<a href="' + jQuery(this).attr('src') + '" class="fancybox">';
+            html += jQuery(this).parent().html();
+            html += '</a>';
 
-        jQuery(this).replaceWith(html);
+            jQuery(this).replaceWith(html);
+        }
     });
 
     jQuery(".fancybox").fancybox();

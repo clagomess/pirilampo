@@ -26,9 +26,21 @@ public class Compilador {
     private final String HTML_FEATURE_PDF = "<h1 class=\"page-header\">%s <small>%s <em>%s</em></small></h1>\n" +
             "%s\n<span style=\"page-break-after: always\"></span>";
 
+    public static String COR_MENU = "#14171A";
+    public static String NOME_MENU_RAIZ = "Features";
+    public static File LOGO_PATH = null;
+
     public Compilador(){
         Compilador.LOG = "";
     }
+
+    public static void setConfig(String corMenu, String nomeMenuRaiz, File logoPath){
+        COR_MENU = corMenu;
+        NOME_MENU_RAIZ = nomeMenuRaiz;
+        LOGO_PATH = logoPath;
+    }
+
+    //====== Metodos
 
     private void listarPasta(File curDir) throws Exception {
         File[] filesList = curDir.listFiles();
@@ -115,7 +127,7 @@ public class Compilador {
                     htmlFeatureRoot = htmlFeatureRoot.trim();
 
                     if(htmlFeatureRoot.equals("")){
-                        htmlFeatureRoot = "Features";
+                        htmlFeatureRoot = Compilador.NOME_MENU_RAIZ;
                     }
 
                     String htmlFeatureId = htmlFeatureRoot + "_" + f.getName().replace(".feature", ".html");
@@ -176,7 +188,7 @@ public class Compilador {
                     }
 
                     // Adiciona item de menu se deu tudo certo com a master
-                    if("Features".equals(htmlFeatureRoot)){
+                    if(Compilador.NOME_MENU_RAIZ.equals(htmlFeatureRoot)){
                         parseMenu.addMenuItem(
                                 htmlFeatureRoot +
                                 File.separator +
@@ -220,6 +232,19 @@ public class Compilador {
             html = html.replace("#HTML_CSS#", htmlCss);
             html = html.replace("#HTML_JAVASCRIPT#", htmlJavascript);
             html = html.replace("#HTML_TEMPLATE#", htmlTemplate);
+            html = html.replace("#PROJECT_COLOR#", Compilador.COR_MENU);
+
+            // monta cabeçalho menu
+            if(Compilador.LOGO_PATH != null && Compilador.LOGO_PATH.isFile()){
+                String logoString = ParseImage.parse(Compilador.LOGO_PATH);
+                html = html.replace("#PROJECT_LOGO#", String.format("<img class=\"logo\" src=\"%s\">", logoString));
+            }else{
+                html = html.replace("#PROJECT_LOGO#", String.format(
+                        "%s <small><em>%s</em></small>",
+                        projectName,
+                        projecVersion
+                ));
+            }
 
             // Grava
             // Cria Diretório se não existir */html/feature/

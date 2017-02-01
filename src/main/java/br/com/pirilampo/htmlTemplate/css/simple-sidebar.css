@@ -110,6 +110,10 @@
     background: none;
 }
 
+.sidebar-nav > .sidebar-brand img {
+    max-height: 60px;
+}
+
 .sidebar-nav ul {
     padding: 0;
     list-style: none;
@@ -151,7 +155,7 @@
 
 #menu-toggle {
     position: absolute;
-    background: #14171A !important;
+    background: #14171A;
     z-index: 999999;
     padding: 5px 10px;
     display: block;

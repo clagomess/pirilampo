@@ -8,11 +8,22 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
 class ParseImage {
     private static final Logger logger = LoggerFactory.getLogger(Compilador.class);
+
+    static String parse(String fileName, String path){
+        List<String> paths = new ArrayList<>();
+        paths.add(path);
+        return ParseImage.parse(fileName, paths);
+    }
+
+    static String parse(File file){
+        return ParseImage.parse(file.getName(), file.getAbsolutePath().replace(file.getName(), ""));
+    }
 
     static String parse(String fileName, List<String> paths){
         String toReturn = fileName;

@@ -3,17 +3,26 @@ package br.com.pirilampo.controller;
 import br.com.pirilampo.util.Compilador;
 import br.com.pirilampo.util.ExceptionUtil;
 import javafx.application.Platform;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import java.io.File;
+import java.net.URL;
+import java.util.ResourceBundle;
 
-public class MainController extends MainForm {
+public class MainController extends MainForm implements Initializable {
     private final String MSG_SELECIONAR_PASTA = "É necessário selecionar uma pasta!";
     private final String MSG_SELECIONAR_FEATURE = "É necessário selecionar uma feature!";
     private final String MSG_OPE_SUCESSO = "Operação realizada com sucesso!";
+
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        txtCorMenu.setText(Compilador.COR_MENU);
+        txtRootMenuNome.setText(Compilador.NOME_MENU_RAIZ);
+    }
 
     public void selecionarFeature(){
         FileChooser chooser = new FileChooser();
@@ -97,6 +106,12 @@ public class MainController extends MainForm {
         Compilador compilador = new Compilador();
 
         if(txtPastaSrc.getText() != null && !txtPastaSrc.getText().trim().equals("")) {
+            Compilador.setConfig(
+                    txtCorMenu.getText(),
+                    txtRootMenuNome.getText(),
+                    new File(txtBrandSrc.getText())
+            );
+
             new Thread(() -> {
                 Platform.runLater(() -> progressBar.setProgress(-1));
                 Platform.runLater(this::desabilitarBotoes);
@@ -146,6 +161,23 @@ public class MainController extends MainForm {
         }
     }
 
+    public void selecionarBrand(){
+        FileChooser chooser = new FileChooser();
+        chooser.setTitle("Selecionar Imagens");
+
+        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter(
+                "Imagens",
+                "*.jpg", "*.jpeg", "*.png"
+        );
+        chooser.getExtensionFilters().add(extFilter);
+
+        File file = chooser.showOpenDialog(new Stage());
+
+        if(file != null) {
+            txtBrandSrc.setText(file.getAbsolutePath());
+        }
+    }
+
     private void alertWarning(String title, String msg){
         Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.setHeaderText(title);
@@ -169,6 +201,10 @@ public class MainController extends MainForm {
         btnSelecionarPasta.setDisable(true);
         btnPastaGerarHtml.setDisable(true);
         btnPastaGerarPdf.setDisable(true);
+        txtRootMenuNome.setDisable(true);
+        txtBrandSrc.setDisable(true);
+        btnBrandSrc.setDisable(true);
+        txtCorMenu.setDisable(true);
     }
 
     private void habilitarBotoes(){
@@ -178,5 +214,9 @@ public class MainController extends MainForm {
         btnSelecionarPasta.setDisable(false);
         btnPastaGerarHtml.setDisable(false);
         btnPastaGerarPdf.setDisable(false);
+        txtRootMenuNome.setDisable(false);
+        txtBrandSrc.setDisable(false);
+        btnBrandSrc.setDisable(false);
+        txtCorMenu.setDisable(false);
     }
 }

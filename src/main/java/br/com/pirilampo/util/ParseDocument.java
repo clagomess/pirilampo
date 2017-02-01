@@ -4,7 +4,6 @@ import gherkin.ast.*;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.commonmark.renderer.html.HtmlRenderer;
 
-import java.util.Calendar;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -166,7 +165,7 @@ class ParseDocument {
         txt = txt.replaceAll("<img src=\"(.+?)\"(.*?)>", img);
         txt = txt.replaceAll("&lt;img src=&quot;(.+?)&quot;(.*?)&gt;", img);
 
-        if(txt.contains("data-lightbox")){
+        if(txt.contains("<img")){
             txt = txt.replaceAll("&quot;", "\"");
         }
 
