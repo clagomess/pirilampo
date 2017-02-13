@@ -8,7 +8,7 @@ Pirilampo é um sistema gerador de documentação com base features escritos na 
  - Java JRE 8
  
 ## Imagem do Sistema
-![imagem](https://cloud.githubusercontent.com/assets/9750668/17646018/1c4e2160-618e-11e6-8625-6d0e7298b6ed.jpg)
+<img src="https://cloud.githubusercontent.com/assets/9750668/17646018/1c4e2160-618e-11e6-8625-6d0e7298b6ed.jpg" width="400">
  
 ## Exemplos
 ### Estrutura de pasta
@@ -33,11 +33,6 @@ Funcionalidade: Introdução
   | ![Image](https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/Independence_of_Brazil_1888.jpg/320px-Independence_of_Brazil_1888.jpg) |
 ```
 
-### Html Individual
-![screenshot- domain date time](https://cloud.githubusercontent.com/assets/9750668/17646023/8c0855de-618e-11e6-9eff-894473aa4b1a.png)
-
-### Html Múltiplas Feature
-![screenshot- domain date time _2](https://cloud.githubusercontent.com/assets/9750668/17646025/93b7b43c-618e-11e6-94b9-24e5b12e1aec.png)
-
-### PDF Feature
-![screenshot- domain date time _3](https://cloud.githubusercontent.com/assets/9750668/17646026/97c24920-618e-11e6-95d8-b65bb965c7b1.png)
+Html Individual | Html Múltiplas Feature | PDF Feature
+--------------- | ---------------------- | -----------
+![screenshot- domain date time](https://cloud.githubusercontent.com/assets/9750668/17646023/8c0855de-618e-11e6-9eff-894473aa4b1a.png) | ![screenshot- domain date time _2](https://cloud.githubusercontent.com/assets/9750668/17646025/93b7b43c-618e-11e6-94b9-24e5b12e1aec.png) | ![screenshot- domain date time _3](https://cloud.githubusercontent.com/assets/9750668/17646026/97c24920-618e-11e6-95d8-b65bb965c7b1.png)
