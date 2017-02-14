@@ -1,20 +1,55 @@
+import br.com.pirilampo.main.Main;
 import br.com.pirilampo.util.Compilador;
 import org.apache.commons.io.input.BOMInputStream;
+import org.apache.pdfbox.cos.COSName;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.graphics.PDXObject;
+import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
+import org.apache.pdfbox.text.PDFTextStripper;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.contrib.java.lang.system.ExpectedSystemExit;
 
 import java.io.*;
 import java.util.Base64;
 import java.util.Calendar;
 
-import static org.junit.Assert.*;
-
 public class CompiladorTest {
+    private final String projectName = "XXX_PROJECT_NAME_XXX";
+    private final String projectVersion = "1.2.3";
     private final String featureName = "xxx.feature";
     private final String imgName = "xxx.png";
-    private final String imgLogoName = "logo_xxx.png";
-    private final String imgBase64 = "iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAC40lEQVR4XnVTy09TWRz+7r3lFi19UBRKyrTAAjVWCpQCZQj1QSRBqRMfMZowjQtdzMKdM8PSP8EYNy7MbNy50zCLyUwU48KEmTiRd4QhBVpKO22hva/2nns8bRpiI97ky+/8ft/3/c6558FRSvGtz9ffXwfAzqDMz81Jh2n4b5nPBIPDPM8/4zjuJcMTlvsPFVJKDxCNRunpQEDsHhh46B8cLATDYToyPk5DY2PUPzSk9w4Pv2B8Q1lX9dQ2EATBc/3aVdoXCqmjExP0/JUIvfvrLzQyNUXPXrpEz01O0siVSdrq8Xirntpf+DHo/sGXequH7TmzVTBwsqcHtsZGnPB3o6XNDbe8hd7se3K2hYuy/RFr9oAVjrsE5YHHKZhuhY7h4QUHvFvvoP/9B8z/vMLNpjh++t6Cgd4OoV2U7wHw1zTwCIWwyNMmp1VAIZVAm9uJO5d96JLXcP9GD0aCnTBBRymzBaZztvFSF5vUyldn73DxSp/NDNFUx0MQTdCkHAxSgkFRibqmQinkUOatTOcS5G4A7oMVWJq903UCFSgpGwiSawvI7Wwgr5SQT8cRX5qr1Mu8yHTWZu/PAForDfp9vvXtjU9PNZ0jeomgqOrQJA3ZRAwSG6c316Dk5Uq9zJd1ZT3z/VVp8HJmJrBnbnyd10CUIkF2T0OhoEFhkDSdRRWSxMYszysETGcw/Zs/Z2evmgCAnetC0oCzRPl4RuHa6y1m5JMKLPU8ZM1AaleGrBooEg6qIaIILZk0jvxvdx5Z5wGA3XMNgLyqWx/t7ukEvAlFmwsp2QRCKRJ7FAXOAuJwIZ1TjZWi7TEAg2H7y4u0uKw7FrOG+HsykaX16j6E1vbKKfDfnYKpwYZMbJOmiDi7Suz/AkizieWDBizJAYj9tiivpqydXGxnn6RXVipcZnkeO//FSLqhg3u+JH0AUGT4+NVjAnC0+qAuMvQxRHyBwDSLtxlGGdxl3tHU5Kh68BluxIWLuaA4mgAAAABJRU5ErkJggg==";
+    private final String imgBase64 = "iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAC40lEQVR4XnVTy09TWRz+7r3lFi19" +
+    "UBRKyrTAAjVWCpQCZQj1QSRBqRMfMZowjQtdzMKdM8PSP8EYNy7MbNy50zCLyUwU48KEmTiRd4QhBVpKO22hva/2nns8bRpiI97ky+/8ft/3/" +
+    "c6558FRSvGtz9ffXwfAzqDMz81Jh2n4b5nPBIPDPM8/4zjuJcMTlvsPFVJKDxCNRunpQEDsHhh46B8cLATDYToyPk5DY2PUPzSk9w4Pv2B8Q1" +
+    "lX9dQ2EATBc/3aVdoXCqmjExP0/JUIvfvrLzQyNUXPXrpEz01O0siVSdrq8Xirntpf+DHo/sGXequH7TmzVTBwsqcHtsZGnPB3o6XNDbe8hd7" +
+    "se3K2hYuy/RFr9oAVjrsE5YHHKZhuhY7h4QUHvFvvoP/9B8z/vMLNpjh++t6Cgd4OoV2U7wHw1zTwCIWwyNMmp1VAIZVAm9uJO5d96JLXcP9G" +
+    "D0aCnTBBRymzBaZztvFSF5vUyldn73DxSp/NDNFUx0MQTdCkHAxSgkFRibqmQinkUOatTOcS5G4A7oMVWJq903UCFSgpGwiSawvI7Wwgr5SQT" +
+    "8cRX5qr1Mu8yHTWZu/PAForDfp9vvXtjU9PNZ0jeomgqOrQJA3ZRAwSG6c316Dk5Uq9zJd1ZT3z/VVp8HJmJrBnbnyd10CUIkF2T0OhoEFhkD" +
+    "SdRRWSxMYszysETGcw/Zs/Z2evmgCAnetC0oCzRPl4RuHa6y1m5JMKLPU8ZM1AaleGrBooEg6qIaIILZk0jvxvdx5Z5wGA3XMNgLyqWx/t7uk" +
+    "EvAlFmwsp2QRCKRJ7FAXOAuJwIZ1TjZWi7TEAg2H7y4u0uKw7FrOG+HsykaX16j6E1vbKKfDfnYKpwYZMbJOmiDi7Suz/AkizieWDBizJAYj9" +
+    "tiivpqydXGxnn6RXVipcZnkeO//FSLqhg3u+JH0AUGT4+NVjAnC0+qAuMvQxRHyBwDSLtxlGGdxl3tHU5Kh68BluxIWLuaA4mgAAAABJRU5Er" +
+    "kJggg==";
 
-    private String criarFeature() {
+    private String featureDir = null;
+
+    @Rule
+    public final ExpectedSystemExit exit = ExpectedSystemExit.none();
+
+    @Before
+    public void before() throws Exception {
+        featureDir = criarFeature(false);
+    }
+
+    private String criarFeature(Boolean featureMaster) {
+        try {
+            Thread.sleep(2);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         Boolean toReturn;
         File f;
 
@@ -39,21 +74,27 @@ public class CompiladorTest {
         //-----------
 
         // -- cria feature
-        String featurePath = null;
         if (toReturn) {
             final String feature = "# language: pt\n" +
                     "# encoding: utf-8\n" +
                     "Funcionalidade: XX\n" +
                     "\nXXX\n" +
-                    "\nContexto: XXX\n" +
+                    "\nContexto: XXX\n" + (featureMaster ? " - YYY_MASTER_YYY" : "") +
                     "\nDado XXX" +
                     "\nE Teste" +
                     "\n| Ibagem |" +
                     "\n| ![Image](" + imgName + ") |" +
                     "\n| <img src=\"" + imgName + "\"> |   " +
-                    "\n| <img src=\"" + imgName + "\" width=\"50\"> |";
+                    "\n| <img src=\"" + imgName + "\" width=\"50\"> |" +
+                    "\n\n" +
+                    "\nEsquema do Cenário: JJJ" +
+                    "\nQuando xxx " +
+                    "\nE YYY " +
+                    "\nExemplos: " +
+                    "\n| a | b | " +
+                    "\n| c | d | ";
 
-            featurePath = dir;
+            String featurePath = dir;
             featurePath += File.separator;
             featurePath += featureName;
 
@@ -111,24 +152,21 @@ public class CompiladorTest {
 
     @Test
     public void testCriarFeature(){
-        assertNotNull(criarFeature());
+        Assert.assertNotNull(featureDir);
     }
 
     @Test
     public void testCompileFeaturePath(){
+        Assert.assertNotNull(featureDir);
+
         File f;
         Compilador compilador = new Compilador();
         final String COR_MENU = "#666";
         final String NM_MN_RAIZ = "NOME_MENU_RAIZ_666";
-        String logoPath = null;
-
-        //-- Cria feature
-        String dir = criarFeature();
-
-        assertNotNull(dir);
+        final String imgLogoName = "logo_xxx.png";
+        final String logoPath = featureDir + File.separator + imgLogoName;
 
         //-- Cria logo
-        logoPath = dir + File.separator + imgLogoName;
         try {
             byte[] imgBytes = Base64.getDecoder().decode(imgBase64);
 
@@ -137,119 +175,285 @@ public class CompiladorTest {
             fos.close();
         } catch (Exception e) {
             e.printStackTrace();
-            fail();
+            Assert.fail();
         }
 
         f = new File(logoPath);
-        assertTrue(f.isFile());
+        Assert.assertTrue(f.isFile());
 
         Compilador.setConfig(COR_MENU, NM_MN_RAIZ, new File(logoPath));
 
-        assertEquals(Compilador.COR_MENU, COR_MENU);
-        assertEquals(Compilador.NOME_MENU_RAIZ, NM_MN_RAIZ);
+        Assert.assertEquals(Compilador.COR_MENU, COR_MENU);
+        Assert.assertEquals(Compilador.NOME_MENU_RAIZ, NM_MN_RAIZ);
 
         try {
             // cria pasta de saida;
-            f = new File(dir + File.separator + "outdir");
-            assertTrue(f.mkdir());
+            f = new File(featureDir + File.separator + "outdir");
+            Assert.assertTrue(f.mkdir());
 
             compilador.compilarPasta(
-                    dir,
+                    featureDir,
                     null,
-                    "XXX",
-                    "XXX",
-                    dir + File.separator + "outdir" + File.separator
+                    projectName,
+                    projectVersion,
+                    featureDir + File.separator + "outdir" + File.separator
             );
 
-            String html = dir + File.separator + "outdir" + File.separator + "index.html";
+            String html = featureDir + File.separator + "outdir" + File.separator + "index.html";
 
             f = new File(html);
-            assertTrue(f.isFile());
+            Assert.assertTrue(f.isFile());
 
             String htmlString = load(html);
-            assertNotEquals(htmlString, "");
+            Assert.assertNotEquals(htmlString, "");
 
-            assertTrue(htmlString.contains(Compilador.COR_MENU));
-            assertTrue(htmlString.contains(Compilador.NOME_MENU_RAIZ));
-            assertFalse(htmlString.contains(Compilador.LOGO_PATH.getName()));
+            Assert.assertTrue(htmlString.contains(Compilador.COR_MENU));
+            Assert.assertTrue(htmlString.contains(Compilador.NOME_MENU_RAIZ));
+            Assert.assertFalse(htmlString.contains(Compilador.LOGO_PATH.getName()));
+            Assert.assertFalse(htmlString.contains(imgLogoName));
         }catch (Exception e){
             e.printStackTrace();
-            fail();
+            Assert.fail();
         }
     }
 
     @Test
     public void testCompileFeature(){
         Compilador compilador = new Compilador();
-        String dir = criarFeature();
 
-        assertNotNull(dir);
+        Assert.assertNotNull(featureDir);
 
         try {
             File f;
 
             //-- compila sem output
             compilador.compilarFeature(
-                    dir + File.separator + featureName,
-                    "XXX",
-                    "XXX",
+                    featureDir + File.separator + featureName,
+                    projectName,
+                    projectVersion,
                     null
             );
 
-            f = new File(dir + File.separator + featureName.replace(".feature", ".html"));
-            assertTrue(f.isFile());
+            f = new File(featureDir + File.separator + featureName.replace(".feature", ".html"));
+            Assert.assertTrue(f.isFile());
 
             //-- compila com output
             // cria pasta de saida;
-            f = new File(dir + File.separator + "outdir");
-            assertTrue(f.mkdir());
+            f = new File(featureDir + File.separator + "outdir");
+            Assert.assertTrue(f.mkdir());
 
             compilador.compilarFeature(
-                    dir + File.separator + featureName,
-                    "XXX",
-                    "XXX",
-                    dir + File.separator + "outdir" + File.separator
+                    featureDir + File.separator + featureName,
+                    projectName,
+                    projectVersion,
+                    featureDir + File.separator + "outdir" + File.separator
             );
 
-            f = new File(dir + File.separator + "outdir" + File.separator + featureName.replace(".feature", ".html"));
-            assertTrue(f.isFile());
+            f = new File(featureDir + File.separator + "outdir" + File.separator + featureName.replace(".feature", ".html"));
+            Assert.assertTrue(f.isFile());
         }catch (Exception e){
             e.printStackTrace();
-            fail();
+            Assert.fail();
         }
     }
 
     @Test
     public void testCompileImage(){
         Compilador compilador = new Compilador();
-        String dir = criarFeature();
 
-        assertNotNull(dir);
+        Assert.assertNotNull(featureDir);
 
         try {
             File f;
 
             //-- compila sem output
             compilador.compilarFeature(
-                    dir + File.separator + featureName,
-                    "XXX",
-                    "XXX",
+                    featureDir + File.separator + featureName,
+                    projectName,
+                    projectVersion,
                     null
             );
 
-            String html = dir + File.separator + featureName.replace(".feature", ".html");
+            String html = featureDir + File.separator + featureName.replace(".feature", ".html");
 
             f = new File(html);
-            assertTrue(f.isFile());
+            Assert.assertTrue(f.isFile());
 
             String htmlString = load(html);
-            assertNotEquals(htmlString, "");
+            Assert.assertNotEquals(htmlString, "");
 
-            assertFalse(htmlString.contains(imgName));
-            assertTrue(htmlString.contains("width=\"50\""));
+            Assert.assertFalse(htmlString.contains(imgName));
+            Assert.assertTrue(htmlString.contains("width=\"50\""));
         }catch (Exception e){
             e.printStackTrace();
-            fail();
+            Assert.fail();
         }
+    }
+
+    @Test
+    public void testCompilePdf(){
+        Compilador compilador = new Compilador();
+
+        Assert.assertNotNull(featureDir);
+
+        try {
+            compilador.compilarFeaturePdf(
+                    featureDir + File.separator + featureName,
+                    projectName,
+                    projectVersion,
+                    "P"
+            );
+
+            String pdf = featureDir + File.separator + featureName.replace(".feature", ".pdf");
+            File f = new File(pdf);
+            Assert.assertTrue(f.isFile());
+
+            PDDocument pdfDocument = PDDocument.load(f);
+            String pdfAsStr = new PDFTextStripper().getText(pdfDocument);
+
+            Assert.assertTrue(pdfAsStr.contains(projectName));
+            Assert.assertTrue(pdfAsStr.contains(projectVersion));
+
+            // Verifica se tem as imagens
+            Boolean possuiImagens = false;
+            for (COSName cosName : pdfDocument.getPage(0).getResources().getXObjectNames()){
+                PDXObject xobject = pdfDocument.getPage(0).getResources().getXObject(cosName);
+
+                if (xobject instanceof PDImageXObject) {
+                    possuiImagens  = true;
+                    break;
+                }
+            }
+
+            Assert.assertTrue(possuiImagens);
+        }catch (Exception e){
+            Assert.fail();
+        }
+    }
+
+    @Test
+    public void testCompilePdfPath(){
+        Assert.assertNotNull(featureDir);
+
+        String outDir = featureDir + File.separator + ".." + File.separator + "html";
+
+        File f;
+        Compilador compilador = new Compilador();
+
+        try {
+            compilador.compilarPastaPdf(
+                    featureDir,
+                    projectName,
+                    projectVersion,
+                    "R"
+            );
+            String pdf = outDir + File.separator + "index.pdf";
+            f = new File(pdf);
+            Assert.assertTrue(f.isFile());
+
+            PDDocument pdfDocument = PDDocument.load(f);
+            String pdfAsStr = new PDFTextStripper().getText(pdfDocument);
+
+            Assert.assertTrue(pdfAsStr.contains(projectName));
+            Assert.assertTrue(pdfAsStr.contains(projectVersion));
+        }catch (Exception e){
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+
+    @Test
+    public void testCompileFeatureMaster() {
+        Compilador compilador = new Compilador();
+        String featureMasterDir = criarFeature(true);
+
+        Assert.assertNotNull(featureMasterDir);
+        Assert.assertNotNull(featureDir);
+
+        try {
+            File f = new File(featureDir + File.separator + "outdir_w_master");
+            Assert.assertTrue(f.mkdir());
+
+            compilador.compilarPasta(
+                    featureDir,
+                    featureMasterDir,
+                    projectName,
+                    projectVersion,
+                    featureDir + File.separator + "outdir_w_master" + File.separator
+            );
+
+            String html = featureDir + File.separator + "outdir_w_master" + File.separator + "index.html";
+
+            f = new File(html);
+            Assert.assertTrue(f.isFile());
+
+            String htmlString = load(html);
+
+            Assert.assertTrue(htmlString.contains("YYY_MASTER_YYY"));
+        }catch (Exception e){
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+
+    @Test
+    public void testAbsolutePathMethod(){
+        Compilador compilador = new Compilador();
+
+        String result = compilador.absoluteNameFeature("foo\\\\bar\\123", "foo\\bar\\123\\xxx.feature");
+
+        Assert.assertEquals("xxx.feature", result);
+
+        result = compilador.absoluteNameFeature("foo//bar/123", "foo/bar/123/xxx.feature");
+
+        Assert.assertEquals("xxx.feature", result);
+    }
+
+    @Test
+    public void testMain(){
+        final String outDir = featureDir + File.separator + "out_dir_main";
+
+        File f = new File(outDir);
+        Assert.assertTrue(f.mkdir());
+
+        exit.expectSystemExit();
+
+        try {
+            Main.main(new String[]{
+                "-feature_path",
+                featureDir,
+                "-name",
+                "XXX",
+                "-version",
+                "1.2.3",
+                "-output",
+                outDir + File.separator,
+            });
+        } catch (Exception e) {
+            System.out.println("OK");
+        }
+
+        f = new File(outDir + File.separator + "index.html");
+
+        Assert.assertTrue(f.isFile());
+
+        try {
+            Main.main(new String[]{
+                    "-feature",
+                    featureDir + File.separator + "xxx.feature",
+                    "-name",
+                    "XXX",
+                    "-version",
+                    "1.2.3",
+                    "-output",
+                    outDir + File.separator,
+            });
+        } catch (Exception e) {
+            System.out.println("OK");
+        }
+
+        f = new File(outDir + File.separator + "xxx.html");
+
+        Assert.assertTrue(f.isFile());
     }
 }

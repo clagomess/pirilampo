@@ -36,9 +36,7 @@ public class ParsePdf {
                 else {
                     return Image.getInstance(src);
                 }
-            } catch (BadElementException ex) {
-                return null;
-            } catch (IOException ex) {
+            } catch (BadElementException | IOException ex) {
                 return null;
             }
         }

@@ -21,10 +21,6 @@ public class ParseMenu {
         walker(menu);
     }
 
-    public void printMenu(){
-        System.out.print(menu);
-    }
-
     public String getHtml(){
         htmlNodeNum = 0;
 

@@ -429,11 +429,13 @@ public class Compilador {
         return md5;
     }
 
-    private String absoluteNameFeature(String path, String absolutePath){
-        absolutePath = absolutePath.replace(path, "");
-        absolutePath = absolutePath.replaceFirst("^\\/", "");
-        absolutePath = absolutePath.replaceFirst("^\\\\", "");
+    public String absoluteNameFeature(String path, String absolutePath){
+        path = path.replaceAll("\\\\", "");
+        absolutePath = absolutePath.replaceAll("\\\\", "");
 
-        return absolutePath;
+        path = path.replaceAll("\\/", "");
+        absolutePath = absolutePath.replaceAll("\\/", "");
+
+        return absolutePath.replace(path, "");
     }
 }
