@@ -124,7 +124,7 @@ class ParseDocument {
                 }
 
                 body = String.format(HTML_CHILDREN_BODY, scenarioIdx, body);
-                html += String.format(HTML_CHILDREN, scenarioIdx, StringEscapeUtils.escapeHtml(sd.getName().equals("") ? sd.getKeyword() : sd.getName()), body);
+                html += String.format(HTML_CHILDREN, scenarioIdx, StringEscapeUtils.escapeHtml("".equals(sd.getName()) ? sd.getKeyword() : sd.getName()), body);
 
                 scenarioIdx++;
             }
