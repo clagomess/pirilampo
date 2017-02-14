@@ -41,7 +41,7 @@ public class MainController extends MainForm implements Initializable {
     public void featureGerarHtml(){
         Compilador compilador = new Compilador();
 
-        if (txtFeatureSrc.getText() != null && !txtFeatureSrc.getText().trim().equals("")) {
+        if (txtFeatureSrc.getText() != null && !"".equals(txtFeatureSrc.getText().trim())) {
             new Thread(() -> {
                 Platform.runLater(() -> progressBar.setProgress(-1));
                 Platform.runLater(this::desabilitarBotoes);
@@ -49,7 +49,7 @@ public class MainController extends MainForm implements Initializable {
                 try {
                     compilador.compilarFeature(txtFeatureSrc.getText(), txtNome.getText(), txtVersao.getText(), null);
 
-                    Platform.runLater(() -> alertInfo(null, MSG_OPE_SUCESSO));
+                    Platform.runLater(() -> alertInfo(MSG_OPE_SUCESSO));
                 } catch (Exception e) {
                     Platform.runLater(() -> ExceptionUtil.showDialog(e));
                 }
@@ -58,14 +58,14 @@ public class MainController extends MainForm implements Initializable {
                 Platform.runLater(this::habilitarBotoes);
             }).start();
         } else {
-            alertWarning(null, MSG_SELECIONAR_FEATURE);
+            alertWarning(MSG_SELECIONAR_FEATURE);
         }
     }
 
     public void featureGerarPdf(){
         Compilador compilador = new Compilador();
 
-        if(txtFeatureSrc.getText() != null && !txtFeatureSrc.getText().trim().equals("")) {
+        if(txtFeatureSrc.getText() != null && !"".equals(txtFeatureSrc.getText().trim())) {
             new Thread(() -> {
                 Platform.runLater(() -> progressBar.setProgress(-1));
                 Platform.runLater(this::desabilitarBotoes);
@@ -78,7 +78,7 @@ public class MainController extends MainForm implements Initializable {
                             (String) rdoLayoutPdf.getSelectedToggle().getUserData()
                     );
 
-                    Platform.runLater(() -> alertInfo(null, MSG_OPE_SUCESSO));
+                    Platform.runLater(() -> alertInfo(MSG_OPE_SUCESSO));
                 } catch (Exception e) {
                     Platform.runLater(() -> ExceptionUtil.showDialog(e));
                 }
@@ -87,7 +87,7 @@ public class MainController extends MainForm implements Initializable {
                 Platform.runLater(this::habilitarBotoes);
             }).start();
         }else{
-            alertWarning(null, MSG_SELECIONAR_FEATURE);
+            alertWarning(MSG_SELECIONAR_FEATURE);
         }
     }
 
@@ -105,7 +105,7 @@ public class MainController extends MainForm implements Initializable {
     public void pastaGerarHtml(){
         Compilador compilador = new Compilador();
 
-        if(txtPastaSrc.getText() != null && !txtPastaSrc.getText().trim().equals("")) {
+        if(txtPastaSrc.getText() != null && !"".equals(txtPastaSrc.getText().trim())) {
             Compilador.setConfig(
                     txtCorMenu.getText(),
                     txtRootMenuNome.getText(),
@@ -119,7 +119,7 @@ public class MainController extends MainForm implements Initializable {
                 try {
                     compilador.compilarPasta(txtPastaSrc.getText(), null, txtNome.getText(), txtVersao.getText(), null);
 
-                    Platform.runLater(() -> alertInfo(null, MSG_OPE_SUCESSO));
+                    Platform.runLater(() -> alertInfo(MSG_OPE_SUCESSO));
                 } catch (Exception e) {
                     Platform.runLater(() -> ExceptionUtil.showDialog(e));
                 }
@@ -128,14 +128,14 @@ public class MainController extends MainForm implements Initializable {
                 Platform.runLater(this::habilitarBotoes);
             }).start();
         }else{
-            alertWarning(null, MSG_SELECIONAR_PASTA);
+            alertWarning(MSG_SELECIONAR_PASTA);
         }
     }
 
     public void pastaGerarPdf(){
         Compilador compilador = new Compilador();
 
-        if(txtPastaSrc.getText() != null && !txtPastaSrc.getText().trim().equals("")) {
+        if(txtPastaSrc.getText() != null && !"".equals(txtPastaSrc.getText().trim())) {
             new Thread(() -> {
                 Platform.runLater(() -> progressBar.setProgress(-1));
                 Platform.runLater(this::desabilitarBotoes);
@@ -148,7 +148,7 @@ public class MainController extends MainForm implements Initializable {
                             (String) rdoLayoutPdf.getSelectedToggle().getUserData()
                     );
 
-                    Platform.runLater(() -> alertInfo(null, MSG_OPE_SUCESSO));
+                    Platform.runLater(() -> alertInfo(MSG_OPE_SUCESSO));
                 } catch (Exception e) {
                     Platform.runLater(() -> ExceptionUtil.showDialog(e));
                 }
@@ -157,7 +157,7 @@ public class MainController extends MainForm implements Initializable {
                 Platform.runLater(this::habilitarBotoes);
             }).start();
         }else{
-            alertWarning(null, MSG_SELECIONAR_PASTA);
+            alertWarning(MSG_SELECIONAR_PASTA);
         }
     }
 
@@ -178,17 +178,15 @@ public class MainController extends MainForm implements Initializable {
         }
     }
 
-    private void alertWarning(String title, String msg){
+    private void alertWarning(String msg){
         Alert alert = new Alert(Alert.AlertType.WARNING);
-        alert.setHeaderText(title);
         alert.setContentText(msg);
 
         alert.showAndWait();
     }
 
-    private void alertInfo(String title, String msg){
+    private void alertInfo(String msg){
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setHeaderText(title);
         alert.setContentText(msg);
 
         alert.showAndWait();
