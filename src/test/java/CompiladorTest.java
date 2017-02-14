@@ -285,6 +285,7 @@ public class CompiladorTest {
             Assert.assertNotEquals(htmlString, "");
 
             Assert.assertFalse(htmlString.contains(imgName));
+            Assert.assertTrue(htmlString.contains(imgUrl));
             Assert.assertTrue(htmlString.contains("width=\"50\""));
         }catch (Exception e){
             e.printStackTrace();
