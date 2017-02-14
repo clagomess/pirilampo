@@ -20,6 +20,7 @@ public class CompiladorTest {
     private final String projectName = "XXX_PROJECT_NAME_XXX";
     private final String projectVersion = "1.2.3";
     private final String featureName = "xxx.feature";
+    private final String imgUrl = "https://pt.wikipedia.org/static/images/project-logos/ptwiki.png";
     private final String imgName = "xxx.png";
     private final String imgBase64 = "iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAC40lEQVR4XnVTy09TWRz+7r3lFi19" +
     "UBRKyrTAAjVWCpQCZQj1QSRBqRMfMZowjQtdzMKdM8PSP8EYNy7MbNy50zCLyUwU48KEmTiRd4QhBVpKO22hva/2nns8bRpiI97ky+/8ft/3/" +
@@ -86,6 +87,7 @@ public class CompiladorTest {
                     "\n| ![Image](" + imgName + ") |" +
                     "\n| <img src=\"" + imgName + "\"> |   " +
                     "\n| <img src=\"" + imgName + "\" width=\"50\"> |" +
+                    "\n| ![Image]("+ imgUrl +") |" +
                     "\n\n" +
                     "\nEsquema do Cenário: JJJ" +
                     "\nQuando xxx " +
