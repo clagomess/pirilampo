@@ -86,3 +86,9 @@ del {
     font-weight: bolder;
     color: #a94442;
 }
+
+/** html embed **/
+#html-frame {
+    border: 0;
+    width: 100%;
+}

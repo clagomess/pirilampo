@@ -97,3 +97,27 @@ pirilampoApp.controller('indexController', function($scope){
     jQuery('#btn-master').hide();
     jQuery('#btn-diff').hide();
 });
+
+pirilampoApp.controller('htmlController', function($scope, $route){
+    jQuery('#feature-diff-row').hide();
+    jQuery('#feature-master').hide();
+    jQuery('#btn-master').hide();
+    jQuery('#btn-diff').hide();
+
+    var fnResize = function(){
+        // 90 - equivalente aos padding
+        jQuery('#html-frame').height(jQuery(window).height() - 170);
+    };
+
+    fnResize();
+
+    jQuery(window).resize(function () {
+        fnResize();
+    });
+
+    // monta conteúdo
+    jQuery('#html-frame-title').text($route.current.params.html);
+
+    var blob = new Blob([jQuery('[id="'+$route.current.params.html+'"]').html()], {type:'text/html'});
+    document.querySelector('iframe').src = URL.createObjectURL(blob);
+});

@@ -29,9 +29,11 @@ public class Compilador {
     public static String COR_MENU = "#14171A";
     public static String NOME_MENU_RAIZ = "Features";
     public static File LOGO_PATH = null;
+    public static List<File> PAGINA_HTML_ANEXO;
 
     public Compilador(){
         Compilador.LOG = "";
+        Compilador.PAGINA_HTML_ANEXO = new ArrayList<>();
     }
 
     public static void setConfig(String corMenu, String nomeMenuRaiz, File logoPath){
@@ -216,6 +218,16 @@ public class Compilador {
                         );
                     }
                 }
+            }
+
+            // adiciona html embed
+            for (File htmlEmbed : Compilador.PAGINA_HTML_ANEXO){
+                String loadedHtmlEmbed = loadFeature(htmlEmbed.getAbsolutePath());
+                htmlTemplate += String.format(
+                        "<template type=\"text/ng-template\" id=\"%s\">%s</template>\n",
+                        htmlEmbed.getName(),
+                        loadedHtmlEmbed
+                );
             }
 
             //------------------ BUILD -----------------

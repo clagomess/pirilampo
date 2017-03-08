@@ -17,6 +17,10 @@ pirilampoApp.config(function($routeProvider){
             },
             controller: 'featureController'
         })
+        .when('/html/:html', {
+            templateUrl: 'html.html',
+            controller: 'htmlController'
+        })
         .when('/', {
             templateUrl: 'index.html',
             controller: 'indexController'

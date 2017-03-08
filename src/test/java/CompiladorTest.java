@@ -20,6 +20,7 @@ public class CompiladorTest {
     private final String projectName = "XXX_PROJECT_NAME_XXX";
     private final String projectVersion = "1.2.3";
     private final String featureName = "xxx.feature";
+    private final String htmlEmbedName = "html_embed.html";
     private final String imgUrl = "https://pt.wikipedia.org/static/images/project-logos/ptwiki.png";
     private final String imgName = "xxx.png";
     private final String imgBase64 = "iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAC40lEQVR4XnVTy09TWRz+7r3lFi19" +
@@ -88,6 +89,8 @@ public class CompiladorTest {
                     "\n| <img src=\"" + imgName + "\"> |   " +
                     "\n| <img src=\"" + imgName + "\" width=\"50\"> |" +
                     "\n| ![Image]("+ imgUrl +") |" +
+                    "\n| Link Html Embeded: [Link Embeded]("+ htmlEmbedName +") |" +
+                    "\n| Link Google: [Google](https://www.google.com.br) |" +
                     "\n\n" +
                     "\nEsquema do Cenário: JJJ" +
                     "\nQuando xxx " +
@@ -126,6 +129,20 @@ public class CompiladorTest {
 
             File ffi = new File(dir + File.separator + imgName);
             toReturn = ffi.isFile();
+        }
+
+        //-- Cria Html Embed
+        if (toReturn) {
+            try {
+                FileOutputStream fos = new FileOutputStream(dir + File.separator + htmlEmbedName);
+                fos.write("<strong>html_embed_txt</strong>".getBytes());
+                fos.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            File ffh = new File(dir + File.separator + htmlEmbedName);
+            toReturn = ffh.isFile();
         }
 
         return (toReturn ? dir : null);
@@ -458,5 +475,42 @@ public class CompiladorTest {
         f = new File(outDir + File.separator + "xxx.html");
 
         Assert.assertTrue(f.isFile());
+    }
+
+    @Test
+    public void testCompileHtmlAnexo(){
+        Assert.assertNotNull(featureDir);
+
+        File f;
+        Compilador compilador = new Compilador();
+
+        try {
+            // cria pasta de saida;
+            f = new File(featureDir + File.separator + "outdir");
+            Assert.assertTrue(f.mkdir());
+
+            compilador.compilarPasta(
+                    featureDir,
+                    null,
+                    projectName,
+                    projectVersion,
+                    featureDir + File.separator + "outdir" + File.separator
+            );
+
+            String html = featureDir + File.separator + "outdir" + File.separator + "index.html";
+
+            f = new File(html);
+            Assert.assertTrue(f.isFile());
+
+            String htmlString = load(html);
+            Assert.assertNotEquals(htmlString, "");
+
+            // teste html embeded
+            Assert.assertTrue(htmlString.contains("#/html/" + htmlEmbedName));
+            Assert.assertTrue(htmlString.contains("html_embed_txt"));
+        }catch (Exception e){
+            e.printStackTrace();
+            Assert.fail();
+        }
     }
 }

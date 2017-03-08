@@ -4,6 +4,7 @@ import gherkin.ast.*;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.commonmark.renderer.html.HtmlRenderer;
 
+import java.io.File;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -176,6 +177,22 @@ class ParseDocument {
         while(m.find()) {
             String imgSrcBase64 = ParseImage.parse(m.group(1), pathList);
             txt = txt.replace("src=\""+ m.group(1) +"\"", "src=\"" + imgSrcBase64 + "\"");
+        }
+
+        // verifica html embeded
+        p = Pattern.compile("href=\"(.+)\\.html\"");
+        m = p.matcher(txt);
+
+        while(m.find()) {
+            for (String path : pathList) {
+                File htmlEmbed = new File(path + File.separator + m.group(1) + ".html");
+                if (htmlEmbed.isFile()) {
+                    Compilador.PAGINA_HTML_ANEXO.add(htmlEmbed);
+                    String urlHtmlEmbed = "#/html/" + m.group(1) + ".html";
+                    txt = txt.replace("href=\""+ m.group(1) +".html\"", "href=\"" + urlHtmlEmbed + "\"");
+                    break;
+                }
+            }
         }
 
         return txt;
