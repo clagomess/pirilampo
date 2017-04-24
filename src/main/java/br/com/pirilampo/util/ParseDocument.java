@@ -3,6 +3,8 @@ package br.com.pirilampo.util;
 import gherkin.ast.*;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.commonmark.renderer.html.HtmlRenderer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.List;
@@ -10,6 +12,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 class ParseDocument {
+    private static final Logger logger = LoggerFactory.getLogger(ParseDocument.class);
     private GherkinDocument gd;
     private List<String> pathList;
 
@@ -36,110 +39,116 @@ class ParseDocument {
         final String HTML_CHILDREN_TABLE_TH = "<th>%s</th>\n";
         final String HTML_CHILDREN_TABLE_TD = "<td>%s</td>\n";
 
-        String html = "";
+        StringBuilder html = new StringBuilder();
 
         if(gd != null){
-            html += String.format(HTML_TITULO, format(gd.getFeature().getName(), false));
+            html.append(String.format(HTML_TITULO, format(gd.getFeature().getName(), false)));
 
             if(gd.getFeature().getDescription() != null) {
-                html += String.format(HTML_PARAGRAFO, format(gd.getFeature().getDescription()));
+                html.append(String.format(HTML_PARAGRAFO, format(gd.getFeature().getDescription())));
             }
 
             int scenarioIdx = 0;
             for (ScenarioDefinition sd : gd.getFeature().getChildren()){
-                String body  = "";
+                StringBuilder body = new StringBuilder();
 
                 if(sd.getDescription() != null){
-                    body += String.format(HTML_PARAGRAFO, format(sd.getDescription()));
+                    body.append(String.format(HTML_PARAGRAFO, format(sd.getDescription())));
                 }
 
                 for (Step step : sd.getSteps()){
-                    body += String.format(HTML_STEP, step.getKeyword(), format(step.getText()));
+                    body.append(String.format(HTML_STEP, step.getKeyword(), format(step.getText())));
 
                     if(step.getArgument() != null){
                         if(step.getArgument() instanceof DataTable) {
-                            String htmlTrH = "";
-                            String htmlTrD = "";
+                            StringBuilder htmlTrH = new StringBuilder();
+                            StringBuilder htmlTrD = new StringBuilder();
                             int i = 0;
 
                             for (TableRow tr : ((DataTable) step.getArgument()).getRows()) {
-                                String htmlTc = "";
+                                StringBuilder htmlTc = new StringBuilder();
                                 for (TableCell tc : tr.getCells()) {
                                     if (i == 0) {
-                                        htmlTc += String.format(HTML_CHILDREN_TABLE_TH, format(tc.getValue(), false));
+                                        htmlTc.append(String.format(HTML_CHILDREN_TABLE_TH, format(tc.getValue(), false)));
                                     } else {
-                                        htmlTc += String.format(HTML_CHILDREN_TABLE_TD, format(tc.getValue()));
+                                        htmlTc.append(String.format(HTML_CHILDREN_TABLE_TD, format(tc.getValue())));
                                     }
                                 }
 
                                 if (i == 0) {
-                                    htmlTrH += String.format(HTML_CHILDREN_TABLE_TR, htmlTc);
+                                    htmlTrH.append(String.format(HTML_CHILDREN_TABLE_TR, htmlTc));
                                 } else {
-                                    htmlTrD += String.format(HTML_CHILDREN_TABLE_TR, htmlTc);
+                                    htmlTrD.append(String.format(HTML_CHILDREN_TABLE_TR, htmlTc));
                                 }
 
                                 i++;
                             }
 
-                            body += String.format(HTML_CHILDREN_TABLE, htmlTrH, htmlTrD);
+                            body.append(String.format(HTML_CHILDREN_TABLE, htmlTrH, htmlTrD));
                         }
 
                         if(step.getArgument() instanceof DocString) {
-                            body += String.format(HTML_CODE, format(((DocString) step.getArgument()).getContent(), false));
+                            body.append(String.format(HTML_CODE, format(((DocString) step.getArgument()).getContent(), false)));
                         }
                     }
                 }
 
                 if(sd instanceof ScenarioOutline) {
                     for (Examples examples : ((ScenarioOutline) sd).getExamples()){
-                        body += String.format(HTML_STEP, examples.getKeyword(), ":");
+                        body.append(String.format(HTML_STEP, examples.getKeyword(), ":"));
 
-                        String htmlTrH = "";
-                        String htmlTrD = "";
-                        String htmlTc = "";
+                        StringBuilder htmlTrH = new StringBuilder();
+                        StringBuilder htmlTrD = new StringBuilder();
+                        StringBuilder htmlTc = new StringBuilder();
 
                         if(examples.getTableHeader() != null) {
                             for (TableCell tc : examples.getTableHeader().getCells()) {
-                                htmlTc += String.format(HTML_CHILDREN_TABLE_TH, format(tc.getValue(), false));
+                                htmlTc.append(String.format(HTML_CHILDREN_TABLE_TH, format(tc.getValue(), false)));
                             }
 
-                            htmlTrH += String.format(HTML_CHILDREN_TABLE_TR, htmlTc);
+                            htmlTrH.append(String.format(HTML_CHILDREN_TABLE_TR, htmlTc));
                         }
 
                         if(examples.getTableBody() != null) {
                             for (TableRow tr : examples.getTableBody()) {
-                                htmlTc = "";
+                                htmlTc = new StringBuilder();
 
                                 for (TableCell tc : tr.getCells()) {
-                                    htmlTc += String.format(HTML_CHILDREN_TABLE_TD, format(tc.getValue()));
+                                    htmlTc.append(String.format(HTML_CHILDREN_TABLE_TD, format(tc.getValue())));
                                 }
 
-                                htmlTrD += String.format(HTML_CHILDREN_TABLE_TR, htmlTc);
+                                htmlTrD.append(String.format(HTML_CHILDREN_TABLE_TR, htmlTc));
                             }
                         }
 
-                        if(!htmlTrH.equals("") || !htmlTrD.equals("")) {
-                            body += String.format(HTML_CHILDREN_TABLE, htmlTrH, htmlTrD);
+                        if(!"".equals(htmlTrH.toString()) || !"".equals(htmlTrD.toString())) {
+                            body.append(String.format(HTML_CHILDREN_TABLE, htmlTrH, htmlTrD));
                         }
                     }
                 }
 
-                body = String.format(HTML_CHILDREN_BODY, scenarioIdx, body);
-                html += String.format(HTML_CHILDREN, scenarioIdx, StringEscapeUtils.escapeHtml("".equals(sd.getName()) ? sd.getKeyword() : sd.getName()), body);
+                body.append(String.format(HTML_CHILDREN_BODY, scenarioIdx, body));
+                html.append(String.format(
+                        HTML_CHILDREN,
+                        scenarioIdx,
+                        StringEscapeUtils.escapeHtml("".equals(sd.getName()) ? sd.getKeyword() : sd.getName()),
+                        body
+                ));
 
                 scenarioIdx++;
             }
         }
 
-        return html;
+        return html.toString();
     }
 
     /**
-     * @param txt raw texto
+     * @param txtRaw raw texto
      * @param md ativar markedow?
      * @return html
      */
-    private String format(String txt, boolean md){
+    private String format(String txtRaw, boolean md){
+        String txt = txtRaw;
         txt = txt.trim();
 
         txt = txt.replaceAll("<", "&lt;");
@@ -157,7 +166,7 @@ class ParseDocument {
                 txt = txt.replaceFirst("^<p>(.+)<\\/p>", "$1");
                 txt = txt.trim();
             } catch (Exception e) {
-                e.printStackTrace();
+                logger.warn(ParseDocument.class.getName(), e);
             }
         }
 

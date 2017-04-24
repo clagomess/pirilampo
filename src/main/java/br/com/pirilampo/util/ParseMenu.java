@@ -32,7 +32,7 @@ public class ParseMenu {
         final String HTML_MENU_PAI = "<li><a href=\"javascript:;\" data-toggle=\"collapse\" data-target=\"#menu-%s\">" +
                 "%s</a><ul id=\"menu-%s\" class=\"collapse\">%s</ul></li>";
 
-        String buffer = "";
+        StringBuilder buffer = new StringBuilder();
 
         if(node instanceof Map){
             Map<String, Object> nodeCasted = (Map<String, Object>) node;
@@ -40,27 +40,27 @@ public class ParseMenu {
             for (Map.Entry<String, Object> entry : nodeCasted.entrySet()) {
                 htmlNodeNum++;
 
-                buffer += String.format(
+                buffer.append(String.format(
                         HTML_MENU_PAI,
                         htmlNodeNum,
                         entry.getKey(),
                         htmlNodeNum,
                         walkerHtml(entry.getValue())
-                );
+                ));
             }
         }else{
             List<Map<String, String>> nodeCasted = (ArrayList<Map<String, String>>) node;
 
             for (Map<String, String> item : nodeCasted){
-                buffer += String.format(
+                buffer.append(String.format(
                         HTML_MENU_FILHO,
                         item.get("url"),
                         item.get("name")
-                );
+                ));
             }
         }
 
-        return buffer;
+        return buffer.toString();
     }
 
     private Object walker (Object node){

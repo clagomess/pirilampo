@@ -18,7 +18,7 @@ import java.util.*;
 
 public class Compilador {
     private static final Logger logger = LoggerFactory.getLogger(Compilador.class);
-    static String LOG;
+    static StringBuilder LOG;
     private List<File> arquivos = new ArrayList<>();
     private final String HTML_TEMPLATE = "<script type=\"text/ng-template\" id=\"%s\">%s</script>\n";
     private final String HTML_JAVASCRIPT = "<script type=\"text/javascript\">%s</script>\n";
@@ -29,10 +29,10 @@ public class Compilador {
     public static String COR_MENU = "#14171A";
     public static String NOME_MENU_RAIZ = "Features";
     public static File LOGO_PATH = null;
-    public static List<File> PAGINA_HTML_ANEXO;
+    static List<File> PAGINA_HTML_ANEXO;
 
     public Compilador(){
-        Compilador.LOG = "";
+        Compilador.LOG = new StringBuilder();
         Compilador.PAGINA_HTML_ANEXO = new ArrayList<>();
     }
 
@@ -53,10 +53,8 @@ public class Compilador {
                     listarPasta(f);
                 }
 
-                if (f.isFile()) {
-                    if(f.getName().contains(".feature")) {
-                        arquivos.add(f);
-                    }
+                if (f.isFile() && f.getName().contains(".feature")) {
+                    arquivos.add(f);
                 }
             }
         }else{
@@ -69,9 +67,13 @@ public class Compilador {
         TokenMatcher matcher = new TokenMatcher();
         String html = null;
 
+        FileInputStream fis = null;
+        BOMInputStream bis = null;
+
         try {
             // BOMInputStream para caso o arquivo possuir BOM
-            BOMInputStream bis = new BOMInputStream(new FileInputStream(pathFeature));
+            fis = new FileInputStream(pathFeature);
+            bis = new BOMInputStream(fis);
 
             Reader in = new InputStreamReader(bis, "UTF-8");
 
@@ -82,12 +84,20 @@ public class Compilador {
                 html = pd.getHtml();
             }
 
-            Compilador.LOG += "OK: " + pathFeature + "\n";
+            Compilador.LOG.append("OK: ").append(pathFeature).append("\n");
             logger.info("OK: " + pathFeature);
-        }catch (Exception e){
-            Compilador.LOG += "ERRRROU: " + pathFeature + "\n";
+        } catch (Exception e){
+            Compilador.LOG.append("ERRRROU: ").append(pathFeature).append("\n");
             logger.warn("ERRRROU: " + pathFeature);
             throw e;
+        } finally {
+            if(fis != null){
+                fis.close();
+            }
+
+            if(bis != null){
+                bis.close();
+            }
         }
 
         return html;
@@ -95,9 +105,9 @@ public class Compilador {
 
     public void compilarPasta(String dir, String dirMaster, String projectName, String projecVersion, String outputDir) throws Exception {
         ParseMenu parseMenu = new ParseMenu();
-        String htmlTemplate = "";
-        String htmlJavascript = "";
-        String htmlCss = "";
+        StringBuilder htmlTemplate = new StringBuilder();
+        StringBuilder htmlJavascript = new StringBuilder();
+        StringBuilder htmlCss = new StringBuilder();
 
         // -------- MASTER
         List<File> arquivosMaster = null;
@@ -176,16 +186,16 @@ public class Compilador {
 
                             String featureHtml = getFeatureHtml(fmd.getAbsolutePath(), pathListMaster);
 
-                            htmlTemplate += String.format(
+                            htmlTemplate.append(String.format(
                                     HTML_TEMPLATE,
                                     "master_" + htmlFeatureId,
                                     featureHtml
-                            );
-                            htmlTemplate += String.format(
+                            ));
+                            htmlTemplate.append(String.format(
                                     HTML_TEMPLATE,
                                     "master_" + htmlFeatureId.replace(".html", ".feature"),
                                     loadFeature(fmd.getAbsolutePath())
-                            );
+                            ));
                         }
                     }
 
@@ -207,15 +217,15 @@ public class Compilador {
 
                     String featureHtml = getFeatureHtml(f.getAbsolutePath(), pathList);
 
-                    htmlTemplate += String.format(HTML_TEMPLATE, htmlFeatureId, featureHtml);
+                    htmlTemplate.append(String.format(HTML_TEMPLATE, htmlFeatureId, featureHtml));
 
                     // Salva as feature para diff
                     if(dirMaster != null){
-                        htmlTemplate += String.format(
+                        htmlTemplate.append(String.format(
                                 HTML_TEMPLATE,
                                 htmlFeatureId.replace(".html", ".feature"),
                                 loadFeature(f.getAbsolutePath())
-                        );
+                        ));
                     }
                 }
             }
@@ -223,20 +233,20 @@ public class Compilador {
             // adiciona html embed
             for (File htmlEmbed : Compilador.PAGINA_HTML_ANEXO){
                 String loadedHtmlEmbed = loadFeature(htmlEmbed.getAbsolutePath());
-                htmlTemplate += String.format(
-                        "<template type=\"text/ng-template\" id=\"%s\">%s</template>\n",
+                htmlTemplate.append(String.format(
+                        "<template type=\"text/ng-template\" id=\"%s\">%s</template>%n",
                         htmlEmbed.getName(),
                         loadedHtmlEmbed
-                );
+                ));
             }
 
             //------------------ BUILD -----------------
             String html = loadResource("htmlTemplate/html/template_feature_pasta.html");
 
             // adiciona resources
-            htmlCss += String.format(HTML_CSS, loadResource("htmlTemplate/dist/feature-pasta.min.css"));
-            htmlJavascript += String.format(HTML_JAVASCRIPT, loadResource("htmlTemplate/dist/feature-pasta.min.js"));
-            htmlJavascript += String.format(HTML_JAVASCRIPT, loadResource("htmlTemplate/dist/feature-pasta-angular.min.js"));
+            htmlCss.append(String.format(HTML_CSS, loadResource("htmlTemplate/dist/feature-pasta.min.css")));
+            htmlJavascript.append(String.format(HTML_JAVASCRIPT, loadResource("htmlTemplate/dist/feature-pasta.min.js")));
+            htmlJavascript.append(String.format(HTML_JAVASCRIPT, loadResource("htmlTemplate/dist/feature-pasta-angular.min.js")));
 
             html = html.replace("#PROJECT_NAME#", projectName);
             html = html.replace("#PROJECT_VERSION#", projecVersion);
@@ -267,9 +277,7 @@ public class Compilador {
                 outDirF.mkdir();
             }
 
-            Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outDir + "index.html"), "UTF-8"));
-            out.write(html);
-            out.close();
+            writeHtml(html, outDir + "index.html");
         }
     }
 
@@ -297,9 +305,34 @@ public class Compilador {
         String outDir = (outputDir != null ? outputDir : feature.getParent());
         outDir += String.format("/%s.html", feature.getName().replace(".feature", ""));
 
-        Writer out = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(outDir), "UTF-8"));
-        out.write(html);
-        out.close();
+        writeHtml(html, outDir);
+    }
+
+    private void writeHtml(String html, String path) throws IOException {
+        FileOutputStream fos = null;
+        OutputStreamWriter osw = null;
+        Writer out = null;
+
+        try {
+            fos = new FileOutputStream(path);
+            osw = new OutputStreamWriter(fos, "UTF-8");
+            out = new BufferedWriter(osw);
+            out.write(html);
+        }catch (Exception ea){
+            throw ea;
+        } finally {
+            if(out != null){
+                out.close();
+            }
+
+            if(osw != null){
+                osw.close();
+            }
+
+            if(fos != null) {
+                fos.close();
+            }
+        }
     }
 
     public void compilarFeaturePdf(String featurePath, String projectName, String projecVersion, String layout) throws Exception {
@@ -332,7 +365,7 @@ public class Compilador {
     }
 
     public void compilarPastaPdf(String dir, String projectName, String projecVersion, String layout) throws Exception {
-        String html = "";
+        StringBuilder html = new StringBuilder();
 
         // Abre pasta root
         File curDir = new File(dir);
@@ -350,13 +383,13 @@ public class Compilador {
 
                     String rawHtml = getFeatureHtml(f.getAbsolutePath(), pathList);
 
-                    html += String.format(
+                    html.append(String.format(
                             HTML_FEATURE_PDF,
                             projectName,
                             f.getName().replace(".feature", ""),
                             projecVersion,
                             rawHtml
-                    );
+                    ));
                 }
             }
 
@@ -364,7 +397,7 @@ public class Compilador {
             String htmlTemplate = loadResource("htmlTemplate/html/template_feature_pdf.html");
             String css = loadResource("htmlTemplate/dist/feature-pdf.min.css");
 
-            html = htmlTemplate.replace("#HTML_TEMPLATE#", html);
+            html.append(htmlTemplate.replace("#HTML_TEMPLATE#", html));
 
             ParsePdf pp = new ParsePdf();
 
@@ -375,12 +408,12 @@ public class Compilador {
                 outDirF.mkdir();
             }
 
-            pp.buildHtml(outDir + "index.pdf", html, css, layout);
+            pp.buildHtml(outDir + "index.pdf", html.toString(), css, layout);
         }
     }
 
     private String loadResource(String src) throws IOException {
-        String buffer = "";
+        StringBuilder buffer = new StringBuilder();
         String linha;
         BufferedReader br;
 
@@ -390,11 +423,12 @@ public class Compilador {
             try {
                 br = new BufferedReader(new FileReader(url.getFile()), 200 * 1024);
             } catch (Exception ea) {
+                logger.warn(Compilador.class.getName(), ea);
                 br = new BufferedReader(new InputStreamReader(url.openStream()), 200 * 1024);
             }
 
             while ((linha = br.readLine()) != null) {
-                buffer += linha + "\n";
+                buffer.append(linha).append("\n");
             }
 
             br.close();
@@ -402,11 +436,12 @@ public class Compilador {
             logger.warn("Falha ao carregar Resource");
         }
 
-        return buffer;
+        return buffer.toString();
     }
 
     private String loadFeature(String pathFeature){
-        String buffer = "";
+        StringBuilder buffer = new StringBuilder();
+        String toReturn = "";
         String linha;
         BufferedReader br;
 
@@ -416,20 +451,20 @@ public class Compilador {
             br = new BufferedReader(new InputStreamReader(bis, "UTF-8"));
 
             while ((linha = br.readLine()) != null) {
-                buffer += linha + "\n";
+                buffer.append(linha).append("\n");
             }
 
-            buffer = buffer.replaceAll("\\t", "   ");
-            buffer = buffer.trim();
+            toReturn = buffer.toString().replaceAll("\\t", "   ");
+            toReturn = toReturn.trim();
         }catch (Exception e){
-            logger.warn(e.getMessage());
+            logger.warn(Compilador.class.getName(), e);
         }
 
-        return buffer;
+        return toReturn;
     }
 
     private String md5(String str){
-        String md5 = null;
+        String md5 = "";
 
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");

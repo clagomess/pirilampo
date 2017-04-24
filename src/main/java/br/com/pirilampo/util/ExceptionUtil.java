@@ -11,12 +11,15 @@ import org.slf4j.LoggerFactory;
 
 public class ExceptionUtil {
     private static final Logger logger = LoggerFactory.getLogger(Compilador.class);
+
+    private ExceptionUtil(){}
+
     public static void showDialog(Exception e){
         logger.warn(ExceptionUtil.class.getName(), e);
 
         String msg = e.getMessage();
 
-        if(!Compilador.LOG.equals("")){
+        if(!"".equals(Compilador.LOG.toString())){
             msg += "\n\n";
             msg += "LOG DE FEATURES COMPILADAS:\n";
             msg += Compilador.LOG;
