@@ -415,23 +415,39 @@ public class Compilador {
     private String loadResource(String src) throws IOException {
         StringBuilder buffer = new StringBuilder();
         String linha;
-        BufferedReader br;
 
         URL url = Thread.currentThread().getContextClassLoader().getResource(Main.SYS_PATH + src);
 
         if(url != null) {
+            BufferedReader br;
+            FileReader fr = null;
+            InputStreamReader isr = null;
+
             try {
-                br = new BufferedReader(new FileReader(url.getFile()), 200 * 1024);
-            } catch (Exception ea) {
-                logger.warn(Compilador.class.getName(), ea);
-                br = new BufferedReader(new InputStreamReader(url.openStream()), 200 * 1024);
-            }
+                fr = new FileReader(url.getFile());
+                br = new BufferedReader(fr, 200 * 1024);
 
-            while ((linha = br.readLine()) != null) {
-                buffer.append(linha).append("\n");
-            }
+                while ((linha = br.readLine()) != null) {
+                    buffer.append(linha).append("\n");
+                }
+            } catch (Exception e) {
+                logger.warn(Compilador.class.getName(), e);
 
-            br.close();
+                isr = new InputStreamReader(url.openStream());
+                br = new BufferedReader(isr, 200 * 1024);
+
+                while ((linha = br.readLine()) != null) {
+                    buffer.append(linha).append("\n");
+                }
+            } finally {
+                if(fr != null){
+                    fr.close();
+                }
+
+                if(isr != null){
+                    isr.close();
+                }
+            }
         } else {
             logger.warn("Falha ao carregar Resource");
         }
@@ -443,10 +459,12 @@ public class Compilador {
         StringBuilder buffer = new StringBuilder();
         String toReturn = "";
         String linha;
+        FileInputStream fis = null;
         BufferedReader br;
 
         try {
-            BOMInputStream bis = new BOMInputStream(new FileInputStream(pathFeature));
+            fis = new FileInputStream(pathFeature);
+            BOMInputStream bis = new BOMInputStream(fis);
 
             br = new BufferedReader(new InputStreamReader(bis, "UTF-8"));
 
@@ -458,6 +476,14 @@ public class Compilador {
             toReturn = toReturn.trim();
         }catch (Exception e){
             logger.warn(Compilador.class.getName(), e);
+        } finally {
+            if(fis != null){
+                try {
+                    fis.close();
+                } catch (IOException e) {
+                    logger.warn(Compilador.class.getName(), e);
+                }
+            }
         }
 
         return toReturn;

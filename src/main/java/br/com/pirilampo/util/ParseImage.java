@@ -45,6 +45,7 @@ class ParseImage {
                     break;
                 } catch (IOException e) {
                     logger.info(e.getMessage() + " - " + image.getAbsolutePath());
+                    logger.warn(ParseImage.class.getName(), e);
                 }
             }
         }

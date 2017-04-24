@@ -18,12 +18,16 @@ import com.itextpdf.tool.xml.pipeline.end.PdfWriterPipeline;
 import com.itextpdf.tool.xml.pipeline.html.AbstractImageProvider;
 import com.itextpdf.tool.xml.pipeline.html.HtmlPipeline;
 import com.itextpdf.tool.xml.pipeline.html.HtmlPipelineContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
 public class ParsePdf {
+    private static final Logger logger = LoggerFactory.getLogger(ParsePdf.class);
+
     class Base64ImageProvider extends AbstractImageProvider {
         @Override
         public Image retrieve(String src) {
@@ -37,6 +41,7 @@ public class ParsePdf {
                     return Image.getInstance(src);
                 }
             } catch (BadElementException | IOException ex) {
+                logger.warn(ParsePdf.class.getName(), ex);
                 return null;
             }
         }
