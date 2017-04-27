@@ -127,12 +127,11 @@ class ParseDocument {
                     }
                 }
 
-                body.append(String.format(HTML_CHILDREN_BODY, scenarioIdx, body));
                 html.append(String.format(
                         HTML_CHILDREN,
                         scenarioIdx,
                         StringEscapeUtils.escapeHtml("".equals(sd.getName()) ? sd.getKeyword() : sd.getName()),
-                        body
+                        String.format(HTML_CHILDREN_BODY, scenarioIdx, body)
                 ));
 
                 scenarioIdx++;
@@ -174,6 +173,8 @@ class ParseDocument {
 
         txt = txt.replaceAll("<img src=\"(.+?)\"(.*?)>", img);
         txt = txt.replaceAll("&lt;img src=&quot;(.+?)&quot;(.*?)&gt;", img);
+        txt = txt.replaceAll("&lt;strike&gt;(.+?)&lt;/strike&gt;", "<strike>$1</strike>");
+        txt = txt.replaceAll("&lt;br&gt;", "<br/>");
 
         if(txt.contains("<img")){
             txt = txt.replaceAll("&quot;", "\"");

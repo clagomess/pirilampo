@@ -67,13 +67,9 @@ public class Compilador {
         TokenMatcher matcher = new TokenMatcher();
         String html = null;
 
-        FileInputStream fis = null;
-        BOMInputStream bis = null;
-
-        try {
+        try (FileInputStream fis = new FileInputStream(pathFeature)) {
             // BOMInputStream para caso o arquivo possuir BOM
-            fis = new FileInputStream(pathFeature);
-            bis = new BOMInputStream(fis);
+            BOMInputStream bis = new BOMInputStream(fis);
 
             Reader in = new InputStreamReader(bis, "UTF-8");
 
@@ -85,19 +81,11 @@ public class Compilador {
             }
 
             Compilador.LOG.append("OK: ").append(pathFeature).append("\n");
-            logger.info("OK: " + pathFeature);
+            logger.info("OK: {}", pathFeature);
         } catch (Exception e){
             Compilador.LOG.append("ERRRROU: ").append(pathFeature).append("\n");
             logger.warn("ERRRROU: " + pathFeature);
             throw e;
-        } finally {
-            if(fis != null){
-                fis.close();
-            }
-
-            if(bis != null){
-                bis.close();
-            }
         }
 
         return html;
@@ -149,21 +137,23 @@ public class Compilador {
                         boolean diferente = true;
                         File fmd = null;
 
-                        if(arquivosMaster.size() > 0) {
+                        if(!arquivosMaster.isEmpty()) {
                             for (File fm : arquivosMaster) {
                                 String absoluteNFM = absoluteNameFeature(dirMaster, fm.getAbsolutePath());
                                 String absoluteNFB = absoluteNameFeature(dir, f.getAbsolutePath());
+                                String absoluteNFMMd5 = md5(loadFeature(fm.getAbsolutePath()));
+                                String absoluteNFBMd5 = md5(loadFeature(f.getAbsolutePath()));
 
                                 if (absoluteNFM.equals(absoluteNFB)) {
-                                    if(md5(loadFeature(fm.getAbsolutePath())).equals(md5(loadFeature(f.getAbsolutePath())))){
+                                    if(absoluteNFMMd5.equals(absoluteNFBMd5)){
                                         diferente = false;
                                     }else{
                                         fmd = fm;
                                         // Debug
                                         logger.info(
                                                 "Diff Master/Branch: {} - {} - {} - {}",
-                                                md5(absoluteNFM),
-                                                md5(absoluteNFB),
+                                                absoluteNFMMd5,
+                                                absoluteNFBMd5,
                                                 absoluteNFM,
                                                 absoluteNFB
                                         );
@@ -309,29 +299,13 @@ public class Compilador {
     }
 
     private void writeHtml(String html, String path) throws IOException {
-        FileOutputStream fos = null;
-        OutputStreamWriter osw = null;
-        Writer out = null;
-
-        try {
-            fos = new FileOutputStream(path);
-            osw = new OutputStreamWriter(fos, "UTF-8");
-            out = new BufferedWriter(osw);
+        try (FileOutputStream fos = new FileOutputStream(path)){
+            OutputStreamWriter osw = new OutputStreamWriter(fos, "UTF-8");
+            Writer out = new BufferedWriter(osw);
             out.write(html);
-        }catch (Exception ea){
-            throw ea;
-        } finally {
-            if(out != null){
-                out.close();
-            }
-
-            if(osw != null){
-                osw.close();
-            }
-
-            if(fos != null) {
-                fos.close();
-            }
+            out.flush();
+        }catch (Exception e){
+            throw e;
         }
     }
 
@@ -374,7 +348,7 @@ public class Compilador {
         arquivos = new ArrayList<>();
         listarPasta(curDir);
 
-        if(arquivos.size() > 0) {
+        if(!arquivos.isEmpty()) {
             for (File f : arquivos) {
                 if (f.getName().contains(".feature")) {
                     List<String> pathList = new ArrayList<>();
@@ -420,11 +394,8 @@ public class Compilador {
 
         if(url != null) {
             BufferedReader br;
-            FileReader fr = null;
-            InputStreamReader isr = null;
 
-            try {
-                fr = new FileReader(url.getFile());
+            try (FileReader fr = new FileReader(url.getFile())) {
                 br = new BufferedReader(fr, 200 * 1024);
 
                 while ((linha = br.readLine()) != null) {
@@ -433,19 +404,14 @@ public class Compilador {
             } catch (Exception e) {
                 logger.warn(Compilador.class.getName(), e);
 
-                isr = new InputStreamReader(url.openStream());
-                br = new BufferedReader(isr, 200 * 1024);
+                try(InputStreamReader isr = new InputStreamReader(url.openStream())){
+                    br = new BufferedReader(isr, 200 * 1024);
 
-                while ((linha = br.readLine()) != null) {
-                    buffer.append(linha).append("\n");
-                }
-            } finally {
-                if(fr != null){
-                    fr.close();
-                }
-
-                if(isr != null){
-                    isr.close();
+                    while ((linha = br.readLine()) != null) {
+                        buffer.append(linha).append("\n");
+                    }
+                } catch(Exception ea){
+                    logger.warn(Compilador.class.getName(), ea);
                 }
             }
         } else {
@@ -459,11 +425,9 @@ public class Compilador {
         StringBuilder buffer = new StringBuilder();
         String toReturn = "";
         String linha;
-        FileInputStream fis = null;
         BufferedReader br;
 
-        try {
-            fis = new FileInputStream(pathFeature);
+        try (FileInputStream fis = new FileInputStream(pathFeature)){
             BOMInputStream bis = new BOMInputStream(fis);
 
             br = new BufferedReader(new InputStreamReader(bis, "UTF-8"));
@@ -476,14 +440,6 @@ public class Compilador {
             toReturn = toReturn.trim();
         }catch (Exception e){
             logger.warn(Compilador.class.getName(), e);
-        } finally {
-            if(fis != null){
-                try {
-                    fis.close();
-                } catch (IOException e) {
-                    logger.warn(Compilador.class.getName(), e);
-                }
-            }
         }
 
         return toReturn;

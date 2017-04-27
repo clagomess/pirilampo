@@ -1,15 +1,13 @@
 import br.com.pirilampo.main.Main;
 import br.com.pirilampo.util.Compilador;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.input.BOMInputStream;
 import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.graphics.PDXObject;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.apache.pdfbox.text.PDFTextStripper;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.contrib.java.lang.system.ExpectedSystemExit;
 
 import java.io.*;
@@ -36,44 +34,54 @@ public class CompiladorTest {
     "kJggg==";
 
     private String featureDir = null;
+    private String rootDir = null;
+    private String rootDirMaster = null;
 
     @Rule
     public final ExpectedSystemExit exit = ExpectedSystemExit.none();
 
     @Before
     public void before() throws Exception {
+        //-- cria diretorio
+        rootDir = criarPasta();
+
+        //-- cria feature
         featureDir = criarFeature(false);
     }
 
-    private String criarFeature(Boolean featureMaster) {
+    private String criarPasta(){
         try {
             Thread.sleep(2);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
-        Boolean toReturn;
-        File f;
-
-        //-- cria diretorio
         String dir = System.getProperty("java.io.tmpdir");
         dir += File.separator;
         dir += "pirilampo_test";
 
-        f = new File(dir);
-        toReturn = f.isDirectory() || f.mkdir();
+        File f = new File(dir);
 
-        if (toReturn) {
+        if (f.isDirectory() || f.mkdir()) {
             dir += File.separator;
             dir += (new Long(Calendar.getInstance().getTime().getTime())).toString();
 
             f = new File(dir);
-            toReturn = f.mkdir();
+            f.mkdir();
 
             System.out.println("Pasta de teste: " + dir);
         }
 
-        //-----------
+        return dir;
+    }
+
+    private String criarFeature(Boolean featureMaster) {
+        if(featureMaster){
+            rootDirMaster = rootDir;
+            rootDir = criarPasta();
+        }
+
+        Boolean toReturn = rootDir != null;
 
         // -- cria feature
         if (toReturn) {
@@ -91,6 +99,8 @@ public class CompiladorTest {
                     "\n| ![Image]("+ imgUrl +") |" +
                     "\n| Link Html Embeded: [Link Embeded]("+ htmlEmbedName +") |" +
                     "\n| Link Google: [Google](https://www.google.com.br) |" +
+                    "\n| <strike>strike</strike> |" +
+                    "\n| <strike>strike<br>strike</strike> |" +
                     "\n\n" +
                     "\nEsquema do Cenário: JJJ" +
                     "\nQuando xxx " +
@@ -99,7 +109,7 @@ public class CompiladorTest {
                     "\n| a | b | " +
                     "\n| c | d | ";
 
-            String featurePath = dir;
+            String featurePath = rootDir;
             featurePath += File.separator;
             featurePath += featureName;
 
@@ -120,53 +130,53 @@ public class CompiladorTest {
             try {
                 byte[] imgBytes = Base64.getDecoder().decode(imgBase64);
 
-                FileOutputStream fos = new FileOutputStream(dir + File.separator + imgName);
+                FileOutputStream fos = new FileOutputStream(rootDir + File.separator + imgName);
                 fos.write(imgBytes);
                 fos.close();
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
-            File ffi = new File(dir + File.separator + imgName);
+            File ffi = new File(rootDir + File.separator + imgName);
             toReturn = ffi.isFile();
         }
 
         //-- Cria Html Embed
         if (toReturn) {
             try {
-                FileOutputStream fos = new FileOutputStream(dir + File.separator + htmlEmbedName);
+                FileOutputStream fos = new FileOutputStream(rootDir + File.separator + htmlEmbedName);
                 fos.write("<strong>html_embed_txt</strong>".getBytes());
                 fos.close();
             } catch (Exception e) {
                 e.printStackTrace();
             }
 
-            File ffh = new File(dir + File.separator + htmlEmbedName);
+            File ffh = new File(rootDir + File.separator + htmlEmbedName);
             toReturn = ffh.isFile();
         }
 
-        return (toReturn ? dir : null);
+        return (toReturn ? rootDir : null);
     }
 
     private String load(String path) {
-        String buffer = "";
+        StringBuilder buffer = new StringBuilder();
         String linha;
         BufferedReader br;
 
-        try {
-            BOMInputStream bis = new BOMInputStream(new FileInputStream(path));
+        try (FileInputStream fis = new FileInputStream(path)){
+            BOMInputStream bis = new BOMInputStream(fis);
 
             br = new BufferedReader(new InputStreamReader(bis, "UTF-8"));
 
             while ((linha = br.readLine()) != null) {
-                buffer += linha + "\n";
+                buffer.append(linha).append("\n");
             }
         }catch (Exception e){
             e.printStackTrace();
-            buffer = "";
+            buffer = new StringBuilder();
         }
 
-        return buffer;
+        return buffer.toString();
     }
 
     @Test
@@ -345,8 +355,11 @@ public class CompiladorTest {
                 }
             }
 
+            pdfDocument.close();
+
             Assert.assertTrue(possuiImagens);
         }catch (Exception e){
+            e.printStackTrace();
             Assert.fail();
         }
     }
@@ -376,6 +389,8 @@ public class CompiladorTest {
 
             Assert.assertTrue(pdfAsStr.contains(projectName));
             Assert.assertTrue(pdfAsStr.contains(projectVersion));
+
+            pdfDocument.close();
         }catch (Exception e){
             e.printStackTrace();
             Assert.fail();
@@ -389,6 +404,7 @@ public class CompiladorTest {
 
         Assert.assertNotNull(featureMasterDir);
         Assert.assertNotNull(featureDir);
+        Assert.assertFalse(featureMasterDir.equals(featureDir));
 
         try {
             File f = new File(featureDir + File.separator + "outdir_w_master");
@@ -511,6 +527,54 @@ public class CompiladorTest {
         }catch (Exception e){
             e.printStackTrace();
             Assert.fail();
+        }
+    }
+
+    @Test
+    public void testCompileTagsExcecoes(){
+        Compilador compilador = new Compilador();
+
+        Assert.assertNotNull(featureDir);
+
+        try {
+            File f;
+
+            //-- compila sem output
+            compilador.compilarFeature(
+                    featureDir + File.separator + featureName,
+                    projectName,
+                    projectVersion,
+                    null
+            );
+
+            String html = featureDir + File.separator + featureName.replace(".feature", ".html");
+
+            f = new File(html);
+            Assert.assertTrue(f.isFile());
+
+            String htmlString = load(html);
+
+            Assert.assertFalse(htmlString.contains("&lt;strike&gt;"));
+            Assert.assertTrue(htmlString.contains("<strike>"));
+            Assert.assertFalse(htmlString.contains("&lt;br&gt;"));
+            Assert.assertTrue(htmlString.contains("<br/>"));
+        }catch (Exception e){
+            e.printStackTrace();
+            Assert.fail();
+        }
+    }
+
+    @After
+    public void after() throws Exception {
+        String outDir = featureDir + File.separator + ".." + File.separator + "html";
+        FileUtils.deleteDirectory(new File(outDir));
+
+        if(rootDir != null) {
+            FileUtils.deleteDirectory(new File(rootDir));
+        }
+
+        if(rootDirMaster != null) {
+            FileUtils.deleteDirectory(new File(rootDirMaster));
         }
     }
 }
