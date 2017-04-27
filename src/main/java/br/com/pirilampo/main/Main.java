@@ -15,7 +15,6 @@ public class Main {
         // LOGGER
         PatternLayout patternLayout = new PatternLayout("%-5p %d{yyyy-MM-dd HH:mm:ss} - %m%n");
         ConsoleAppender consoleAppender = new ConsoleAppender(patternLayout);
-        BasicConfigurator.resetConfiguration();
         BasicConfigurator.configure(consoleAppender);
         LogManager.getRootLogger().setLevel(Level.INFO);
 
