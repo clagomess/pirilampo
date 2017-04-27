@@ -2,6 +2,7 @@ import br.com.pirilampo.main.Main;
 import br.com.pirilampo.util.Compilador;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.input.BOMInputStream;
+import org.apache.log4j.*;
 import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.graphics.PDXObject;
@@ -9,12 +10,15 @@ import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.junit.*;
 import org.junit.contrib.java.lang.system.ExpectedSystemExit;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.util.Base64;
 import java.util.Calendar;
 
 public class CompiladorTest {
+    private static final Logger logger = LoggerFactory.getLogger(CompiladorTest.class);
     private final String projectName = "XXX_PROJECT_NAME_XXX";
     private final String projectVersion = "1.2.3";
     private final String featureName = "xxx.Feature";
@@ -43,6 +47,12 @@ public class CompiladorTest {
 
     @Before
     public void before() throws Exception {
+        //-- config logger
+        PatternLayout patternLayout = new PatternLayout("%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n");
+        ConsoleAppender consoleAppender = new ConsoleAppender(patternLayout);
+        BasicConfigurator.configure(consoleAppender);
+        LogManager.getRootLogger().setLevel(Level.INFO);
+
         //-- cria diretorio
         rootDir = criarPasta();
 
@@ -70,7 +80,7 @@ public class CompiladorTest {
             f = new File(dir);
             f.mkdir();
 
-            System.out.println("Pasta de teste: " + dir);
+            logger.info("Pasta de teste: {}", dir);
         }
 
         return dir;
@@ -467,7 +477,7 @@ public class CompiladorTest {
                 outDir + File.separator,
             });
         } catch (Exception e) {
-            System.out.println("OK");
+            logger.info("OK");
         }
 
         f = new File(outDir + File.separator + "index.html");
@@ -486,7 +496,7 @@ public class CompiladorTest {
                     outDir + File.separator,
             });
         } catch (Exception e) {
-            System.out.println("OK");
+            logger.info("OK");
         }
 
         f = new File(outDir + File.separator + "xxx.html");

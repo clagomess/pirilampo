@@ -400,8 +400,6 @@ public class Compilador {
                     buffer.append(linha).append("\n");
                 }
             } catch (Exception e) {
-                logger.warn(Compilador.class.getName(), e);
-
                 try(InputStreamReader isr = new InputStreamReader(url.openStream())){
                     br = new BufferedReader(isr, 200 * 1024);
 
@@ -409,6 +407,7 @@ public class Compilador {
                         buffer.append(linha).append("\n");
                     }
                 } catch(Exception ea){
+                    logger.warn(Compilador.class.getName(), e);
                     logger.warn(Compilador.class.getName(), ea);
                 }
             }

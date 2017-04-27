@@ -2,6 +2,7 @@ package br.com.pirilampo.main;
 
 import br.com.pirilampo.util.Compilador;
 import org.apache.commons.cli.*;
+import org.apache.log4j.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,6 +12,14 @@ public class Main {
     static final String SYS_ICON = SYS_PATH + "resources/img_01.png";
 
     public static void main(String[] args) throws Exception {
+        // LOGGER
+        PatternLayout patternLayout = new PatternLayout("%d{yyyy-MM-dd HH:mm:ss} - %m%n");
+        ConsoleAppender consoleAppender = new ConsoleAppender(patternLayout);
+        BasicConfigurator.resetConfiguration();
+        BasicConfigurator.configure(consoleAppender);
+        LogManager.getRootLogger().setLevel(Level.INFO);
+
+        // INICIO MAIN
         Main main = new Main();
         logger.info("Pirilampo - Ver.: {}", main.getVersion());
 
