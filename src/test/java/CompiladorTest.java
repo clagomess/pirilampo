@@ -48,7 +48,7 @@ public class CompiladorTest {
     @Before
     public void before() throws Exception {
         //-- config logger
-        PatternLayout patternLayout = new PatternLayout("%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n");
+        PatternLayout patternLayout = new PatternLayout("%-5p %d{yyyy-MM-dd HH:mm:ss} %c{1}:%L - %m%n");
         ConsoleAppender consoleAppender = new ConsoleAppender(patternLayout);
         BasicConfigurator.configure(consoleAppender);
         LogManager.getRootLogger().setLevel(Level.INFO);

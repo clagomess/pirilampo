@@ -13,7 +13,7 @@ public class Main {
 
     public static void main(String[] args) throws Exception {
         // LOGGER
-        PatternLayout patternLayout = new PatternLayout("%d{yyyy-MM-dd HH:mm:ss} - %m%n");
+        PatternLayout patternLayout = new PatternLayout("%-5p %d{yyyy-MM-dd HH:mm:ss} - %m%n");
         ConsoleAppender consoleAppender = new ConsoleAppender(patternLayout);
         BasicConfigurator.resetConfiguration();
         BasicConfigurator.configure(consoleAppender);
