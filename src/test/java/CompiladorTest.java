@@ -17,7 +17,8 @@ import java.util.Calendar;
 public class CompiladorTest {
     private final String projectName = "XXX_PROJECT_NAME_XXX";
     private final String projectVersion = "1.2.3";
-    private final String featureName = "xxx.feature";
+    private final String featureName = "xxx.Feature";
+    private final String featureExt = ".Feature";
     private final String htmlEmbedName = "html_embed.html";
     private final String imgUrl = "https://pt.wikipedia.org/static/images/project-logos/ptwiki.png";
     private final String imgName = "xxx.png";
@@ -263,7 +264,7 @@ public class CompiladorTest {
                     null
             );
 
-            f = new File(featureDir + File.separator + featureName.replace(".feature", ".html"));
+            f = new File(featureDir + File.separator + featureName.replace(featureExt, ".html"));
             Assert.assertTrue(f.isFile());
 
             //-- compila com output
@@ -278,7 +279,7 @@ public class CompiladorTest {
                     featureDir + File.separator + "outdir" + File.separator
             );
 
-            f = new File(featureDir + File.separator + "outdir" + File.separator + featureName.replace(".feature", ".html"));
+            f = new File(featureDir + File.separator + "outdir" + File.separator + featureName.replace(featureExt, ".html"));
             Assert.assertTrue(f.isFile());
         }catch (Exception e){
             e.printStackTrace();
@@ -303,7 +304,7 @@ public class CompiladorTest {
                     null
             );
 
-            String html = featureDir + File.separator + featureName.replace(".feature", ".html");
+            String html = featureDir + File.separator + featureName.replace(featureExt, ".html");
 
             f = new File(html);
             Assert.assertTrue(f.isFile());
@@ -334,7 +335,7 @@ public class CompiladorTest {
                     "P"
             );
 
-            String pdf = featureDir + File.separator + featureName.replace(".feature", ".pdf");
+            String pdf = featureDir + File.separator + featureName.replace(featureExt, ".pdf");
             File f = new File(pdf);
             Assert.assertTrue(f.isFile());
 
@@ -476,7 +477,7 @@ public class CompiladorTest {
         try {
             Main.main(new String[]{
                     "-feature",
-                    featureDir + File.separator + "xxx.feature",
+                    featureDir + File.separator + featureName,
                     "-name",
                     "XXX",
                     "-version",
@@ -547,7 +548,7 @@ public class CompiladorTest {
                     null
             );
 
-            String html = featureDir + File.separator + featureName.replace(".feature", ".html");
+            String html = featureDir + File.separator + featureName.replace(featureExt, ".html");
 
             f = new File(html);
             Assert.assertTrue(f.isFile());
