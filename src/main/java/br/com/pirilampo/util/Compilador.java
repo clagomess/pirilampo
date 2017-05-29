@@ -369,7 +369,7 @@ public class Compilador {
             String htmlTemplate = loadResource("htmlTemplate/html/template_feature_pdf.html");
             String css = loadResource("htmlTemplate/dist/feature-pdf.min.css");
 
-            html.append(htmlTemplate.replace("#HTML_TEMPLATE#", html));
+            html = new StringBuilder(htmlTemplate.replace("#HTML_TEMPLATE#", html));
 
             ParsePdf pp = new ParsePdf();
 
