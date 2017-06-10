@@ -3,6 +3,7 @@
 Pirilampo é um sistema gerador de documentação com base features escritos na linguagem Gherkin ([Cucumber](https://cucumber.io/docs/reference)) e com suporte a markedown ([CommonMark](http://commonmark.org/)).
 
 [![GitHub release](https://img.shields.io/github/release/clagomess/pirilampo.svg?maxAge=2592000)](https://github.com/clagomess/pirilampo/releases/latest)
+[![Travis Build](https://travis-ci.org/clagomess/pirilampo.svg?branch=master)](https://travis-ci.org/clagomess/pirilampo)
 
 ## Pré-requisito:
  - Java JRE 8
