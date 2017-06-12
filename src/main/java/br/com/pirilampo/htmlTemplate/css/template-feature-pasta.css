@@ -92,3 +92,9 @@ del {
     border: 0;
     width: 100%;
 }
+
+.panel-heading > h3 {
+    font-size: inherit;
+    font-weight: bolder;
+    margin: 0;
+}

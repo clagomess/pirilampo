@@ -22,13 +22,13 @@ class ParseDocument {
     }
 
     public String getHtml(){
-        final String HTML_TITULO = "<h1>%s</h1>\n";
+        final String HTML_TITULO = "<h2>%s</h2>\n";
         final String HTML_PARAGRAFO = "<p>%s</p>\n";
         final String HTML_STEP = "<p><span class=\"keyword\">%s</span> %s</p>\n";
         final String HTML_CODE = "<pre>%s</pre>\n";
 
         final String HTML_CHILDREN = "<div class=\"panel panel-default\">\n" +
-                "<div class=\"panel-heading\" style=\"cursor: pointer;\" data-toggle=\"collapse\" data-target=\"#scenario-%s\"><strong>%s</strong></div>\n%s\n</div>\n";
+                "<div class=\"panel-heading\" style=\"cursor: pointer;\" data-toggle=\"collapse\" data-target=\"#scenario-%s\"><h3>%s</h3></div>\n%s\n</div>\n";
         final String HTML_CHILDREN_BODY = "<div id=\"scenario-%s\" class=\"panel-body collapse in\">%s</div>\n";
         final String HTML_CHILDREN_TABLE = "<div class=\"table-responsive\">\n" +
                 "<table class=\"table table-condensed table-bordered table-hover table-striped\">\n" +

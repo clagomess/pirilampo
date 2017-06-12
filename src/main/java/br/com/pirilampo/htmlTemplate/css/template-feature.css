@@ -1,3 +1,9 @@
 img[alt="Image"] {
     max-width: 240px;
 }
+
+.panel-heading > h3 {
+    font-size: inherit;
+    font-weight: bolder;
+    margin: 0;
+}
