@@ -87,13 +87,13 @@ public class ParseMenu {
             List<Map<String, String>> nodeCasted = (List<Map<String, String>>) node;
 
             String htmlFeatureId = String.join(" ", nodes);
-            htmlFeatureId = htmlFeatureId.replace(nodes[level], "");
+            htmlFeatureId = htmlFeatureId.replace(nodes[nodes.length - 1], "");
             htmlFeatureId = htmlFeatureId.trim();
-            htmlFeatureId = htmlFeatureId + "_" + nodes[level].replace(".feature", "");
+            htmlFeatureId = htmlFeatureId + "_" + nodes[nodes.length - 1].replace(".feature", "");
 
             Map<String, String> link = new HashMap<>();
             link.put("url", htmlFeatureId);
-            link.put("name", nodes[level].replace(".feature", ""));
+            link.put("name", nodes[nodes.length - 1].replace(".feature", ""));
 
             if(!nodeCasted.contains(link)) {
                 nodeCasted.add(link);
@@ -103,5 +103,9 @@ public class ParseMenu {
         }
 
         return toReturn;
+    }
+
+    public Map<String, Object> getMenuMap(){
+        return menu;
     }
 }
