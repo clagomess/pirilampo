@@ -1,5 +1,4 @@
 .idea
 *.iml
-src/main/java/br/com/pirilampo/htmlTemplate/bower_components
-src/main/java/br/com/pirilampo/htmlTemplate/node_modules
-src/main/java/br/com/pirilampo/htmlTemplate/.bowerrc
+src/main/resources/htmlTemplate/node_modules
+yarn-error.log
