@@ -20,7 +20,7 @@
         minWidth="-Infinity"
         prefHeight="600.0"
         prefWidth="600.0"
-        xmlns="http://javafx.com/javafx/8.0.112"
+        xmlns="http://javafx.com/javafx/8"
         xmlns:fx="http://javafx.com/fxml/1"
         fx:controller="br.com.pirilampo.controller.MainController"
 >

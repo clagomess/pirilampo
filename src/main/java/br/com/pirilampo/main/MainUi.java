@@ -18,21 +18,21 @@ public class MainUi extends Application {
         Parent root = null;
 
         try {
-            root = FXMLLoader.load(getClass().getResource("../fxml/main.fxml"));
-        }catch (Exception ea){
-            try {
-                URL url = Thread.currentThread().getContextClassLoader().getResource(Main.SYS_PATH + "fxml/main.fxml");
-                root = FXMLLoader.load(url);
-            }catch (Exception eb) {
-                ExceptionUtil.showDialog(ea);
-                ExceptionUtil.showDialog(eb);
+            URL url = Thread.currentThread().getContextClassLoader().getResource("fxml/main.fxml");
+
+            if(url == null){
+                throw new Exception("Falha ao carregar o MAIN_FXML");
             }
+
+            root = FXMLLoader.load(url);
+        }catch (Throwable e){
+            ExceptionUtil.showDialog(e);
         }
 
         if(root != null) {
             primaryStage.setTitle("Pirilampo - Ver.: " + mainUi.getVersion());
             primaryStage.setScene(new Scene(root, 600, 600));
-            primaryStage.getIcons().add(new Image(Main.SYS_ICON));
+            primaryStage.getIcons().add(new Image("img_01.png"));
             primaryStage.setOnCloseRequest(t -> {
                 Platform.exit();
                 System.exit(0);

@@ -102,22 +102,17 @@
             <version>1.16.1</version>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.0</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>
         <finalName>${project.artifactId}</finalName>
-
-        <resources>
-            <resource>
-                <directory>src/main/java</directory>
-                <includes>
-                    <include>**/*.fxml</include>
-                    <include>**/resources/img_01.png</include>
-                    <include>**/htmlTemplate/dist/*.*</include>
-                    <include>**/htmlTemplate/html/*.*</include>
-                </includes>
-            </resource>
-        </resources>
 
         <plugins>
             <plugin>

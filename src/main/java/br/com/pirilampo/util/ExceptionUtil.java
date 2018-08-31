@@ -6,16 +6,14 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class ExceptionUtil {
-    private static final Logger logger = LoggerFactory.getLogger(Compilador.class);
-
     private ExceptionUtil(){}
 
-    public static void showDialog(Exception e){
-        logger.warn(ExceptionUtil.class.getName(), e);
+    public static void showDialog(Throwable e){
+        log.warn(ExceptionUtil.class.getName(), e);
 
         String msg = e.getMessage();
 

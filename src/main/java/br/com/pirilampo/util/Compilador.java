@@ -1,25 +1,24 @@
 package br.com.pirilampo.util;
 
-import br.com.pirilampo.main.Main;
 import gherkin.AstBuilder;
 import gherkin.Parser;
 import gherkin.TokenMatcher;
 import gherkin.ast.GherkinDocument;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.input.BOMInputStream;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.math.BigInteger;
 import java.net.URL;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Slf4j
 public class Compilador {
-    private static final Logger logger = LoggerFactory.getLogger(Compilador.class);
     static StringBuilder LOG;
     private List<File> arquivos = new ArrayList<>();
     private final String HTML_TEMPLATE = "<script type=\"text/ng-template\" id=\"%s\">%s</script>\n";
@@ -83,10 +82,10 @@ public class Compilador {
             }
 
             Compilador.LOG.append("OK: ").append(pathFeature).append("\n");
-            logger.info("OK: {}", pathFeature);
+            log.info("OK: {}", pathFeature);
         } catch (Exception e){
             Compilador.LOG.append("ERRRROU: ").append(pathFeature).append("\n");
-            logger.warn("ERRRROU: " + pathFeature);
+            log.warn("ERRRROU: " + pathFeature);
             throw e;
         }
 
@@ -151,7 +150,7 @@ public class Compilador {
                                 }else{
                                     fmd = fm;
                                     // Debug
-                                    logger.info(
+                                    log.info(
                                             "Diff Master/Branch: {} - {} - {} - {}",
                                             absoluteNFMMd5,
                                             absoluteNFBMd5,
@@ -388,7 +387,7 @@ public class Compilador {
         StringBuilder buffer = new StringBuilder();
         String linha;
 
-        URL url = Thread.currentThread().getContextClassLoader().getResource(Main.SYS_PATH + src);
+        URL url = Thread.currentThread().getContextClassLoader().getResource(src);
 
         if(url != null) {
             BufferedReader br;
@@ -407,12 +406,12 @@ public class Compilador {
                         buffer.append(linha).append("\n");
                     }
                 } catch(Exception ea){
-                    logger.warn(Compilador.class.getName(), e);
-                    logger.warn(Compilador.class.getName(), ea);
+                    log.warn(Compilador.class.getName(), e);
+                    log.warn(Compilador.class.getName(), ea);
                 }
             }
         } else {
-            logger.warn("Falha ao carregar Resource");
+            log.warn("Falha ao carregar Resource");
         }
 
         return buffer.toString();
@@ -436,7 +435,7 @@ public class Compilador {
             toReturn = buffer.toString().replaceAll("\\t", "   ");
             toReturn = toReturn.trim();
         }catch (Exception e){
-            logger.warn(Compilador.class.getName(), e);
+            log.warn(Compilador.class.getName(), e);
         }
 
         return toReturn;
@@ -449,7 +448,7 @@ public class Compilador {
             MessageDigest md = MessageDigest.getInstance("MD5");
             md5 = String.format("%032x", new BigInteger(1, md.digest(str.getBytes())));
         } catch (NoSuchAlgorithmException e) {
-            logger.warn(Compilador.class.getName(), e);
+            log.warn(Compilador.class.getName(), e);
         }
 
         return md5;

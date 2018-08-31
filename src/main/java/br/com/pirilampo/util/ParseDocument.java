@@ -1,18 +1,17 @@
 package br.com.pirilampo.util;
 
 import gherkin.ast.*;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.commonmark.renderer.html.HtmlRenderer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Slf4j
 class ParseDocument {
-    private static final Logger logger = LoggerFactory.getLogger(ParseDocument.class);
     private GherkinDocument gd;
     private List<String> pathList;
 
@@ -165,7 +164,7 @@ class ParseDocument {
                 txt = txt.replaceFirst("^<p>(.+)<\\/p>", "$1");
                 txt = txt.trim();
             } catch (Exception e) {
-                logger.warn(ParseDocument.class.getName(), e);
+                log.warn(ParseDocument.class.getName(), e);
             }
         }
 

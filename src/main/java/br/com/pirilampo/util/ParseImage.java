@@ -1,9 +1,8 @@
 package br.com.pirilampo.util;
 
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,9 +11,8 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
+@Slf4j
 class ParseImage {
-    private static final Logger logger = LoggerFactory.getLogger(Compilador.class);
-
     static String parse(String fileName, String path){
         List<String> paths = new ArrayList<>();
         paths.add(path);
@@ -44,8 +42,8 @@ class ParseImage {
 
                     break;
                 } catch (IOException e) {
-                    logger.info(e.getMessage() + " - " + image.getAbsolutePath());
-                    logger.warn(ParseImage.class.getName(), e);
+                    log.info(e.getMessage() + " - " + image.getAbsolutePath());
+                    log.warn(ParseImage.class.getName(), e);
                 }
             }
         }

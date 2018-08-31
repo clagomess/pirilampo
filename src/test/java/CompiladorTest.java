@@ -1,6 +1,7 @@
 import br.com.pirilampo.main.Main;
 import br.com.pirilampo.util.Compilador;
 import br.com.pirilampo.util.ParseMenu;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.input.BOMInputStream;
 import org.apache.log4j.*;
@@ -11,8 +12,6 @@ import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.junit.*;
 import org.junit.contrib.java.lang.system.ExpectedSystemExit;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.util.Base64;
@@ -20,8 +19,8 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 public class CompiladorTest {
-    private static final Logger logger = LoggerFactory.getLogger(CompiladorTest.class);
     private final String projectName = "XXX_PROJECT_NAME_XXX";
     private final String projectVersion = "1.2.3";
     private final String featureName = "xxx.Feature";
@@ -84,7 +83,7 @@ public class CompiladorTest {
             f = new File(dir);
             f.mkdir();
 
-            logger.info("Pasta de teste: {}", dir);
+            log.info("Pasta de teste: {}", dir);
         }
 
         return dir;
@@ -481,7 +480,7 @@ public class CompiladorTest {
                 outDir + File.separator,
             });
         } catch (Exception e) {
-            logger.info("OK");
+            log.info("OK");
         }
 
         f = new File(outDir + File.separator + "index.html");
@@ -500,7 +499,7 @@ public class CompiladorTest {
                     outDir + File.separator,
             });
         } catch (Exception e) {
-            logger.info("OK");
+            log.info("OK");
         }
 
         f = new File(outDir + File.separator + "xxx.html");
@@ -588,7 +587,7 @@ public class CompiladorTest {
 
         Map<String, Object> menu = pm.getMenuMap();
 
-        logger.info("MENU: {}", menu);
+        log.info("MENU: {}", menu);
 
         final String f001 = ((Map<String, String>) ((List) menu.get("Features")).get(0)).get("url");
         final String f002 = ((Map<String, String>) ((List) menu.get("bar")).get(0)).get("url");
