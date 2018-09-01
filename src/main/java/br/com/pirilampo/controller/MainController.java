@@ -20,8 +20,8 @@ public class MainController extends MainForm implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        txtCorMenu.setText(Compilador.COR_MENU);
-        txtRootMenuNome.setText(Compilador.NOME_MENU_RAIZ);
+        //txtCorMenu.setText(Compilador.COR_MENU);
+        //txtRootMenuNome.setText(Compilador.NOME_MENU_RAIZ);
     }
 
     public void selecionarFeature(){
