@@ -1,10 +1,10 @@
+import br.com.pirilampo.bean.Parametro;
+import br.com.pirilampo.core.Compilador;
+import br.com.pirilampo.core.ParseMenu;
 import br.com.pirilampo.main.Main;
-import br.com.pirilampo.util.Compilador;
-import br.com.pirilampo.util.ParseMenu;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.input.BOMInputStream;
-import org.apache.log4j.*;
 import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.graphics.PDXObject;
@@ -43,24 +43,21 @@ public class CompiladorTest {
     private String featureDir = null;
     private String rootDir = null;
     private String rootDirMaster = null;
+    private final Parametro parametro = new Parametro();
 
     @Rule
     public final ExpectedSystemExit exit = ExpectedSystemExit.none();
 
     @Before
     public void before() throws Exception {
-        //-- config logger
-        PatternLayout patternLayout = new PatternLayout("%-5p %d{yyyy-MM-dd HH:mm:ss} %c{1}:%L - %m%n");
-        ConsoleAppender consoleAppender = new ConsoleAppender(patternLayout);
-        BasicConfigurator.resetConfiguration();
-        BasicConfigurator.configure(consoleAppender);
-        LogManager.getRootLogger().setLevel(Level.INFO);
-
         //-- cria diretorio
         rootDir = criarPasta();
 
         //-- cria feature
         featureDir = criarFeature(false);
+
+        parametro.setTxtNome(projectName);
+        parametro.setTxtVersao(projectVersion);
     }
 
     private String criarPasta(){
@@ -204,10 +201,13 @@ public class CompiladorTest {
 
         File f;
         Compilador compilador = new Compilador();
-        final String COR_MENU = "#666";
-        final String NM_MN_RAIZ = "NOME_MENU_RAIZ_666";
         final String imgLogoName = "logo_xxx.png";
         final String logoPath = featureDir + File.separator + imgLogoName;
+        parametro.setClrMenu("#666");
+        parametro.setTxtNomeMenuRaiz("NOME_MENU_RAIZ_666");
+        parametro.setTxtLogoSrc(logoPath);
+        parametro.setTxtSrcFonte(featureDir);
+        parametro.setTxtOutputTarget(featureDir + File.separator + "outdir" + File.separator);
 
         //-- Cria logo
         try {
@@ -224,23 +224,12 @@ public class CompiladorTest {
         f = new File(logoPath);
         Assert.assertTrue(f.isFile());
 
-        Compilador.setConfig(COR_MENU, NM_MN_RAIZ, new File(logoPath));
-
-        Assert.assertEquals(Compilador.COR_MENU, COR_MENU);
-        Assert.assertEquals(Compilador.NOME_MENU_RAIZ, NM_MN_RAIZ);
-
         try {
             // cria pasta de saida;
             f = new File(featureDir + File.separator + "outdir");
             Assert.assertTrue(f.mkdir());
 
-            compilador.compilarPasta(
-                    featureDir,
-                    null,
-                    projectName,
-                    projectVersion,
-                    featureDir + File.separator + "outdir" + File.separator
-            );
+            compilador.compilarPasta(parametro);
 
             String html = featureDir + File.separator + "outdir" + File.separator + "index.html";
 
@@ -250,9 +239,9 @@ public class CompiladorTest {
             String htmlString = load(html);
             Assert.assertNotEquals(htmlString, "");
 
-            Assert.assertTrue(htmlString.contains(Compilador.COR_MENU));
-            Assert.assertTrue(htmlString.contains(Compilador.NOME_MENU_RAIZ));
-            Assert.assertFalse(htmlString.contains(Compilador.LOGO_PATH.getName()));
+            Assert.assertTrue(htmlString.contains(parametro.getClrMenu()));
+            Assert.assertTrue(htmlString.contains(parametro.getTxtNomeMenuRaiz()));
+            Assert.assertFalse(htmlString.contains((new File(parametro.getTxtLogoSrc())).getName()));
             Assert.assertFalse(htmlString.contains(imgLogoName));
         }catch (Exception e){
             e.printStackTrace();
@@ -270,12 +259,9 @@ public class CompiladorTest {
             File f;
 
             //-- compila sem output
-            compilador.compilarFeature(
-                    featureDir + File.separator + featureName,
-                    projectName,
-                    projectVersion,
-                    null
-            );
+            parametro.setTxtSrcFonte(featureDir + File.separator + featureName);
+            parametro.setTxtOutputTarget(null);
+            compilador.compilarFeature(parametro);
 
             f = new File(featureDir + File.separator + featureName.replace(featureExt, ".html"));
             Assert.assertTrue(f.isFile());
@@ -285,12 +271,9 @@ public class CompiladorTest {
             f = new File(featureDir + File.separator + "outdir");
             Assert.assertTrue(f.mkdir());
 
-            compilador.compilarFeature(
-                    featureDir + File.separator + featureName,
-                    projectName,
-                    projectVersion,
-                    featureDir + File.separator + "outdir" + File.separator
-            );
+            parametro.setTxtSrcFonte(featureDir + File.separator + featureName);
+            parametro.setTxtOutputTarget(featureDir + File.separator + "outdir" + File.separator);
+            compilador.compilarFeature(parametro);
 
             f = new File(featureDir + File.separator + "outdir" + File.separator + featureName.replace(featureExt, ".html"));
             Assert.assertTrue(f.isFile());
@@ -310,12 +293,9 @@ public class CompiladorTest {
             File f;
 
             //-- compila sem output
-            compilador.compilarFeature(
-                    featureDir + File.separator + featureName,
-                    projectName,
-                    projectVersion,
-                    null
-            );
+            parametro.setTxtSrcFonte(featureDir + File.separator + featureName);
+            parametro.setTxtOutputTarget(null);
+            compilador.compilarFeature(parametro);
 
             String html = featureDir + File.separator + featureName.replace(featureExt, ".html");
 
@@ -341,12 +321,9 @@ public class CompiladorTest {
         Assert.assertNotNull(featureDir);
 
         try {
-            compilador.compilarFeaturePdf(
-                    featureDir + File.separator + featureName,
-                    projectName,
-                    projectVersion,
-                    "P"
-            );
+            parametro.setTxtSrcFonte(featureDir + File.separator + featureName);
+            parametro.setTxtOutputTarget(null);
+            compilador.compilarFeaturePdf(parametro);
 
             String pdf = featureDir + File.separator + featureName.replace(featureExt, ".pdf");
             File f = new File(pdf);
@@ -388,12 +365,9 @@ public class CompiladorTest {
         Compilador compilador = new Compilador();
 
         try {
-            compilador.compilarPastaPdf(
-                    featureDir,
-                    projectName,
-                    projectVersion,
-                    "R"
-            );
+            parametro.setTxtSrcFonte(featureDir);
+            parametro.setTxtOutputTarget(null);
+            compilador.compilarPastaPdf(parametro);
             String pdf = outDir + File.separator + "index.pdf";
             f = new File(pdf);
             Assert.assertTrue(f.isFile());
@@ -424,13 +398,10 @@ public class CompiladorTest {
             File f = new File(featureDir + File.separator + "outdir_w_master");
             Assert.assertTrue(f.mkdir());
 
-            compilador.compilarPasta(
-                    featureDir,
-                    featureMasterDir,
-                    projectName,
-                    projectVersion,
-                    featureDir + File.separator + "outdir_w_master" + File.separator
-            );
+            parametro.setTxtSrcFonte(featureDir);
+            parametro.setTxtSrcFonteMaster(featureMasterDir);
+            parametro.setTxtOutputTarget(featureDir + File.separator + "outdir_w_master" + File.separator);
+            compilador.compilarPasta(parametro);
 
             String html = featureDir + File.separator + "outdir_w_master" + File.separator + "index.html";
 
@@ -519,13 +490,10 @@ public class CompiladorTest {
             f = new File(featureDir + File.separator + "outdir");
             Assert.assertTrue(f.mkdir());
 
-            compilador.compilarPasta(
-                    featureDir,
-                    null,
-                    projectName,
-                    projectVersion,
-                    featureDir + File.separator + "outdir" + File.separator
-            );
+            parametro.setTxtSrcFonte(featureDir);
+            parametro.setTxtSrcFonteMaster(null);
+            parametro.setTxtOutputTarget(featureDir + File.separator + "outdir" + File.separator);
+            compilador.compilarPasta(parametro);
 
             String html = featureDir + File.separator + "outdir" + File.separator + "index.html";
 
@@ -554,12 +522,10 @@ public class CompiladorTest {
             File f;
 
             //-- compila sem output
-            compilador.compilarFeature(
-                    featureDir + File.separator + featureName,
-                    projectName,
-                    projectVersion,
-                    null
-            );
+            parametro.setTxtSrcFonte(featureDir + File.separator + featureName);
+            parametro.setTxtSrcFonteMaster(null);
+            parametro.setTxtOutputTarget(null);
+            compilador.compilarFeature(parametro);
 
             String html = featureDir + File.separator + featureName.replace(featureExt, ".html");
 

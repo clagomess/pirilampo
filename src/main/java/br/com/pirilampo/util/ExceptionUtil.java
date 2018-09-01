@@ -1,6 +1,7 @@
 package br.com.pirilampo.util;
 
 
+import br.com.pirilampo.core.Compilador;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;

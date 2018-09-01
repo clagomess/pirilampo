@@ -1,4 +1,4 @@
-package br.com.pirilampo.util;
+package br.com.pirilampo.core;
 
 
 import lombok.extern.slf4j.Slf4j;

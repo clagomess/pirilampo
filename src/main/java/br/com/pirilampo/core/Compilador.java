@@ -1,11 +1,13 @@
-package br.com.pirilampo.util;
+package br.com.pirilampo.core;
 
+import br.com.pirilampo.bean.Parametro;
 import gherkin.AstBuilder;
 import gherkin.Parser;
 import gherkin.TokenMatcher;
 import gherkin.ast.GherkinDocument;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.input.BOMInputStream;
+import org.apache.commons.lang.StringUtils;
 
 import java.io.*;
 import java.math.BigInteger;
@@ -19,28 +21,18 @@ import java.util.regex.Pattern;
 
 @Slf4j
 public class Compilador {
-    static StringBuilder LOG;
+    public static StringBuilder LOG;
     private List<File> arquivos = new ArrayList<>();
     private final String HTML_TEMPLATE = "<script type=\"text/ng-template\" id=\"%s\">%s</script>\n";
     private final String HTML_JAVASCRIPT = "<script type=\"text/javascript\">%s</script>\n";
     private final String HTML_CSS = "<style>%s</style>\n";
     private final String HTML_FEATURE_PDF = "<h1 class=\"page-header\">%s <small>%s <em>%s</em></small></h1>\n" +
             "%s\n<span style=\"page-break-after: always\"></span>";
-
-    public static String COR_MENU = "#14171A";
-    public static String NOME_MENU_RAIZ = "Features";
-    public static File LOGO_PATH = null;
     static List<File> PAGINA_HTML_ANEXO;
 
     public Compilador(){
         Compilador.LOG = new StringBuilder();
         Compilador.PAGINA_HTML_ANEXO = new ArrayList<>();
-    }
-
-    public static void setConfig(String corMenu, String nomeMenuRaiz, File logoPath){
-        COR_MENU = corMenu;
-        NOME_MENU_RAIZ = nomeMenuRaiz;
-        LOGO_PATH = logoPath;
     }
 
     //====== Metodos
@@ -92,7 +84,7 @@ public class Compilador {
         return html;
     }
 
-    public void compilarPasta(String dir, String dirMaster, String projectName, String projecVersion, String outputDir) throws Exception {
+    public void compilarPasta(Parametro parametro) throws Exception {
         ParseMenu parseMenu = new ParseMenu();
         StringBuilder htmlTemplate = new StringBuilder();
         StringBuilder htmlJavascript = new StringBuilder();
@@ -100,9 +92,9 @@ public class Compilador {
 
         // -------- MASTER
         List<File> arquivosMaster = null;
-        if(dirMaster != null) {
+        if(!StringUtils.isEmpty(parametro.getTxtSrcFonteMaster())) {
             // Abre pasta root
-            File curDirMaster = new File(dirMaster);
+            File curDirMaster = new File(parametro.getTxtSrcFonteMaster());
 
             // Popula com arquivos feature
             arquivos = new ArrayList<>();
@@ -112,7 +104,7 @@ public class Compilador {
 
         // -------- NORMAL
         // Abre pasta root
-        File curDir = new File(dir);
+        File curDir = new File(parametro.getTxtSrcFonte());
 
         // Popula com arquivos feature
         arquivos = new ArrayList<>();
@@ -125,22 +117,19 @@ public class Compilador {
                 htmlFeatureRoot = htmlFeatureRoot.replace(f.getName(), "");
                 htmlFeatureRoot = htmlFeatureRoot.replace(File.separator, " ");
                 htmlFeatureRoot = htmlFeatureRoot.trim();
-
-                if(htmlFeatureRoot.equals("")){
-                    htmlFeatureRoot = Compilador.NOME_MENU_RAIZ;
-                }
+                htmlFeatureRoot = !StringUtils.isEmpty(parametro.getTxtNomeMenuRaiz()) ? parametro.getTxtNomeMenuRaiz() : htmlFeatureRoot;
 
                 String htmlFeatureId = htmlFeatureRoot + "_" + f.getName().replace(getExtension(f), ".html");
 
                 // Processa Master
-                if(dirMaster != null) {
+                if(!StringUtils.isEmpty(parametro.getTxtSrcFonteMaster())) {
                     boolean diferente = true;
                     File fmd = null;
 
-                    if(!arquivosMaster.isEmpty()) {
+                    if(arquivosMaster != null && !arquivosMaster.isEmpty()) {
                         for (File fm : arquivosMaster) {
-                            String absoluteNFM = absoluteNameFeature(dirMaster, fm.getAbsolutePath());
-                            String absoluteNFB = absoluteNameFeature(dir, f.getAbsolutePath());
+                            String absoluteNFM = absoluteNameFeature(parametro.getTxtSrcFonteMaster(), fm.getAbsolutePath());
+                            String absoluteNFB = absoluteNameFeature(parametro.getTxtSrcFonte(), f.getAbsolutePath());
                             String absoluteNFMMd5 = md5(loadFeature(fm.getAbsolutePath()));
                             String absoluteNFBMd5 = md5(loadFeature(f.getAbsolutePath()));
 
@@ -171,7 +160,7 @@ public class Compilador {
                     if(fmd != null) {
                         // PathListMaster
                         List<String> pathListMaster = new ArrayList<>();
-                        pathListMaster.add(dirMaster);
+                        pathListMaster.add(parametro.getTxtSrcFonteMaster());
                         pathListMaster.add(fmd.getAbsolutePath().replace(fmd.getName(), ""));
 
                         String featureHtml = getFeatureHtml(fmd.getAbsolutePath(), pathListMaster);
@@ -190,7 +179,7 @@ public class Compilador {
                 }
 
                 // Adiciona item de menu se deu tudo certo com a master
-                if(Compilador.NOME_MENU_RAIZ.equals(htmlFeatureRoot)){
+                if(parametro.getTxtNomeMenuRaiz().equals(htmlFeatureRoot)){
                     parseMenu.addMenuItem(
                             htmlFeatureRoot +
                             File.separator +
@@ -202,7 +191,7 @@ public class Compilador {
 
                 // Gera a feture
                 List<String> pathList = new ArrayList<>();
-                pathList.add(dir);
+                pathList.add(parametro.getTxtSrcFonte());
                 pathList.add(f.getAbsolutePath().replace(f.getName(), ""));
 
                 String featureHtml = getFeatureHtml(f.getAbsolutePath(), pathList);
@@ -210,7 +199,7 @@ public class Compilador {
                 htmlTemplate.append(String.format(HTML_TEMPLATE, htmlFeatureId, featureHtml));
 
                 // Salva as feature para diff
-                if(dirMaster != null){
+                if(parametro.getTxtSrcFonteMaster() != null){
                     htmlTemplate.append(String.format(
                             HTML_TEMPLATE,
                             htmlFeatureId.replace(".html", ".feature"),
@@ -237,29 +226,29 @@ public class Compilador {
             htmlJavascript.append(String.format(HTML_JAVASCRIPT, loadResource("htmlTemplate/dist/feature-pasta.min.js")));
             htmlJavascript.append(String.format(HTML_JAVASCRIPT, loadResource("htmlTemplate/dist/feature-pasta-angular.min.js")));
 
-            html = html.replace("#PROJECT_NAME#", projectName);
-            html = html.replace("#PROJECT_VERSION#", projecVersion);
+            html = html.replace("#PROJECT_NAME#", parametro.getTxtNome());
+            html = html.replace("#PROJECT_VERSION#", parametro.getTxtVersao());
             html = html.replace("#HTML_MENU#", parseMenu.getHtml());
             html = html.replace("#HTML_CSS#", htmlCss);
             html = html.replace("#HTML_JAVASCRIPT#", htmlJavascript);
             html = html.replace("#HTML_TEMPLATE#", htmlTemplate);
-            html = html.replace("#PROJECT_COLOR#", Compilador.COR_MENU);
+            html = html.replace("#PROJECT_COLOR#", parametro.getClrMenu());
 
             // monta cabeçalho menu
-            if(Compilador.LOGO_PATH != null && Compilador.LOGO_PATH.isFile()){
-                String logoString = ParseImage.parse(Compilador.LOGO_PATH);
+            if(!StringUtils.isEmpty(parametro.getTxtLogoSrc())){
+                String logoString = ParseImage.parse(new File(parametro.getTxtLogoSrc()));
                 html = html.replace("#PROJECT_LOGO#", String.format("<img class=\"logo\" src=\"%s\">", logoString));
             }else{
                 html = html.replace("#PROJECT_LOGO#", String.format(
                         "%s <small><em>%s</em></small>",
-                        projectName,
-                        projecVersion
+                        parametro.getTxtNome(),
+                        parametro.getTxtVersao()
                 ));
             }
 
             // Grava
             // Cria Diretório se não existir */html/feature/
-            String outDir = (outputDir != null ? outputDir : curDir.getParent() + "/html/");
+            String outDir = (parametro.getTxtOutputTarget() != null ? parametro.getTxtOutputTarget() : curDir.getParent() + "/html/");
             File outDirF = new File(outDir);
 
             if(!outDirF.exists()){
@@ -270,9 +259,9 @@ public class Compilador {
         }
     }
 
-    public void compilarFeature(String featurePath, String projectName, String projecVersion, String outputDir) throws IOException {
+    public void compilarFeature(Parametro parametro) throws IOException {
         // Abre feature
-        File feature = new File(featurePath);
+        File feature = new File(parametro.getTxtSrcFonte());
 
         // compila
         List<String> pathList = new ArrayList<>();
@@ -284,14 +273,14 @@ public class Compilador {
 
         String htmlCss = String.format(HTML_CSS, loadResource("htmlTemplate/dist/feature.min.css"));
 
-        html = html.replace("#PROJECT_NAME#", projectName);
-        html = html.replace("#PROJECT_VERSION#", projecVersion);
+        html = html.replace("#PROJECT_NAME#", parametro.getTxtNome());
+        html = html.replace("#PROJECT_VERSION#", parametro.getTxtVersao());
         html = html.replace("#PROJECT_FEATURE#", feature.getName().replace(getExtension(feature), ""));
         html = html.replace("#HTML_CSS#", htmlCss);
         html = html.replace("#HTML_TEMPLATE#", featureHtml);
 
         // Grava
-        String outDir = (outputDir != null ? outputDir : feature.getParent());
+        String outDir = (parametro.getTxtOutputTarget() != null ? parametro.getTxtOutputTarget() : feature.getParent());
         outDir += String.format("/%s.html", feature.getName().replace(getExtension(feature), ""));
 
         writeHtml(html, outDir);
@@ -308,9 +297,9 @@ public class Compilador {
         }
     }
 
-    public void compilarFeaturePdf(String featurePath, String projectName, String projecVersion, String layout) throws Exception {
+    public void compilarFeaturePdf(Parametro parametro) throws Exception {
         // Abre feature
-        File feature = new File(featurePath);
+        File feature = new File(parametro.getTxtSrcFonte());
 
         //------------------ BUILD -----------------
         String htmlTemplate = loadResource("htmlTemplate/html/template_feature_pdf.html");
@@ -322,9 +311,9 @@ public class Compilador {
 
         html = String.format(
                 HTML_FEATURE_PDF,
-                projectName,
+                parametro.getTxtNome(),
                 feature.getName().replace(getExtension(feature), ""),
-                projecVersion,
+                parametro.getTxtVersao(),
                 html
         );
 
@@ -334,14 +323,14 @@ public class Compilador {
 
         String path = feature.getParent() + String.format("/%s.pdf", feature.getName().replace(getExtension(feature), ""));
 
-        pp.buildHtml(path, html, css, layout);
+        pp.buildHtml(path, html, css, parametro.getTipLayoutPdf().getValue());
     }
 
-    public void compilarPastaPdf(String dir, String projectName, String projecVersion, String layout) throws Exception {
+    public void compilarPastaPdf(Parametro parametro) throws Exception {
         StringBuilder html = new StringBuilder();
 
         // Abre pasta root
-        File curDir = new File(dir);
+        File curDir = new File(parametro.getTxtSrcFonte());
 
         // Popula com arquivos feature
         arquivos = new ArrayList<>();
@@ -350,16 +339,16 @@ public class Compilador {
         if(!arquivos.isEmpty()) {
             for (File f : arquivos) {
                 List<String> pathList = new ArrayList<>();
-                pathList.add(dir);
+                pathList.add(parametro.getTxtSrcFonte());
                 pathList.add(f.getAbsolutePath().replace(f.getName(), ""));
 
                 String rawHtml = getFeatureHtml(f.getAbsolutePath(), pathList);
 
                 html.append(String.format(
                         HTML_FEATURE_PDF,
-                        projectName,
+                        parametro.getTxtNome(),
                         f.getName().replace(getExtension(f), ""),
-                        projecVersion,
+                        parametro.getTxtVersao(),
                         rawHtml
                 ));
             }
@@ -379,7 +368,7 @@ public class Compilador {
                 outDirF.mkdir();
             }
 
-            pp.buildHtml(outDir + "index.pdf", html.toString(), css, layout);
+            pp.buildHtml(outDir + "index.pdf", html.toString(), css, parametro.getTipLayoutPdf().getValue());
         }
     }
 

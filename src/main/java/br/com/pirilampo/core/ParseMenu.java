@@ -1,4 +1,4 @@
-package br.com.pirilampo.util;
+package br.com.pirilampo.core;
 
 import java.util.*;
 

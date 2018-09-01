@@ -59,18 +59,18 @@
                 <ColumnConstraints hgrow="ALWAYS" />
                 <ColumnConstraints hgrow="ALWAYS" />
             </columnConstraints>
-            <TextField GridPane.columnIndex="0" fx:id="txtBrandSrc"/>
-            <Button GridPane.columnIndex="1" fx:id="btnBrandSrc" onAction="#selecionarBrand" text="Selecionar"/>
+            <TextField GridPane.columnIndex="0" fx:id="txtLogoSrc"/>
+            <Button GridPane.columnIndex="1" fx:id="btnSelecionarLogoSrc" onAction="#selecionarLogoSrc" text="Selecionar"/>
         </GridPane>
     </GridPane>
     <Separator GridPane.rowIndex="2" prefWidth="200.0" />
 
     <Label GridPane.rowIndex="3" text="Layout PDF" style="-fx-font-size: 12px; -fx-font-weight: bolder"/>
     <fx:define>
-        <ToggleGroup fx:id="rdoLayoutPdf" />
+        <ToggleGroup fx:id="tipLayoutPdf" />
     </fx:define>
-    <RadioButton GridPane.rowIndex="4" toggleGroup="$rdoLayoutPdf" text="Retrato" userData="R" mnemonicParsing="false" selected="true"/>
-    <RadioButton GridPane.rowIndex="4" toggleGroup="$rdoLayoutPdf" text="Paisagem" userData="P" mnemonicParsing="false">
+    <RadioButton GridPane.rowIndex="4" toggleGroup="$tipLayoutPdf" text="Retrato" userData="R" mnemonicParsing="false" selected="true"/>
+    <RadioButton GridPane.rowIndex="4" toggleGroup="$tipLayoutPdf" text="Paisagem" userData="P" mnemonicParsing="false">
         <GridPane.margin>
             <Insets left="100.0"/>
         </GridPane.margin>
@@ -91,7 +91,7 @@
         </rowConstraints>
         <Label GridPane.rowIndex="0" GridPane.columnIndex="0" text="Cor Menu:" />
         <Label GridPane.rowIndex="0" GridPane.columnIndex="1" text="Cor Texto Menu:" />
-        <ColorPicker GridPane.rowIndex="1" GridPane.columnIndex="0" >
+        <ColorPicker fx:id="clrMenu" GridPane.rowIndex="1" GridPane.columnIndex="0" >
             <value>
                 <Color blue="0.26" green="0.23" red="0.20"  />
             </value>
@@ -100,7 +100,7 @@
                 <Color blue="0.0" green="1.0" red="1.0" />
             </customColors>
         </ColorPicker>
-        <ColorPicker GridPane.rowIndex="1" GridPane.columnIndex="1" >
+        <ColorPicker fx:id="clrTextoMenu" GridPane.rowIndex="1" GridPane.columnIndex="1" >
             <value>
                 <Color blue="0.26" green="0.23" red="0.20"  />
             </value>
@@ -111,8 +111,8 @@
         </ColorPicker>
         <Label GridPane.rowIndex="2" GridPane.columnIndex="0" text="Nome menu Raiz:" />
         <Label GridPane.rowIndex="2" GridPane.columnIndex="1" text="Embedar Imagens?" />
-        <TextField GridPane.rowIndex="3" GridPane.columnIndex="0" fx:id="txtCorMenua"/>
-        <CheckBox GridPane.rowIndex="3" GridPane.columnIndex="1" />
+        <TextField GridPane.rowIndex="3" GridPane.columnIndex="0" fx:id="txtNomeMenuRaiz"/>
+        <CheckBox GridPane.rowIndex="3" GridPane.columnIndex="1" fx:id="sitEmbedarImagens"/>
     </GridPane>
     <Separator prefWidth="200.0" GridPane.rowIndex="8" />
 
@@ -127,9 +127,12 @@
         <rowConstraints>
             <RowConstraints vgrow="ALWAYS" />
         </rowConstraints>
-        <RadioButton GridPane.columnIndex="0" toggleGroup="$rdoLayoutPdf" text="Coletiva/Pasta" userData="R" mnemonicParsing="false" selected="true"/>
-        <RadioButton GridPane.columnIndex="1" toggleGroup="$rdoLayoutPdf" text="Individual" userData="R" mnemonicParsing="false"/>
-        <RadioButton GridPane.columnIndex="2" toggleGroup="$rdoLayoutPdf" text="Diff/Comparação" userData="R" mnemonicParsing="false"/>
+        <fx:define>
+            <ToggleGroup fx:id="tipCompilacao" />
+        </fx:define>
+        <RadioButton GridPane.columnIndex="0" toggleGroup="$tipCompilacao" text="Coletiva/Pasta" userData="PASTA" mnemonicParsing="false" selected="true"/>
+        <RadioButton GridPane.columnIndex="1" toggleGroup="$tipCompilacao" text="Individual" userData="FEATURE" mnemonicParsing="false"/>
+        <RadioButton GridPane.columnIndex="2" toggleGroup="$tipCompilacao" text="Diff/Comparação" userData="DIFF" mnemonicParsing="false"/>
     </GridPane>
     <GridPane GridPane.rowIndex="11" hgap="10.0" vgap="10.0">
         <columnConstraints>
@@ -139,10 +142,10 @@
         <rowConstraints>
             <RowConstraints vgrow="ALWAYS" />
         </rowConstraints>
-        <TextField GridPane.rowIndex="0" GridPane.columnIndex="0" fx:id="txtFeatureSrc" promptText="Pasta/Feature"/>
-        <Button GridPane.rowIndex="0" GridPane.columnIndex="1" fx:id="btnSelecionarFeature" onAction="#selecionarFeature" text="Selecionar"/>
-        <TextField GridPane.rowIndex="1" GridPane.columnIndex="0" fx:id="txtPastaSrc" promptText="Pasta Master"/>
-        <Button GridPane.rowIndex="1" GridPane.columnIndex="1" fx:id="btnSelecionarPasta" onAction="#selecionarPasta" text="Selecionar"/>
+        <TextField GridPane.rowIndex="0" GridPane.columnIndex="0" fx:id="txtSrcFonte" promptText="Pasta/Feature Fonte"/>
+        <Button GridPane.rowIndex="0" GridPane.columnIndex="1" fx:id="btnSelecionarFonte" onAction="#selecionarFonte" text="Selecionar"/>
+        <TextField GridPane.rowIndex="1" GridPane.columnIndex="0" fx:id="txtSrcFonteMaster" promptText="Pasta Fonte Master"/>
+        <Button GridPane.rowIndex="1" GridPane.columnIndex="1" fx:id="btnSelecionarFonteMaster" onAction="#selecionarFonteMaster" text="Selecionar"/>
     </GridPane>
     <GridPane GridPane.rowIndex="12" hgap="10.0">
         <columnConstraints>
@@ -153,8 +156,8 @@
         <rowConstraints>
             <RowConstraints vgrow="ALWAYS" />
         </rowConstraints>
-        <Button GridPane.columnIndex="0" fx:id="btnPastaGerarHtml" onAction="#pastaGerarHtml" text="Gerar HTML"/>
-        <Button GridPane.columnIndex="1" fx:id="btnPastaGerarPdf" onAction="#pastaGerarPdf" text="Gerar PDF"/>
+        <Button GridPane.columnIndex="0" fx:id="btnGerarHtml" onAction="#compilarHtml" text="Gerar HTML"/>
+        <Button GridPane.columnIndex="1" fx:id="btnGerarPdf" onAction="#compilarPdf" text="Gerar PDF"/>
     </GridPane>
     <ProgressBar  GridPane.rowIndex="13" fx:id="progressBar" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" progress="0.0" />
 </GridPane>

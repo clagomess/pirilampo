@@ -1,6 +1,7 @@
 package br.com.pirilampo.main;
 
-import br.com.pirilampo.util.Compilador;
+import br.com.pirilampo.bean.Parametro;
+import br.com.pirilampo.core.Compilador;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.cli.*;
 
@@ -21,23 +22,12 @@ public class Main {
             }
 
             if(cmd.getOptionValue("feature") != null){
-                compilador.compilarFeature(
-                        cmd.getOptionValue("feature"),
-                        cmd.getOptionValue("name"),
-                        cmd.getOptionValue("version"),
-                        cmd.getOptionValue("output")
-                );
+                compilador.compilarFeature(new Parametro(cmd));
                 System.exit(0);
             }
 
             if(cmd.getOptionValue("feature_path") != null){
-                compilador.compilarPasta(
-                        cmd.getOptionValue("feature_path"),
-                        cmd.getOptionValue("feature_path_master"),
-                        cmd.getOptionValue("name"),
-                        cmd.getOptionValue("version"),
-                        cmd.getOptionValue("output")
-                );
+                compilador.compilarPasta(new Parametro(cmd));
                 System.exit(0);
             }
         }else{
