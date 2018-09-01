@@ -2,8 +2,10 @@ package br.com.pirilampo.bean;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.layout.GridPane;
 
 public class MainForm {
+    @FXML protected GridPane root;
     @FXML protected TextField txtNome;
     @FXML protected TextField txtVersao;
     @FXML protected TextField txtLogoSrc;

@@ -3,7 +3,6 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.paint.*?>
 <GridPane
         vgap="10.0"
         maxHeight="-Infinity"
@@ -15,6 +14,7 @@
         xmlns="http://javafx.com/javafx/8"
         xmlns:fx="http://javafx.com/fxml/1"
         fx:controller="br.com.pirilampo.controller.MainController"
+        fx:id="root"
 >
     <columnConstraints>
         <ColumnConstraints hgrow="ALWAYS" />
@@ -69,8 +69,8 @@
     <fx:define>
         <ToggleGroup fx:id="tipLayoutPdf" />
     </fx:define>
-    <RadioButton GridPane.rowIndex="4" toggleGroup="$tipLayoutPdf" text="Retrato" userData="R" mnemonicParsing="false" selected="true"/>
-    <RadioButton GridPane.rowIndex="4" toggleGroup="$tipLayoutPdf" text="Paisagem" userData="P" mnemonicParsing="false">
+    <RadioButton GridPane.rowIndex="4" toggleGroup="$tipLayoutPdf" text="Retrato" userData="RETRATO" mnemonicParsing="false" selected="true"/>
+    <RadioButton GridPane.rowIndex="4" toggleGroup="$tipLayoutPdf" text="Paisagem" userData="PAISAGEM" mnemonicParsing="false">
         <GridPane.margin>
             <Insets left="100.0"/>
         </GridPane.margin>
@@ -91,24 +91,8 @@
         </rowConstraints>
         <Label GridPane.rowIndex="0" GridPane.columnIndex="0" text="Cor Menu:" />
         <Label GridPane.rowIndex="0" GridPane.columnIndex="1" text="Cor Texto Menu:" />
-        <ColorPicker fx:id="clrMenu" GridPane.rowIndex="1" GridPane.columnIndex="0" >
-            <value>
-                <Color blue="0.26" green="0.23" red="0.20"  />
-            </value>
-            <customColors>
-                <Color blue="0.0" green="0.0" red="1.0"/>
-                <Color blue="0.0" green="1.0" red="1.0" />
-            </customColors>
-        </ColorPicker>
-        <ColorPicker fx:id="clrTextoMenu" GridPane.rowIndex="1" GridPane.columnIndex="1" >
-            <value>
-                <Color blue="0.26" green="0.23" red="0.20"  />
-            </value>
-            <customColors>
-                <Color blue="0.0" green="0.0" red="1.0"/>
-                <Color blue="0.0" green="1.0" red="1.0" />
-            </customColors>
-        </ColorPicker>
+        <ColorPicker fx:id="clrMenu" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+        <ColorPicker fx:id="clrTextoMenu" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
         <Label GridPane.rowIndex="2" GridPane.columnIndex="0" text="Nome menu Raiz:" />
         <Label GridPane.rowIndex="2" GridPane.columnIndex="1" text="Embedar Imagens?" />
         <TextField GridPane.rowIndex="3" GridPane.columnIndex="0" fx:id="txtNomeMenuRaiz"/>

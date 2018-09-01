@@ -2,6 +2,7 @@ package br.com.pirilampo.bean;
 
 import br.com.pirilampo.constant.Compilacao;
 import br.com.pirilampo.constant.LayoutPdf;
+import javafx.scene.paint.Color;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.cli.CommandLine;
@@ -15,7 +16,7 @@ public class Parametro {
     private String txtLogoSrc;
     private LayoutPdf tipLayoutPdf = LayoutPdf.RETRATO;
     private String clrMenu = "#14171A";
-    private String clrTextoMenu;
+    private String clrTextoMenu = "#DDDDDD";
     private String txtNomeMenuRaiz = "Features";
     private boolean sitEmbedarImagens = true;
     private Compilacao tipCompilacao = Compilacao.PASTA;
@@ -27,12 +28,12 @@ public class Parametro {
         this.txtNome = form.txtNome.getText();
         this.txtVersao = form.txtVersao.getText();
         this.txtLogoSrc = form.txtLogoSrc.getText();
-        this.tipLayoutPdf = (LayoutPdf) form.tipLayoutPdf.getSelectedToggle().getUserData();
-        this.clrMenu = null; //@TODO: Implements
-        this.clrTextoMenu = null; //@TODO: Implements
+        this.tipLayoutPdf = LayoutPdf.valueOf((String) form.tipLayoutPdf.getSelectedToggle().getUserData());
+        this.clrMenu = colorHex(form.clrMenu.getValue());
+        this.clrTextoMenu = colorHex(form.clrTextoMenu.getValue());
         this.txtNomeMenuRaiz = form.txtNomeMenuRaiz.getText();
         this.sitEmbedarImagens = form.sitEmbedarImagens.isSelected();
-        this.tipCompilacao = (Compilacao) form.tipCompilacao.getSelectedToggle().getUserData();
+        this.tipCompilacao = Compilacao.valueOf((String) form.tipCompilacao.getSelectedToggle().getUserData());
         this.txtSrcFonte = form.txtSrcFonte.getText();
         this.txtSrcFonteMaster = form.txtSrcFonteMaster.getText();
     }
@@ -44,5 +45,9 @@ public class Parametro {
         this.txtSrcFonte = !StringUtils.isEmpty(cmd.getOptionValue("feature_path")) ? cmd.getOptionValue("feature_path") : this.txtSrcFonte;
         this.txtSrcFonteMaster = cmd.getOptionValue("feature_path_master");
         this.txtOutputTarget = cmd.getOptionValue("output");
+    }
+
+    private String colorHex(Color color){
+        return '#' + Integer.toHexString(color.hashCode()).substring(0, 6);
     }
 }

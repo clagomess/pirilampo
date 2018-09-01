@@ -8,6 +8,7 @@ import br.com.pirilampo.util.ExceptionUtil;
 import javafx.application.Platform;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
+import javafx.scene.paint.Color;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -15,15 +16,39 @@ import org.apache.commons.lang.StringUtils;
 
 import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class MainController extends MainForm implements Initializable {
     private final String MSG_OPE_SUCESSO = "Operação realizada com sucesso!";
+    private final List<Color> cores = new ArrayList<>();
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        //txtCorMenu.setText(Compilador.COR_MENU);
-        //txtRootMenuNome.setText(Compilador.NOME_MENU_RAIZ);
+        cores.add(Color.web("#DDDDDD"));
+        cores.add(Color.web("#14171A"));
+        cores.add(Color.web("#D50000"));
+        cores.add(Color.web("#E67C73"));
+        cores.add(Color.web("#F4511E"));
+        cores.add(Color.web("#F6BF26"));
+        cores.add(Color.web("#33B679"));
+        cores.add(Color.web("#0B8043"));
+        cores.add(Color.web("#039BE5"));
+        cores.add(Color.web("#3F51B5"));
+        cores.add(Color.web("#7986CB"));
+        cores.add(Color.web("#8E24AA"));
+        cores.add(Color.web("#616161"));
+        cores.add(Color.web("#FFFFFF"));
+        cores.add(Color.web("#040404"));
+
+        for(Color cor : cores){
+            clrMenu.getCustomColors().add(cor);
+            clrTextoMenu.getCustomColors().add(cor);
+        }
+
+        clrMenu.setValue(Color.web("#14171A"));
+        clrTextoMenu.setValue(Color.web("#DDDDDD"));
     }
 
     public void selecionarFonte(){
@@ -70,11 +95,13 @@ public class MainController extends MainForm implements Initializable {
 
     private void compilar(boolean isPdf){
         if(StringUtils.isEmpty(txtSrcFonte.getText())){
-            alertWarning(tipCompilacao.getSelectedToggle().getUserData() == Compilacao.FEATURE ? "Favor selecionar uma feature!" : "Favor selecionar uma pasta");
+            showDialog(Alert.AlertType.WARNING, tipCompilacao.getSelectedToggle().getUserData() == Compilacao.FEATURE ? "Favor selecionar uma feature!" : "Favor selecionar uma pasta");
+            return;
         }
 
         if(tipCompilacao.getSelectedToggle().getUserData() == Compilacao.DIFF && StringUtils.isEmpty(txtSrcFonteMaster.getText())){
-            alertWarning("É necessário selecionar a pasta MASTER para realizar a comparação.");
+            showDialog(Alert.AlertType.WARNING, "É necessário selecionar a pasta MASTER para realizar a comparação.");
+            return;
         }
 
         Compilador compilador = new Compilador();
@@ -82,31 +109,33 @@ public class MainController extends MainForm implements Initializable {
 
         new Thread(() -> {
             Platform.runLater(() -> progressBar.setProgress(-1));
-            Platform.runLater(this::desabilitarBotoes);
+            Platform.runLater(() -> root.setDisable(true));
+
+            Compilacao tipCompilacaoConst = Compilacao.valueOf((String) tipCompilacao.getSelectedToggle().getUserData());
 
             try {
-                if(!isPdf && tipCompilacao.getSelectedToggle().getUserData() == Compilacao.FEATURE){
+                if(!isPdf && tipCompilacaoConst == Compilacao.FEATURE){
                     compilador.compilarFeature(parametro);
                 }
 
-                if(!isPdf && (tipCompilacao.getSelectedToggle().getUserData() == Compilacao.PASTA || tipCompilacao.getSelectedToggle().getUserData() == Compilacao.DIFF)){
+                if(!isPdf && (tipCompilacaoConst == Compilacao.PASTA || tipCompilacaoConst == Compilacao.DIFF)){
                     compilador.compilarPasta(parametro);
                 }
 
-                if(isPdf && tipCompilacao.getSelectedToggle().getUserData() == Compilacao.FEATURE){
+                if(isPdf && tipCompilacaoConst == Compilacao.FEATURE){
                     compilador.compilarFeaturePdf(parametro);
                 }
 
-                if(isPdf && tipCompilacao.getSelectedToggle().getUserData() == Compilacao.PASTA){
+                if(isPdf && tipCompilacaoConst == Compilacao.PASTA){
                     compilador.compilarPastaPdf(parametro);
                 }
 
-                Platform.runLater(() -> alertInfo(MSG_OPE_SUCESSO));
+                Platform.runLater(() -> showDialog(Alert.AlertType.INFORMATION, MSG_OPE_SUCESSO));
             } catch (Exception e) {
                 Platform.runLater(() -> ExceptionUtil.showDialog(e));
             } finally {
                 Platform.runLater(() -> progressBar.setProgress(0));
-                Platform.runLater(this::habilitarBotoes);
+                Platform.runLater(() -> root.setDisable(false));
             }
         }).start();
     }
@@ -129,51 +158,10 @@ public class MainController extends MainForm implements Initializable {
         }
     }
 
-    private void alertWarning(String msg){
-        Alert alert = new Alert(Alert.AlertType.WARNING);
+    private void showDialog(Alert.AlertType alertType, String msg){
+        Alert alert = new Alert(alertType);
         alert.setContentText(msg);
 
         alert.showAndWait();
-    }
-
-    private void alertInfo(String msg){
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setContentText(msg);
-
-        alert.showAndWait();
-    }
-
-    private void desabilitarBotoes(){
-        txtNome.setDisable(true);
-        txtVersao.setDisable(true);
-        txtLogoSrc.setDisable(true);
-        btnSelecionarLogoSrc.setDisable(true);
-        clrMenu.setDisable(true);
-        clrTextoMenu.setDisable(true);
-        txtNomeMenuRaiz.setDisable(true);
-        sitEmbedarImagens.setDisable(true);
-        txtSrcFonte.setDisable(true);
-        txtSrcFonteMaster.setDisable(true);
-        btnSelecionarFonte.setDisable(true);
-        btnSelecionarFonteMaster.setDisable(true);
-        btnGerarHtml.setDisable(true);
-        btnGerarPdf.setDisable(true);
-    }
-
-    private void habilitarBotoes(){
-        txtNome.setDisable(false);
-        txtVersao.setDisable(false);
-        txtLogoSrc.setDisable(false);
-        btnSelecionarLogoSrc.setDisable(false);
-        clrMenu.setDisable(false);
-        clrTextoMenu.setDisable(false);
-        txtNomeMenuRaiz.setDisable(false);
-        sitEmbedarImagens.setDisable(false);
-        txtSrcFonte.setDisable(false);
-        txtSrcFonteMaster.setDisable(false);
-        btnSelecionarFonte.setDisable(false);
-        btnSelecionarFonteMaster.setDisable(false);
-        btnGerarHtml.setDisable(false);
-        btnGerarPdf.setDisable(false);
     }
 }
