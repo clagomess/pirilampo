@@ -1,6 +1,7 @@
 package br.com.pirilampo.core;
 
 import br.com.pirilampo.bean.Parametro;
+import br.com.pirilampo.constant.HtmlTemplate;
 import gherkin.ast.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringEscapeUtils;
@@ -28,30 +29,13 @@ class ParseDocument {
     }
 
     public String getHtml(){
-        final String HTML_TITULO = "<h2>%s</h2>\n";
-        final String HTML_PARAGRAFO = "<p>%s</p>\n";
-        final String HTML_STEP = "<p><span class=\"keyword\">%s</span> %s</p>\n";
-        final String HTML_CODE = "<pre>%s</pre>\n";
-
-        final String HTML_CHILDREN = "<div class=\"panel panel-default\">\n" +
-                "<div class=\"panel-heading\" style=\"cursor: pointer;\" data-toggle=\"collapse\" data-target=\"#scenario-%s\"><h3>%s</h3></div>\n%s\n</div>\n";
-        final String HTML_CHILDREN_BODY = "<div id=\"scenario-%s\" class=\"panel-body collapse in\">%s</div>\n";
-        final String HTML_CHILDREN_TABLE = "<div class=\"table-responsive\">\n" +
-                "<table class=\"table table-condensed table-bordered table-hover table-striped\">\n" +
-                "<thead>\n%s\n</thead>\n" +
-                "<tbody>\n%s\n</tbody>\n" +
-                "</table>\n</div>\n";
-        final String HTML_CHILDREN_TABLE_TR = "<tr>%s</tr>\n";
-        final String HTML_CHILDREN_TABLE_TH = "<th>%s</th>\n";
-        final String HTML_CHILDREN_TABLE_TD = "<td>%s</td>\n";
-
         StringBuilder html = new StringBuilder();
 
         if(gd != null){
-            html.append(String.format(HTML_TITULO, format(gd.getFeature().getName(), false)));
+            html.append(String.format(HtmlTemplate.HTML_TITULO, format(gd.getFeature().getName(), false)));
 
             if(gd.getFeature().getDescription() != null) {
-                html.append(String.format(HTML_PARAGRAFO, format(gd.getFeature().getDescription())));
+                html.append(String.format(HtmlTemplate.HTML_PARAGRAFO, format(gd.getFeature().getDescription())));
             }
 
             int scenarioIdx = 0;
@@ -59,11 +43,11 @@ class ParseDocument {
                 StringBuilder body = new StringBuilder();
 
                 if(sd.getDescription() != null){
-                    body.append(String.format(HTML_PARAGRAFO, format(sd.getDescription())));
+                    body.append(String.format(HtmlTemplate.HTML_PARAGRAFO, format(sd.getDescription())));
                 }
 
                 for (Step step : sd.getSteps()){
-                    body.append(String.format(HTML_STEP, step.getKeyword(), format(step.getText())));
+                    body.append(String.format(HtmlTemplate.HTML_STEP, step.getKeyword(), format(step.getText())));
 
                     if(step.getArgument() != null){
                         if(step.getArgument() instanceof DataTable) {
@@ -75,33 +59,33 @@ class ParseDocument {
                                 StringBuilder htmlTc = new StringBuilder();
                                 for (TableCell tc : tr.getCells()) {
                                     if (i == 0) {
-                                        htmlTc.append(String.format(HTML_CHILDREN_TABLE_TH, format(tc.getValue(), false)));
+                                        htmlTc.append(String.format(HtmlTemplate.HTML_CHILDREN_TABLE_TH, format(tc.getValue(), false)));
                                     } else {
-                                        htmlTc.append(String.format(HTML_CHILDREN_TABLE_TD, format(tc.getValue())));
+                                        htmlTc.append(String.format(HtmlTemplate.HTML_CHILDREN_TABLE_TD, format(tc.getValue())));
                                     }
                                 }
 
                                 if (i == 0) {
-                                    htmlTrH.append(String.format(HTML_CHILDREN_TABLE_TR, htmlTc));
+                                    htmlTrH.append(String.format(HtmlTemplate.HTML_CHILDREN_TABLE_TR, htmlTc));
                                 } else {
-                                    htmlTrD.append(String.format(HTML_CHILDREN_TABLE_TR, htmlTc));
+                                    htmlTrD.append(String.format(HtmlTemplate.HTML_CHILDREN_TABLE_TR, htmlTc));
                                 }
 
                                 i++;
                             }
 
-                            body.append(String.format(HTML_CHILDREN_TABLE, htmlTrH, htmlTrD));
+                            body.append(String.format(HtmlTemplate.HTML_CHILDREN_TABLE, htmlTrH, htmlTrD));
                         }
 
                         if(step.getArgument() instanceof DocString) {
-                            body.append(String.format(HTML_CODE, format(((DocString) step.getArgument()).getContent(), false)));
+                            body.append(String.format(HtmlTemplate.HTML_CODE, format(((DocString) step.getArgument()).getContent(), false)));
                         }
                     }
                 }
 
                 if(sd instanceof ScenarioOutline) {
                     for (Examples examples : ((ScenarioOutline) sd).getExamples()){
-                        body.append(String.format(HTML_STEP, examples.getKeyword(), ":"));
+                        body.append(String.format(HtmlTemplate.HTML_STEP, examples.getKeyword(), ":"));
 
                         StringBuilder htmlTrH = new StringBuilder();
                         StringBuilder htmlTrD = new StringBuilder();
@@ -109,10 +93,10 @@ class ParseDocument {
 
                         if(examples.getTableHeader() != null) {
                             for (TableCell tc : examples.getTableHeader().getCells()) {
-                                htmlTc.append(String.format(HTML_CHILDREN_TABLE_TH, format(tc.getValue(), false)));
+                                htmlTc.append(String.format(HtmlTemplate.HTML_CHILDREN_TABLE_TH, format(tc.getValue(), false)));
                             }
 
-                            htmlTrH.append(String.format(HTML_CHILDREN_TABLE_TR, htmlTc));
+                            htmlTrH.append(String.format(HtmlTemplate.HTML_CHILDREN_TABLE_TR, htmlTc));
                         }
 
                         if(examples.getTableBody() != null) {
@@ -120,24 +104,24 @@ class ParseDocument {
                                 htmlTc = new StringBuilder();
 
                                 for (TableCell tc : tr.getCells()) {
-                                    htmlTc.append(String.format(HTML_CHILDREN_TABLE_TD, format(tc.getValue())));
+                                    htmlTc.append(String.format(HtmlTemplate.HTML_CHILDREN_TABLE_TD, format(tc.getValue())));
                                 }
 
-                                htmlTrD.append(String.format(HTML_CHILDREN_TABLE_TR, htmlTc));
+                                htmlTrD.append(String.format(HtmlTemplate.HTML_CHILDREN_TABLE_TR, htmlTc));
                             }
                         }
 
                         if(!"".equals(htmlTrH.toString()) || !"".equals(htmlTrD.toString())) {
-                            body.append(String.format(HTML_CHILDREN_TABLE, htmlTrH, htmlTrD));
+                            body.append(String.format(HtmlTemplate.HTML_CHILDREN_TABLE, htmlTrH, htmlTrD));
                         }
                     }
                 }
 
                 html.append(String.format(
-                        HTML_CHILDREN,
+                        HtmlTemplate.HTML_CHILDREN,
                         scenarioIdx,
                         StringEscapeUtils.escapeHtml("".equals(sd.getName()) ? sd.getKeyword() : sd.getName()),
-                        String.format(HTML_CHILDREN_BODY, scenarioIdx, body)
+                        String.format(HtmlTemplate.HTML_CHILDREN_BODY, scenarioIdx, body)
                 ));
 
                 scenarioIdx++;

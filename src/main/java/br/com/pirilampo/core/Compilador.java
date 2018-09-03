@@ -1,6 +1,7 @@
 package br.com.pirilampo.core;
 
 import br.com.pirilampo.bean.Parametro;
+import br.com.pirilampo.constant.HtmlTemplate;
 import gherkin.AstBuilder;
 import gherkin.Parser;
 import gherkin.TokenMatcher;
@@ -17,11 +18,6 @@ import java.util.List;
 @Slf4j
 public class Compilador {
     public static StringBuilder LOG;
-    private final String HTML_TEMPLATE = "<script type=\"text/ng-template\" id=\"%s\">%s</script>\n";
-    private final String HTML_JAVASCRIPT = "<script type=\"text/javascript\">%s</script>\n";
-    private final String HTML_CSS = "<style>%s</style>\n";
-    private final String HTML_FEATURE_PDF = "<h1 class=\"page-header\">%s <small>%s <em>%s</em></small></h1>\n" +
-            "%s\n<span style=\"page-break-after: always\"></span>";
     static List<File> PAGINA_HTML_ANEXO;
 
     public Compilador(){
@@ -137,12 +133,12 @@ public class Compilador {
                         String featureHtml = getFeatureHtml(parametro, fmd.getAbsolutePath(), pathListMaster);
 
                         htmlTemplate.append(String.format(
-                                HTML_TEMPLATE,
+                                HtmlTemplate.HTML_TEMPLATE,
                                 "master_" + htmlFeatureId,
                                 featureHtml
                         ));
                         htmlTemplate.append(String.format(
-                                HTML_TEMPLATE,
+                                HtmlTemplate.HTML_TEMPLATE,
                                 "master_" + htmlFeatureId.replace(".html", ".feature"),
                                 Resource.loadFeature(fmd.getAbsolutePath())
                         ));
@@ -167,12 +163,12 @@ public class Compilador {
 
                 String featureHtml = getFeatureHtml(parametro, f.getAbsolutePath(), pathList);
 
-                htmlTemplate.append(String.format(HTML_TEMPLATE, htmlFeatureId, featureHtml));
+                htmlTemplate.append(String.format(HtmlTemplate.HTML_TEMPLATE, htmlFeatureId, featureHtml));
 
                 // Salva as feature para diff
                 if(!StringUtils.isEmpty(parametro.getTxtSrcFonteMaster())){
                     htmlTemplate.append(String.format(
-                            HTML_TEMPLATE,
+                            HtmlTemplate.HTML_TEMPLATE,
                             htmlFeatureId.replace(".html", ".feature"),
                             Resource.loadFeature(f.getAbsolutePath())
                     ));
@@ -193,9 +189,9 @@ public class Compilador {
             String html = Resource.loadResource("htmlTemplate/html/template_feature_pasta.html");
 
             // adiciona resources
-            htmlCss.append(String.format(HTML_CSS, Resource.loadResource("htmlTemplate/dist/feature-pasta.min.css")));
-            htmlJavascript.append(String.format(HTML_JAVASCRIPT, Resource.loadResource("htmlTemplate/dist/feature-pasta.min.js")));
-            htmlJavascript.append(String.format(HTML_JAVASCRIPT, Resource.loadResource("htmlTemplate/dist/feature-pasta-angular.min.js")));
+            htmlCss.append(String.format(HtmlTemplate.HTML_CSS, Resource.loadResource("htmlTemplate/dist/feature-pasta.min.css")));
+            htmlJavascript.append(String.format(HtmlTemplate.HTML_JAVASCRIPT, Resource.loadResource("htmlTemplate/dist/feature-pasta.min.js")));
+            htmlJavascript.append(String.format(HtmlTemplate.HTML_JAVASCRIPT, Resource.loadResource("htmlTemplate/dist/feature-pasta-angular.min.js")));
 
             html = html.replace("#PROJECT_NAME#", parametro.getTxtNome());
             html = html.replace("#PROJECT_VERSION#", parametro.getTxtVersao());
@@ -243,7 +239,7 @@ public class Compilador {
         //------------------ BUILD -----------------
         String html = Resource.loadResource("htmlTemplate/html/template_feature.html");
 
-        String htmlCss = String.format(HTML_CSS, Resource.loadResource("htmlTemplate/dist/feature.min.css"));
+        String htmlCss = String.format(HtmlTemplate.HTML_CSS, Resource.loadResource("htmlTemplate/dist/feature.min.css"));
 
         html = html.replace("#PROJECT_NAME#", parametro.getTxtNome());
         html = html.replace("#PROJECT_VERSION#", parametro.getTxtVersao());
@@ -271,7 +267,7 @@ public class Compilador {
         String html = getFeatureHtml(parametro, feature.getAbsolutePath(), pathList);
 
         html = String.format(
-                HTML_FEATURE_PDF,
+                HtmlTemplate.HTML_FEATURE_PDF,
                 parametro.getTxtNome(),
                 feature.getName().replace(Resource.getExtension(feature), ""),
                 parametro.getTxtVersao(),
@@ -305,7 +301,7 @@ public class Compilador {
                 String rawHtml = getFeatureHtml(parametro, f.getAbsolutePath(), pathList);
 
                 html.append(String.format(
-                        HTML_FEATURE_PDF,
+                        HtmlTemplate.HTML_FEATURE_PDF,
                         parametro.getTxtNome(),
                         f.getName().replace(Resource.getExtension(f), ""),
                         parametro.getTxtVersao(),
