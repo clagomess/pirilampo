@@ -13,6 +13,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.File;
@@ -21,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+@Slf4j
 public class MainController extends MainForm implements Initializable {
     private final String MSG_OPE_SUCESSO = "Operação realizada com sucesso!";
     private final List<Color> cores = new ArrayList<>();
@@ -64,8 +66,9 @@ public class MainController extends MainForm implements Initializable {
 
     private void selecionarFonte(boolean isFonteMaster){
         File file;
+        final Compilacao compilacao = Compilacao.valueOf((String) tipCompilacao.getSelectedToggle().getUserData());
 
-        if(tipCompilacao.getSelectedToggle().getUserData() == Compilacao.FEATURE){
+        if(compilacao == Compilacao.FEATURE){
             FileChooser chooser = new FileChooser();
             chooser.setTitle("Selecionar Fonte");
 
@@ -80,12 +83,18 @@ public class MainController extends MainForm implements Initializable {
         }
 
         if(file != null) {
-            if(tipCompilacao.getSelectedToggle().getUserData() != Compilacao.FEATURE){
+            if(!isFonteMaster && compilacao != Compilacao.FEATURE){
                 setData(PropertiesUtil.getData(file.getAbsolutePath()));
             }
 
             if(isFonteMaster){
                 txtSrcFonteMaster.setText(file.getAbsolutePath());
+
+                if(txtSrcFonte.getText().equals(txtSrcFonteMaster.getText())){
+                    showDialog(Alert.AlertType.WARNING, "As pastas para comparação não podem ser iguais.");
+                    txtSrcFonte.setText("");
+                    txtSrcFonteMaster.setText("");
+                }
             } else {
                 txtSrcFonte.setText(file.getAbsolutePath());
             }
@@ -101,12 +110,14 @@ public class MainController extends MainForm implements Initializable {
     }
 
     private void compilar(boolean isPdf){
+        final Compilacao compilacao = Compilacao.valueOf((String) tipCompilacao.getSelectedToggle().getUserData());
+
         if(StringUtils.isEmpty(txtSrcFonte.getText())){
-            showDialog(Alert.AlertType.WARNING, tipCompilacao.getSelectedToggle().getUserData() == Compilacao.FEATURE ? "Favor selecionar uma feature!" : "Favor selecionar uma pasta");
+            showDialog(Alert.AlertType.WARNING, compilacao == Compilacao.FEATURE ? "Favor selecionar uma feature!" : "Favor selecionar uma pasta");
             return;
         }
 
-        if(tipCompilacao.getSelectedToggle().getUserData() == Compilacao.DIFF && StringUtils.isEmpty(txtSrcFonteMaster.getText())){
+        if(compilacao == Compilacao.DIFF && StringUtils.isEmpty(txtSrcFonteMaster.getText())){
             showDialog(Alert.AlertType.WARNING, "É necessário selecionar a pasta MASTER para realizar a comparação.");
             return;
         }
@@ -118,23 +129,21 @@ public class MainController extends MainForm implements Initializable {
             Platform.runLater(() -> progressBar.setProgress(-1));
             Platform.runLater(() -> root.setDisable(true));
 
-            Compilacao tipCompilacaoConst = Compilacao.valueOf((String) tipCompilacao.getSelectedToggle().getUserData());
-
             try {
-                if(!isPdf && tipCompilacaoConst == Compilacao.FEATURE){
+                if(!isPdf && compilacao == Compilacao.FEATURE){
                     compilador.compilarFeature(parametro);
                 }
 
-                if(!isPdf && (tipCompilacaoConst == Compilacao.PASTA || tipCompilacaoConst == Compilacao.DIFF)){
+                if(!isPdf && (compilacao == Compilacao.PASTA || compilacao == Compilacao.DIFF)){
                     compilador.compilarPasta(parametro);
                     PropertiesUtil.setData(parametro);
                 }
 
-                if(isPdf && tipCompilacaoConst == Compilacao.FEATURE){
+                if(isPdf && compilacao == Compilacao.FEATURE){
                     compilador.compilarFeaturePdf(parametro);
                 }
 
-                if(isPdf && tipCompilacaoConst == Compilacao.PASTA){
+                if(isPdf && compilacao == Compilacao.PASTA){
                     compilador.compilarPastaPdf(parametro);
                 }
 
@@ -164,6 +173,15 @@ public class MainController extends MainForm implements Initializable {
         if(file != null) {
             txtLogoSrc.setText(file.getAbsolutePath());
         }
+    }
+
+    public void tipCompilacaoChange(){
+        final Compilacao compilacao = Compilacao.valueOf((String) tipCompilacao.getSelectedToggle().getUserData());
+
+        txtSrcFonte.setText("");
+        txtSrcFonteMaster.setText("");
+        txtSrcFonteMaster.setDisable(compilacao != Compilacao.DIFF);
+        btnSelecionarFonteMaster.setDisable(compilacao != Compilacao.DIFF);
     }
 
     private void showDialog(Alert.AlertType alertType, String msg){

@@ -114,9 +114,9 @@
         <fx:define>
             <ToggleGroup fx:id="tipCompilacao" />
         </fx:define>
-        <RadioButton GridPane.columnIndex="0" toggleGroup="$tipCompilacao" text="Coletiva/Pasta" userData="PASTA" mnemonicParsing="false" selected="true"/>
-        <RadioButton GridPane.columnIndex="1" toggleGroup="$tipCompilacao" text="Individual" userData="FEATURE" mnemonicParsing="false"/>
-        <RadioButton GridPane.columnIndex="2" toggleGroup="$tipCompilacao" text="Diff/Comparação" userData="DIFF" mnemonicParsing="false"/>
+        <RadioButton GridPane.columnIndex="0" toggleGroup="$tipCompilacao" onAction="#tipCompilacaoChange" text="Coletiva/Pasta" userData="PASTA" mnemonicParsing="false" selected="true"/>
+        <RadioButton GridPane.columnIndex="1" toggleGroup="$tipCompilacao" onAction="#tipCompilacaoChange" text="Individual" userData="FEATURE" mnemonicParsing="false"/>
+        <RadioButton GridPane.columnIndex="2" toggleGroup="$tipCompilacao" onAction="#tipCompilacaoChange" text="Diff/Comparação" userData="DIFF" mnemonicParsing="false"/>
     </GridPane>
     <GridPane GridPane.rowIndex="11" hgap="10.0" vgap="10.0">
         <columnConstraints>
@@ -128,8 +128,8 @@
         </rowConstraints>
         <TextField GridPane.rowIndex="0" GridPane.columnIndex="0" fx:id="txtSrcFonte" promptText="Pasta/Feature Fonte"/>
         <Button GridPane.rowIndex="0" GridPane.columnIndex="1" fx:id="btnSelecionarFonte" onAction="#selecionarFonte" text="Selecionar"/>
-        <TextField GridPane.rowIndex="1" GridPane.columnIndex="0" fx:id="txtSrcFonteMaster" promptText="Pasta Fonte Master"/>
-        <Button GridPane.rowIndex="1" GridPane.columnIndex="1" fx:id="btnSelecionarFonteMaster" onAction="#selecionarFonteMaster" text="Selecionar"/>
+        <TextField GridPane.rowIndex="1" GridPane.columnIndex="0" fx:id="txtSrcFonteMaster" promptText="Pasta Fonte Master" disable="true"/>
+        <Button GridPane.rowIndex="1" GridPane.columnIndex="1" fx:id="btnSelecionarFonteMaster" onAction="#selecionarFonteMaster" text="Selecionar" disable="true"/>
     </GridPane>
     <GridPane GridPane.rowIndex="12" hgap="10.0">
         <columnConstraints>
