@@ -78,6 +78,10 @@ public class MainController extends MainForm implements Initializable {
         }
 
         if(file != null) {
+            if(tipCompilacao.getSelectedToggle().getUserData() != Compilacao.FEATURE){
+                setData(PropertiesUtil.getData(file.getAbsolutePath()));
+            }
+
             if(isFonteMaster){
                 txtSrcFonteMaster.setText(file.getAbsolutePath());
             } else {

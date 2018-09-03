@@ -11,13 +11,13 @@ import java.util.Properties;
 public class PropertiesUtil {
     private static final String FILENAME = "/../html/config.properties";
 
-    public static Parametro getData(String htmlPath){
+    public static Parametro getData(String sourcePath){
         Properties prop = new Properties();
         InputStream input = null;
 
-        if((new File(htmlPath + FILENAME)).isFile()) {
+        if((new File(sourcePath + FILENAME)).isFile()) {
             try {
-                input = new FileInputStream(FILENAME);
+                input = new FileInputStream(sourcePath + FILENAME);
 
                 prop.load(input);
             } catch (IOException ex) {
@@ -57,11 +57,11 @@ public class PropertiesUtil {
         }
     }
 
-    private static Properties parametroToProperties(Parametro parametro){
+    public static Properties parametroToProperties(Parametro parametro){
         Properties prop = new Properties();
         prop.setProperty("txtNome", parametro.getTxtNome());
         prop.setProperty("txtVersao", parametro.getTxtVersao());
-        prop.setProperty("txtLogoSrc", parametro.getTxtLogoSrc());
+        prop.setProperty("txtLogoSrc", parametro.getTxtLogoSrc() != null ? parametro.getTxtLogoSrc() : "");
         prop.setProperty("clrMenu", parametro.getClrMenu());
         prop.setProperty("clrTextoMenu", parametro.getClrTextoMenu());
         prop.setProperty("txtNomeMenuRaiz", parametro.getTxtNomeMenuRaiz());

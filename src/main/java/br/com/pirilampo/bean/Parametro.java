@@ -27,13 +27,13 @@ public class Parametro {
     private String txtOutputTarget;
 
     public Parametro(MainForm form){
-        this.txtNome = form.txtNome.getText();
-        this.txtVersao = form.txtVersao.getText();
+        this.txtNome = !StringUtils.isEmpty(form.txtNome.getText()) ? form.txtNome.getText() : this.txtNome;
+        this.txtVersao = !StringUtils.isEmpty(form.txtVersao.getText()) ? form.txtVersao.getText() : this.txtVersao;
         this.txtLogoSrc = form.txtLogoSrc.getText();
         this.tipLayoutPdf = LayoutPdf.valueOf((String) form.tipLayoutPdf.getSelectedToggle().getUserData());
         this.clrMenu = colorHex(form.clrMenu.getValue());
         this.clrTextoMenu = colorHex(form.clrTextoMenu.getValue());
-        this.txtNomeMenuRaiz = form.txtNomeMenuRaiz.getText();
+        this.txtNomeMenuRaiz = !StringUtils.isEmpty(form.txtNomeMenuRaiz.getText()) ? form.txtNomeMenuRaiz.getText() : this.txtNomeMenuRaiz;
         this.sitEmbedarImagens = form.sitEmbedarImagens.isSelected();
         this.tipCompilacao = Compilacao.valueOf((String) form.tipCompilacao.getSelectedToggle().getUserData());
         this.txtSrcFonte = form.txtSrcFonte.getText();

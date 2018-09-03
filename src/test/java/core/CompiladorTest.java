@@ -1,3 +1,5 @@
+package core;
+
 import br.com.pirilampo.bean.Parametro;
 import br.com.pirilampo.core.Compilador;
 import br.com.pirilampo.core.ParseMenu;
