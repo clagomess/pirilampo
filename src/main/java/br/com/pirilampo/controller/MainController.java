@@ -5,6 +5,7 @@ import br.com.pirilampo.bean.Parametro;
 import br.com.pirilampo.constant.Compilacao;
 import br.com.pirilampo.core.Compilador;
 import br.com.pirilampo.util.ExceptionUtil;
+import br.com.pirilampo.util.PropertiesUtil;
 import javafx.application.Platform;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
@@ -120,6 +121,7 @@ public class MainController extends MainForm implements Initializable {
 
                 if(!isPdf && (tipCompilacaoConst == Compilacao.PASTA || tipCompilacaoConst == Compilacao.DIFF)){
                     compilador.compilarPasta(parametro);
+                    PropertiesUtil.setData(parametro);
                 }
 
                 if(isPdf && tipCompilacaoConst == Compilacao.FEATURE){
