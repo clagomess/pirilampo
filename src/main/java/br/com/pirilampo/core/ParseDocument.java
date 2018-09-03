@@ -187,7 +187,7 @@ class ParseDocument {
         }
 
         // altera imagens para base64
-        if(parametro.isSitEmbedarImagens()) {
+        if(parametro.getSitEmbedarImagens()) {
             Pattern p = Pattern.compile("src=\"(.+?)\"");
             Matcher m = p.matcher(txt);
 

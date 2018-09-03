@@ -20,7 +20,7 @@ public class Parametro {
     private String clrMenu = "#14171A";
     private String clrTextoMenu = "#DDDDDD";
     private String txtNomeMenuRaiz = "Features";
-    private boolean sitEmbedarImagens = true;
+    private Boolean sitEmbedarImagens = true;
     private Compilacao tipCompilacao = Compilacao.PASTA;
     private String txtSrcFonte;
     private String txtSrcFonteMaster;
@@ -56,6 +56,7 @@ public class Parametro {
         this.clrMenu = !StringUtils.isEmpty(properties.getProperty("clrMenu")) ? properties.getProperty("clrMenu") : this.clrMenu;
         this.clrTextoMenu = !StringUtils.isEmpty(properties.getProperty("clrTextoMenu")) ? properties.getProperty("clrTextoMenu") : this.clrTextoMenu;
         this.txtNomeMenuRaiz = !StringUtils.isEmpty(properties.getProperty("txtNomeMenuRaiz")) ? properties.getProperty("txtNomeMenuRaiz") : this.txtNomeMenuRaiz;
+        this.sitEmbedarImagens = !StringUtils.isEmpty(properties.getProperty("sitEmbedarImagens")) ? Boolean.valueOf(properties.getProperty("sitEmbedarImagens")) : this.sitEmbedarImagens;
     }
 
     public String colorHex(Color color){

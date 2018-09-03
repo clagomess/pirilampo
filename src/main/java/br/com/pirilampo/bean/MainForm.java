@@ -32,5 +32,6 @@ public class MainForm {
         this.clrMenu.setValue(Color.web(parametro.getClrMenu()));
         this.clrTextoMenu.setValue(Color.web(parametro.getClrTextoMenu()));
         this.txtNomeMenuRaiz.setText(parametro.getTxtNomeMenuRaiz());
+        this.sitEmbedarImagens.setSelected(parametro.getSitEmbedarImagens());
     }
 }

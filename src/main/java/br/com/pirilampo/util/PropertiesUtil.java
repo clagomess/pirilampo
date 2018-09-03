@@ -65,6 +65,7 @@ public class PropertiesUtil {
         prop.setProperty("clrMenu", parametro.getClrMenu());
         prop.setProperty("clrTextoMenu", parametro.getClrTextoMenu());
         prop.setProperty("txtNomeMenuRaiz", parametro.getTxtNomeMenuRaiz());
+        prop.setProperty("sitEmbedarImagens", parametro.getSitEmbedarImagens().toString());
 
         return prop;
     }
