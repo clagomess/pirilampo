@@ -1,5 +1,6 @@
 package br.com.pirilampo.core;
 
+import br.com.pirilampo.bean.Parametro;
 import gherkin.ast.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringEscapeUtils;
@@ -14,10 +15,16 @@ import java.util.regex.Pattern;
 class ParseDocument {
     private GherkinDocument gd;
     private List<String> pathList;
+    private Parametro parametro;
 
-    ParseDocument(GherkinDocument gd, List<String> pathList){
+    public ParseDocument() throws IllegalAccessException {
+        throw new IllegalAccessException("NOP!");
+    }
+
+    ParseDocument(Parametro parametro, GherkinDocument gd, List<String> pathList){
         this.gd = gd;
         this.pathList = pathList;
+        this.parametro = parametro;
     }
 
     public String getHtml(){
@@ -180,17 +187,19 @@ class ParseDocument {
         }
 
         // altera imagens para base64
-        Pattern p = Pattern.compile("src=\"(.+?)\"");
-        Matcher m = p.matcher(txt);
+        if(parametro.isSitEmbedarImagens()) {
+            Pattern p = Pattern.compile("src=\"(.+?)\"");
+            Matcher m = p.matcher(txt);
 
-        while(m.find()) {
-            String imgSrcBase64 = ParseImage.parse(m.group(1), pathList);
-            txt = txt.replace("src=\""+ m.group(1) +"\"", "src=\"" + imgSrcBase64 + "\"");
+            while (m.find()) {
+                String imgSrcBase64 = ParseImage.parse(m.group(1), pathList);
+                txt = txt.replace("src=\"" + m.group(1) + "\"", "src=\"" + imgSrcBase64 + "\"");
+            }
         }
 
         // verifica html embeded
-        p = Pattern.compile("href=\"(.+)\\.html\"");
-        m = p.matcher(txt);
+        Pattern p = Pattern.compile("href=\"(.+)\\.html\"");
+        Matcher m = p.matcher(txt);
 
         while(m.find()) {
             for (String path : pathList) {

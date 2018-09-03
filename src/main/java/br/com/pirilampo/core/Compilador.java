@@ -29,7 +29,7 @@ public class Compilador {
         Compilador.PAGINA_HTML_ANEXO = new ArrayList<>();
     }
 
-    private String getFeatureHtml(String pathFeature, List<String> pathList) throws IOException {
+    private String getFeatureHtml(Parametro parametro, String pathFeature, List<String> pathList) throws IOException {
         Parser<GherkinDocument> parser = new Parser<>(new AstBuilder());
         TokenMatcher matcher = new TokenMatcher();
         String html = null;
@@ -43,7 +43,7 @@ public class Compilador {
             GherkinDocument gherkinDocument = parser.parse(in, matcher);
 
             if (gherkinDocument != null) {
-                ParseDocument pd = new ParseDocument(gherkinDocument, pathList);
+                ParseDocument pd = new ParseDocument(parametro, gherkinDocument, pathList);
                 html = pd.getHtml();
             }
 
@@ -134,7 +134,7 @@ public class Compilador {
                         pathListMaster.add(parametro.getTxtSrcFonteMaster());
                         pathListMaster.add(fmd.getAbsolutePath().replace(fmd.getName(), ""));
 
-                        String featureHtml = getFeatureHtml(fmd.getAbsolutePath(), pathListMaster);
+                        String featureHtml = getFeatureHtml(parametro, fmd.getAbsolutePath(), pathListMaster);
 
                         htmlTemplate.append(String.format(
                                 HTML_TEMPLATE,
@@ -165,7 +165,7 @@ public class Compilador {
                 pathList.add(parametro.getTxtSrcFonte());
                 pathList.add(f.getAbsolutePath().replace(f.getName(), ""));
 
-                String featureHtml = getFeatureHtml(f.getAbsolutePath(), pathList);
+                String featureHtml = getFeatureHtml(parametro, f.getAbsolutePath(), pathList);
 
                 htmlTemplate.append(String.format(HTML_TEMPLATE, htmlFeatureId, featureHtml));
 
@@ -238,7 +238,7 @@ public class Compilador {
         // compila
         List<String> pathList = new ArrayList<>();
         pathList.add(feature.getAbsolutePath().replace(feature.getName(), ""));
-        String featureHtml = getFeatureHtml(feature.getAbsolutePath(), pathList);
+        String featureHtml = getFeatureHtml(parametro, feature.getAbsolutePath(), pathList);
 
         //------------------ BUILD -----------------
         String html = Resource.loadResource("htmlTemplate/html/template_feature.html");
@@ -268,7 +268,7 @@ public class Compilador {
 
         List<String> pathList = new ArrayList<>();
         pathList.add(feature.getAbsolutePath().replace(feature.getName(), ""));
-        String html = getFeatureHtml(feature.getAbsolutePath(), pathList);
+        String html = getFeatureHtml(parametro, feature.getAbsolutePath(), pathList);
 
         html = String.format(
                 HTML_FEATURE_PDF,
@@ -302,7 +302,7 @@ public class Compilador {
                 pathList.add(parametro.getTxtSrcFonte());
                 pathList.add(f.getAbsolutePath().replace(f.getName(), ""));
 
-                String rawHtml = getFeatureHtml(f.getAbsolutePath(), pathList);
+                String rawHtml = getFeatureHtml(parametro, f.getAbsolutePath(), pathList);
 
                 html.append(String.format(
                         HTML_FEATURE_PDF,
