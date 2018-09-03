@@ -58,7 +58,7 @@ public class Parametro {
         this.txtNomeMenuRaiz = !StringUtils.isEmpty(properties.getProperty("txtNomeMenuRaiz")) ? properties.getProperty("txtNomeMenuRaiz") : this.txtNomeMenuRaiz;
     }
 
-    private String colorHex(Color color){
-        return '#' + Integer.toHexString(color.hashCode()).substring(0, 6);
+    public String colorHex(Color color){
+        return '#' + color.toString().substring(2, 8);
     }
 }

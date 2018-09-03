@@ -203,7 +203,8 @@ public class Compilador {
             html = html.replace("#HTML_CSS#", htmlCss);
             html = html.replace("#HTML_JAVASCRIPT#", htmlJavascript);
             html = html.replace("#HTML_TEMPLATE#", htmlTemplate);
-            html = html.replace("#PROJECT_COLOR#", parametro.getClrMenu());
+            html = html.replace("#MENU_COLOR#", parametro.getClrMenu());
+            html = html.replace("#MENU_TEXT_COLOR#", parametro.getClrTextoMenu());
 
             // monta cabeçalho menu
             if(!StringUtils.isEmpty(parametro.getTxtLogoSrc())){
