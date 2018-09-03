@@ -88,7 +88,7 @@ public class Compilador {
                 htmlFeatureRoot = htmlFeatureRoot.replace(f.getName(), "");
                 htmlFeatureRoot = htmlFeatureRoot.replace(File.separator, " ");
                 htmlFeatureRoot = htmlFeatureRoot.trim();
-                htmlFeatureRoot = !StringUtils.isEmpty(parametro.getTxtNomeMenuRaiz()) ? parametro.getTxtNomeMenuRaiz() : htmlFeatureRoot;
+                htmlFeatureRoot = StringUtils.isEmpty(htmlFeatureRoot) ? parametro.getTxtNomeMenuRaiz() : htmlFeatureRoot;
 
                 String htmlFeatureId = htmlFeatureRoot + "_" + f.getName().replace(Resource.getExtension(f), ".html");
 
