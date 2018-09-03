@@ -27,8 +27,10 @@ public class MainController extends MainForm implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        cores.add(Color.web("#DDDDDD"));
-        cores.add(Color.web("#14171A"));
+        Parametro parametro = new Parametro();
+
+        cores.add(Color.web(parametro.getClrTextoMenu()));
+        cores.add(Color.web(parametro.getClrMenu()));
         cores.add(Color.web("#D50000"));
         cores.add(Color.web("#E67C73"));
         cores.add(Color.web("#F4511E"));
@@ -48,8 +50,8 @@ public class MainController extends MainForm implements Initializable {
             clrTextoMenu.getCustomColors().add(cor);
         }
 
-        clrMenu.setValue(Color.web("#14171A"));
-        clrTextoMenu.setValue(Color.web("#DDDDDD"));
+        clrMenu.setValue(Color.web(parametro.getClrMenu()));
+        clrTextoMenu.setValue(Color.web(parametro.getClrTextoMenu()));
     }
 
     public void selecionarFonte(){
