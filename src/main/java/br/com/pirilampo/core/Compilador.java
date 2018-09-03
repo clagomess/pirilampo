@@ -10,19 +10,13 @@ import org.apache.commons.io.input.BOMInputStream;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.*;
-import java.math.BigInteger;
-import java.net.URL;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Slf4j
 public class Compilador {
     public static StringBuilder LOG;
-    private List<File> arquivos = new ArrayList<>();
     private final String HTML_TEMPLATE = "<script type=\"text/ng-template\" id=\"%s\">%s</script>\n";
     private final String HTML_JAVASCRIPT = "<script type=\"text/javascript\">%s</script>\n";
     private final String HTML_CSS = "<style>%s</style>\n";
@@ -35,26 +29,6 @@ public class Compilador {
         Compilador.PAGINA_HTML_ANEXO = new ArrayList<>();
     }
 
-    //====== Metodos
-
-    private void listarPasta(File curDir) throws Exception {
-        File[] filesList = curDir.listFiles();
-
-        if(filesList != null) {
-            for (File f : filesList) {
-                if (f.isDirectory()) {
-                    listarPasta(f);
-                }
-
-                if (f.isFile() && ".feature".equalsIgnoreCase(getExtension(f))) {
-                    arquivos.add(f);
-                }
-            }
-        }else{
-            throw new Exception("Pasta não localizada!");
-        }
-    }
-
     private String getFeatureHtml(String pathFeature, List<String> pathList) throws IOException {
         Parser<GherkinDocument> parser = new Parser<>(new AstBuilder());
         TokenMatcher matcher = new TokenMatcher();
@@ -64,7 +38,7 @@ public class Compilador {
             // BOMInputStream para caso o arquivo possuir BOM
             BOMInputStream bis = new BOMInputStream(fis);
 
-            Reader in = new InputStreamReader(bis, "UTF-8");
+            Reader in = new InputStreamReader(bis, StandardCharsets.UTF_8);
 
             GherkinDocument gherkinDocument = parser.parse(in, matcher);
 
@@ -97,9 +71,7 @@ public class Compilador {
             File curDirMaster = new File(parametro.getTxtSrcFonteMaster());
 
             // Popula com arquivos feature
-            arquivos = new ArrayList<>();
-            listarPasta(curDirMaster);
-            arquivosMaster = arquivos;
+            arquivosMaster = ListarPasta.listarPasta(curDirMaster);
         }
 
         // -------- NORMAL
@@ -107,8 +79,7 @@ public class Compilador {
         File curDir = new File(parametro.getTxtSrcFonte());
 
         // Popula com arquivos feature
-        arquivos = new ArrayList<>();
-        listarPasta(curDir);
+        final List<File> arquivos = ListarPasta.listarPasta(curDir);
 
         if(arquivos.size() > 0){
             for(File f : arquivos){
@@ -119,7 +90,7 @@ public class Compilador {
                 htmlFeatureRoot = htmlFeatureRoot.trim();
                 htmlFeatureRoot = !StringUtils.isEmpty(parametro.getTxtNomeMenuRaiz()) ? parametro.getTxtNomeMenuRaiz() : htmlFeatureRoot;
 
-                String htmlFeatureId = htmlFeatureRoot + "_" + f.getName().replace(getExtension(f), ".html");
+                String htmlFeatureId = htmlFeatureRoot + "_" + f.getName().replace(Resource.getExtension(f), ".html");
 
                 // Processa Master
                 if(!StringUtils.isEmpty(parametro.getTxtSrcFonteMaster())) {
@@ -128,10 +99,10 @@ public class Compilador {
 
                     if(arquivosMaster != null && !arquivosMaster.isEmpty()) {
                         for (File fm : arquivosMaster) {
-                            String absoluteNFM = absoluteNameFeature(parametro.getTxtSrcFonteMaster(), fm.getAbsolutePath());
-                            String absoluteNFB = absoluteNameFeature(parametro.getTxtSrcFonte(), f.getAbsolutePath());
-                            String absoluteNFMMd5 = md5(loadFeature(fm.getAbsolutePath()));
-                            String absoluteNFBMd5 = md5(loadFeature(f.getAbsolutePath()));
+                            String absoluteNFM = Resource.absoluteNameFeature(parametro.getTxtSrcFonteMaster(), fm.getAbsolutePath());
+                            String absoluteNFB = Resource.absoluteNameFeature(parametro.getTxtSrcFonte(), f.getAbsolutePath());
+                            String absoluteNFMMd5 = Resource.md5(Resource.loadFeature(fm.getAbsolutePath()));
+                            String absoluteNFBMd5 = Resource.md5(Resource.loadFeature(f.getAbsolutePath()));
 
                             if (absoluteNFM.equals(absoluteNFB)) {
                                 if(absoluteNFMMd5.equals(absoluteNFBMd5)){
@@ -173,7 +144,7 @@ public class Compilador {
                         htmlTemplate.append(String.format(
                                 HTML_TEMPLATE,
                                 "master_" + htmlFeatureId.replace(".html", ".feature"),
-                                loadFeature(fmd.getAbsolutePath())
+                                Resource.loadFeature(fmd.getAbsolutePath())
                         ));
                     }
                 }
@@ -183,10 +154,10 @@ public class Compilador {
                     parseMenu.addMenuItem(
                             htmlFeatureRoot +
                             File.separator +
-                            f.getAbsolutePath().replace(curDir.getAbsolutePath(), "").replace(getExtension(f), ".feature")
+                            f.getAbsolutePath().replace(curDir.getAbsolutePath(), "").replace(Resource.getExtension(f), ".feature")
                     );
                 }else{
-                    parseMenu.addMenuItem(f.getAbsolutePath().replace(curDir.getAbsolutePath().replace(getExtension(f), ".feature"), ""));
+                    parseMenu.addMenuItem(f.getAbsolutePath().replace(curDir.getAbsolutePath().replace(Resource.getExtension(f), ".feature"), ""));
                 }
 
                 // Gera a feture
@@ -199,18 +170,18 @@ public class Compilador {
                 htmlTemplate.append(String.format(HTML_TEMPLATE, htmlFeatureId, featureHtml));
 
                 // Salva as feature para diff
-                if(parametro.getTxtSrcFonteMaster() != null){
+                if(!StringUtils.isEmpty(parametro.getTxtSrcFonteMaster())){
                     htmlTemplate.append(String.format(
                             HTML_TEMPLATE,
                             htmlFeatureId.replace(".html", ".feature"),
-                            loadFeature(f.getAbsolutePath())
+                            Resource.loadFeature(f.getAbsolutePath())
                     ));
                 }
             }
 
             // adiciona html embed
             for (File htmlEmbed : Compilador.PAGINA_HTML_ANEXO){
-                String loadedHtmlEmbed = loadFeature(htmlEmbed.getAbsolutePath());
+                String loadedHtmlEmbed = Resource.loadFeature(htmlEmbed.getAbsolutePath());
                 htmlTemplate.append(String.format(
                         "<template type=\"text/ng-template\" id=\"%s\">%s</template>%n",
                         htmlEmbed.getName(),
@@ -219,12 +190,12 @@ public class Compilador {
             }
 
             //------------------ BUILD -----------------
-            String html = loadResource("htmlTemplate/html/template_feature_pasta.html");
+            String html = Resource.loadResource("htmlTemplate/html/template_feature_pasta.html");
 
             // adiciona resources
-            htmlCss.append(String.format(HTML_CSS, loadResource("htmlTemplate/dist/feature-pasta.min.css")));
-            htmlJavascript.append(String.format(HTML_JAVASCRIPT, loadResource("htmlTemplate/dist/feature-pasta.min.js")));
-            htmlJavascript.append(String.format(HTML_JAVASCRIPT, loadResource("htmlTemplate/dist/feature-pasta-angular.min.js")));
+            htmlCss.append(String.format(HTML_CSS, Resource.loadResource("htmlTemplate/dist/feature-pasta.min.css")));
+            htmlJavascript.append(String.format(HTML_JAVASCRIPT, Resource.loadResource("htmlTemplate/dist/feature-pasta.min.js")));
+            htmlJavascript.append(String.format(HTML_JAVASCRIPT, Resource.loadResource("htmlTemplate/dist/feature-pasta-angular.min.js")));
 
             html = html.replace("#PROJECT_NAME#", parametro.getTxtNome());
             html = html.replace("#PROJECT_VERSION#", parametro.getTxtVersao());
@@ -255,7 +226,7 @@ public class Compilador {
                 outDirF.mkdir();
             }
 
-            writeHtml(html, outDir + "index.html");
+            Resource.writeHtml(html, outDir + "index.html");
         }
     }
 
@@ -269,32 +240,21 @@ public class Compilador {
         String featureHtml = getFeatureHtml(feature.getAbsolutePath(), pathList);
 
         //------------------ BUILD -----------------
-        String html = loadResource("htmlTemplate/html/template_feature.html");
+        String html = Resource.loadResource("htmlTemplate/html/template_feature.html");
 
-        String htmlCss = String.format(HTML_CSS, loadResource("htmlTemplate/dist/feature.min.css"));
+        String htmlCss = String.format(HTML_CSS, Resource.loadResource("htmlTemplate/dist/feature.min.css"));
 
         html = html.replace("#PROJECT_NAME#", parametro.getTxtNome());
         html = html.replace("#PROJECT_VERSION#", parametro.getTxtVersao());
-        html = html.replace("#PROJECT_FEATURE#", feature.getName().replace(getExtension(feature), ""));
+        html = html.replace("#PROJECT_FEATURE#", feature.getName().replace(Resource.getExtension(feature), ""));
         html = html.replace("#HTML_CSS#", htmlCss);
         html = html.replace("#HTML_TEMPLATE#", featureHtml);
 
         // Grava
         String outDir = (parametro.getTxtOutputTarget() != null ? parametro.getTxtOutputTarget() : feature.getParent());
-        outDir += String.format("/%s.html", feature.getName().replace(getExtension(feature), ""));
+        outDir += String.format("/%s.html", feature.getName().replace(Resource.getExtension(feature), ""));
 
-        writeHtml(html, outDir);
-    }
-
-    private void writeHtml(String html, String path) throws IOException {
-        try (FileOutputStream fos = new FileOutputStream(path)){
-            OutputStreamWriter osw = new OutputStreamWriter(fos, "UTF-8");
-            Writer out = new BufferedWriter(osw);
-            out.write(html);
-            out.flush();
-        }catch (Exception e){
-            throw e;
-        }
+        Resource.writeHtml(html, outDir);
     }
 
     public void compilarFeaturePdf(Parametro parametro) throws Exception {
@@ -302,8 +262,8 @@ public class Compilador {
         File feature = new File(parametro.getTxtSrcFonte());
 
         //------------------ BUILD -----------------
-        String htmlTemplate = loadResource("htmlTemplate/html/template_feature_pdf.html");
-        String css = loadResource("htmlTemplate/dist/feature-pdf.min.css");
+        String htmlTemplate = Resource.loadResource("htmlTemplate/html/template_feature_pdf.html");
+        String css = Resource.loadResource("htmlTemplate/dist/feature-pdf.min.css");
 
         List<String> pathList = new ArrayList<>();
         pathList.add(feature.getAbsolutePath().replace(feature.getName(), ""));
@@ -312,7 +272,7 @@ public class Compilador {
         html = String.format(
                 HTML_FEATURE_PDF,
                 parametro.getTxtNome(),
-                feature.getName().replace(getExtension(feature), ""),
+                feature.getName().replace(Resource.getExtension(feature), ""),
                 parametro.getTxtVersao(),
                 html
         );
@@ -321,7 +281,7 @@ public class Compilador {
 
         ParsePdf pp = new ParsePdf();
 
-        String path = feature.getParent() + String.format("/%s.pdf", feature.getName().replace(getExtension(feature), ""));
+        String path = feature.getParent() + String.format("/%s.pdf", feature.getName().replace(Resource.getExtension(feature), ""));
 
         pp.buildHtml(path, html, css, parametro.getTipLayoutPdf().getValue());
     }
@@ -333,8 +293,7 @@ public class Compilador {
         File curDir = new File(parametro.getTxtSrcFonte());
 
         // Popula com arquivos feature
-        arquivos = new ArrayList<>();
-        listarPasta(curDir);
+        List<File> arquivos = ListarPasta.listarPasta(curDir);
 
         if(!arquivos.isEmpty()) {
             for (File f : arquivos) {
@@ -347,15 +306,15 @@ public class Compilador {
                 html.append(String.format(
                         HTML_FEATURE_PDF,
                         parametro.getTxtNome(),
-                        f.getName().replace(getExtension(f), ""),
+                        f.getName().replace(Resource.getExtension(f), ""),
                         parametro.getTxtVersao(),
                         rawHtml
                 ));
             }
 
             //------------------ BUILD -----------------
-            String htmlTemplate = loadResource("htmlTemplate/html/template_feature_pdf.html");
-            String css = loadResource("htmlTemplate/dist/feature-pdf.min.css");
+            String htmlTemplate = Resource.loadResource("htmlTemplate/html/template_feature_pdf.html");
+            String css = Resource.loadResource("htmlTemplate/dist/feature-pdf.min.css");
 
             html = new StringBuilder(htmlTemplate.replace("#HTML_TEMPLATE#", html));
 
@@ -370,100 +329,5 @@ public class Compilador {
 
             pp.buildHtml(outDir + "index.pdf", html.toString(), css, parametro.getTipLayoutPdf().getValue());
         }
-    }
-
-    private String loadResource(String src) throws IOException {
-        StringBuilder buffer = new StringBuilder();
-        String linha;
-
-        URL url = Thread.currentThread().getContextClassLoader().getResource(src);
-
-        if(url != null) {
-            BufferedReader br;
-
-            try (FileReader fr = new FileReader(url.getFile())) {
-                br = new BufferedReader(fr, 200 * 1024);
-
-                while ((linha = br.readLine()) != null) {
-                    buffer.append(linha).append("\n");
-                }
-            } catch (Exception e) {
-                try(InputStreamReader isr = new InputStreamReader(url.openStream())){
-                    br = new BufferedReader(isr, 200 * 1024);
-
-                    while ((linha = br.readLine()) != null) {
-                        buffer.append(linha).append("\n");
-                    }
-                } catch(Exception ea){
-                    log.warn(Compilador.class.getName(), e);
-                    log.warn(Compilador.class.getName(), ea);
-                }
-            }
-        } else {
-            log.warn("Falha ao carregar Resource");
-        }
-
-        return buffer.toString();
-    }
-
-    private String loadFeature(String pathFeature){
-        StringBuilder buffer = new StringBuilder();
-        String toReturn = "";
-        String linha;
-        BufferedReader br;
-
-        try (FileInputStream fis = new FileInputStream(pathFeature)){
-            BOMInputStream bis = new BOMInputStream(fis);
-
-            br = new BufferedReader(new InputStreamReader(bis, "UTF-8"));
-
-            while ((linha = br.readLine()) != null) {
-                buffer.append(linha).append("\n");
-            }
-
-            toReturn = buffer.toString().replaceAll("\\t", "   ");
-            toReturn = toReturn.trim();
-        }catch (Exception e){
-            log.warn(Compilador.class.getName(), e);
-        }
-
-        return toReturn;
-    }
-
-    private String md5(String str){
-        String md5 = "";
-
-        try {
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            md5 = String.format("%032x", new BigInteger(1, md.digest(str.getBytes())));
-        } catch (NoSuchAlgorithmException e) {
-            log.warn(Compilador.class.getName(), e);
-        }
-
-        return md5;
-    }
-
-    public String absoluteNameFeature(String path, String absolutePath){
-        path = path.replaceAll("\\\\", "");
-        absolutePath = absolutePath.replaceAll("\\\\", "");
-
-        path = path.replaceAll("\\/", "");
-        absolutePath = absolutePath.replaceAll("\\/", "");
-
-        return absolutePath.replace(path, "");
-    }
-
-    private String getExtension(File f){
-        String ext = "";
-        if(f != null && f.isFile()) {
-            Pattern p = Pattern.compile("\\.[a-zA-Z]+$");
-            Matcher m = p.matcher(f.getName());
-
-            if (m.find()) {
-                ext = m.group(0);
-            }
-        }
-
-        return ext;
     }
 }

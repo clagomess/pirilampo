@@ -420,19 +420,6 @@ public class CompiladorTest {
     }
 
     @Test
-    public void testAbsolutePathMethod(){
-        Compilador compilador = new Compilador();
-
-        String result = compilador.absoluteNameFeature("foo\\\\bar\\123", "foo\\bar\\123\\xxx.feature");
-
-        Assert.assertEquals("xxx.feature", result);
-
-        result = compilador.absoluteNameFeature("foo//bar/123", "foo/bar/123/xxx.feature");
-
-        Assert.assertEquals("xxx.feature", result);
-    }
-
-    @Test
     public void testMain(){
         final String outDir = featureDir + File.separator + "out_dir_main";
 
