@@ -2,12 +2,19 @@ package br.com.pirilampo.core;
 
 import br.com.pirilampo.bean.Parametro;
 import br.com.pirilampo.constant.HtmlTemplate;
+import gherkin.AstBuilder;
+import gherkin.Parser;
+import gherkin.TokenMatcher;
 import gherkin.ast.*;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.input.BOMInputStream;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.commonmark.renderer.html.HtmlRenderer;
 
-import java.io.File;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -17,18 +24,52 @@ class ParseDocument {
     private GherkinDocument gd;
     private List<String> pathList;
     private Parametro parametro;
+    private File feature;
+    @Getter
+    private List<File> paginaHtmlAnexo;
 
-    public ParseDocument() throws IllegalAccessException {
-        throw new IllegalAccessException("NOP!");
-    }
-
-    ParseDocument(Parametro parametro, GherkinDocument gd, List<String> pathList){
-        this.gd = gd;
-        this.pathList = pathList;
+    public ParseDocument(Parametro parametro, File feature, List<String> pathList){
         this.parametro = parametro;
+        this.feature = feature;
+        this.pathList = pathList;
+        this.paginaHtmlAnexo = new ArrayList<>();
     }
 
-    public String getHtml(){
+    public static String getFeatureHtml(Parametro parametro, File feature, List<String> pathList) throws IOException {
+        ParseDocument pd = new ParseDocument(parametro, feature, pathList);
+
+        return pd.getFeatureHtml();
+    }
+
+    public String getFeatureHtml() throws IOException {
+        Parser<GherkinDocument> parser = new Parser<>(new AstBuilder());
+        TokenMatcher matcher = new TokenMatcher();
+        String html = null;
+
+        try (FileInputStream fis = new FileInputStream(feature)) {
+            // BOMInputStream para caso o arquivo possuir BOM
+            BOMInputStream bis = new BOMInputStream(fis);
+
+            Reader in = new InputStreamReader(bis, StandardCharsets.UTF_8);
+
+            this.gd = parser.parse(in, matcher);
+
+            if (this.gd != null) {
+                html = getHtml();
+            }
+
+            Compilador.LOG.append("OK: ").append(feature.getAbsolutePath()).append("\n");
+            log.info("OK: {}", feature.getAbsolutePath());
+        } catch (Exception e){
+            Compilador.LOG.append("ERRRROU: ").append(feature.getAbsolutePath()).append("\n");
+            log.warn("ERRRROU: " + feature.getAbsolutePath());
+            throw e;
+        }
+
+        return html;
+    }
+
+    private String getHtml(){
         StringBuilder html = new StringBuilder();
 
         if(gd != null){
@@ -189,7 +230,7 @@ class ParseDocument {
             for (String path : pathList) {
                 File htmlEmbed = new File(path + File.separator + m.group(1) + ".html");
                 if (htmlEmbed.isFile()) {
-                    Compilador.PAGINA_HTML_ANEXO.add(htmlEmbed);
+                    paginaHtmlAnexo.add(htmlEmbed);
                     String urlHtmlEmbed = "#/html/" + m.group(1) + ".html";
                     txt = txt.replace("href=\""+ m.group(1) +".html\"", "href=\"" + urlHtmlEmbed + "\"");
                     break;

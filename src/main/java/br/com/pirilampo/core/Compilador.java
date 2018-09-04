@@ -2,56 +2,20 @@ package br.com.pirilampo.core;
 
 import br.com.pirilampo.bean.Parametro;
 import br.com.pirilampo.constant.HtmlTemplate;
-import gherkin.AstBuilder;
-import gherkin.Parser;
-import gherkin.TokenMatcher;
-import gherkin.ast.GherkinDocument;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.input.BOMInputStream;
 import org.apache.commons.lang.StringUtils;
 
-import java.io.*;
-import java.nio.charset.StandardCharsets;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
 public class Compilador {
     public static StringBuilder LOG;
-    static List<File> PAGINA_HTML_ANEXO;
 
     public Compilador(){
         Compilador.LOG = new StringBuilder();
-        Compilador.PAGINA_HTML_ANEXO = new ArrayList<>();
-    }
-
-    private String getFeatureHtml(Parametro parametro, String pathFeature, List<String> pathList) throws IOException {
-        Parser<GherkinDocument> parser = new Parser<>(new AstBuilder());
-        TokenMatcher matcher = new TokenMatcher();
-        String html = null;
-
-        try (FileInputStream fis = new FileInputStream(pathFeature)) {
-            // BOMInputStream para caso o arquivo possuir BOM
-            BOMInputStream bis = new BOMInputStream(fis);
-
-            Reader in = new InputStreamReader(bis, StandardCharsets.UTF_8);
-
-            GherkinDocument gherkinDocument = parser.parse(in, matcher);
-
-            if (gherkinDocument != null) {
-                ParseDocument pd = new ParseDocument(parametro, gherkinDocument, pathList);
-                html = pd.getHtml();
-            }
-
-            Compilador.LOG.append("OK: ").append(pathFeature).append("\n");
-            log.info("OK: {}", pathFeature);
-        } catch (Exception e){
-            Compilador.LOG.append("ERRRROU: ").append(pathFeature).append("\n");
-            log.warn("ERRRROU: " + pathFeature);
-            throw e;
-        }
-
-        return html;
     }
 
     public void compilarPasta(Parametro parametro) throws Exception {
@@ -59,6 +23,7 @@ public class Compilador {
         StringBuilder htmlTemplate = new StringBuilder();
         StringBuilder htmlJavascript = new StringBuilder();
         StringBuilder htmlCss = new StringBuilder();
+        List<File> paginaHtmlAnexo = new ArrayList<>();
 
         // -------- MASTER
         List<File> arquivosMaster = null;
@@ -118,7 +83,7 @@ public class Compilador {
                         pathListMaster.add(parametro.getTxtSrcFonteMaster());
                         pathListMaster.add(fmd.getAbsolutePath().replace(fmd.getName(), ""));
 
-                        final String featureHtml = getFeatureHtml(parametro, fmd.getAbsolutePath(), pathListMaster);
+                        final String featureHtml = ParseDocument.getFeatureHtml(parametro, fmd, pathListMaster);
 
                         htmlTemplate.append(String.format(HtmlTemplate.HTML_TEMPLATE, "master_" + featureIdHtml, featureHtml));
                         htmlTemplate.append(String.format(HtmlTemplate.HTML_TEMPLATE, "master_" + featureIdFeature, Resource.loadFeature(fmd.getAbsolutePath())));
@@ -133,7 +98,9 @@ public class Compilador {
                 pathList.add(parametro.getTxtSrcFonte());
                 pathList.add(f.getAbsolutePath().replace(f.getName(), ""));
 
-                String featureHtml = getFeatureHtml(parametro, f.getAbsolutePath(), pathList);
+                ParseDocument pd = new ParseDocument(parametro, f, pathList);
+                String featureHtml = pd.getFeatureHtml();
+                paginaHtmlAnexo.addAll(pd.getPaginaHtmlAnexo());
 
                 htmlTemplate.append(String.format(HtmlTemplate.HTML_TEMPLATE, featureIdHtml, featureHtml));
 
@@ -144,7 +111,7 @@ public class Compilador {
             }
 
             // adiciona html embed
-            for (File htmlEmbed : Compilador.PAGINA_HTML_ANEXO){
+            for (File htmlEmbed : paginaHtmlAnexo){
                 String loadedHtmlEmbed = Resource.loadFeature(htmlEmbed.getAbsolutePath());
                 htmlTemplate.append(String.format(
                         "<template type=\"text/ng-template\" id=\"%s\">%s</template>%n",
@@ -202,7 +169,7 @@ public class Compilador {
         // compila
         List<String> pathList = new ArrayList<>();
         pathList.add(feature.getAbsolutePath().replace(feature.getName(), ""));
-        String featureHtml = getFeatureHtml(parametro, feature.getAbsolutePath(), pathList);
+        String featureHtml = ParseDocument.getFeatureHtml(parametro, feature, pathList);
 
         //------------------ BUILD -----------------
         String html = Resource.loadResource("htmlTemplate/html/template_feature.html");
@@ -232,7 +199,7 @@ public class Compilador {
 
         List<String> pathList = new ArrayList<>();
         pathList.add(feature.getAbsolutePath().replace(feature.getName(), ""));
-        String html = getFeatureHtml(parametro, feature.getAbsolutePath(), pathList);
+        String html = ParseDocument.getFeatureHtml(parametro, feature, pathList);
 
         html = String.format(
                 HtmlTemplate.HTML_FEATURE_PDF,
@@ -266,7 +233,7 @@ public class Compilador {
                 pathList.add(parametro.getTxtSrcFonte());
                 pathList.add(f.getAbsolutePath().replace(f.getName(), ""));
 
-                String rawHtml = getFeatureHtml(parametro, f.getAbsolutePath(), pathList);
+                String rawHtml = ParseDocument.getFeatureHtml(parametro, f, pathList);
 
                 html.append(String.format(
                         HtmlTemplate.HTML_FEATURE_PDF,
