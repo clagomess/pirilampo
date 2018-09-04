@@ -19,11 +19,15 @@ public class Feature {
         return htmlFeatureRoot;
     }
 
+    public static String id(Parametro parametro, File feature){
+        return root(parametro, feature) + "_" + feature.getName().replace(Resource.getExtension(feature), "");
+    }
+
     public static String idHtml(Parametro parametro, File feature){
-        return root(parametro, feature) + "_" + feature.getName().replace(Resource.getExtension(feature), ".html");
+        return id(parametro, feature) + ".html";
     }
 
     public static String idFeature(Parametro parametro, File feature){
-        return root(parametro, feature) + "_" + feature.getName().replace(Resource.getExtension(feature), ".feature");
+        return id(parametro, feature) + ".feature";
     }
 }

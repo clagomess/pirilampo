@@ -18,47 +18,20 @@ $("#btn-diff").click(function(){
 });
 
 // TYPE HEAD
-var source = [];
-
-$('[type="text/ng-template"]').each(function(){
-    var feature = $(this).attr('id');
-    var matches = $(this).html().match(/(>|\n)([^<>].+?)(<|\n)/gm);
-
-    if(feature.indexOf('master_') != -1){
-        return;
-    }
-
-    for(var i in matches){
-        if(matches.hasOwnProperty(i)) {
-            var match = matches[i].replace(/^>/, '');
-            match = match.replace(/<$/g, '');
-            match = match.replace(/<(|\/)(\w*)>/g, '');
-            match = match.trim();
-
-            if(match.length >= 3) {
-                var item = {
-                    feature: feature.replace('.html', ''),
-                    txt: $('#buscaBuffer').html(match).text()
-                };
-
-                // verifica repetido
-                if(source.indexOf(item) == -1) {
-                    source.push(item);
-                }
-            }
-        }
-    }
-});
-
 var substringMatcher = function(strs) {
     return function findMatches(q, cb) {
         var matches = [];
         var substrRegex = new RegExp(q, 'i');
 
-        $.each(strs, function(i, str) {
-            if (substrRegex.test(str.txt)) {
-                matches.push(str);
-            }
+        $.each(strs, function(featureId, values) {
+            $.each(values, function(i, txt) {
+                if (substrRegex.test(txt)) {
+                    matches.push({
+                        "feature":featureId,
+                        "txt":txt
+                    });
+                }
+            });
         });
 
         cb(matches);
@@ -72,7 +45,7 @@ $('#busca').typeahead({
     displayKey: 'txt',
     name: 'txt',
     display: 'txt',
-    source: substringMatcher(source),
+    source: substringMatcher(indice),
     templates: {
         suggestion: Handlebars.compile("<div><p><strong>{{feature}}</strong></p>{{txt}}</div>")
     }

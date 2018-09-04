@@ -2,13 +2,13 @@ package br.com.pirilampo.core;
 
 import br.com.pirilampo.bean.Parametro;
 import br.com.pirilampo.constant.HtmlTemplate;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Slf4j
 public class Compilador {
@@ -24,6 +24,7 @@ public class Compilador {
         StringBuilder htmlJavascript = new StringBuilder();
         StringBuilder htmlCss = new StringBuilder();
         List<File> paginaHtmlAnexo = new ArrayList<>();
+        Map<String, LinkedHashSet<String>> indice = new HashMap<>();
 
         // -------- MASTER
         List<File> arquivosMaster = null;
@@ -101,6 +102,7 @@ public class Compilador {
                 ParseDocument pd = new ParseDocument(parametro, f, pathList);
                 String featureHtml = pd.getFeatureHtml();
                 paginaHtmlAnexo.addAll(pd.getPaginaHtmlAnexo());
+                indice.putAll(pd.getIndice());
 
                 htmlTemplate.append(String.format(HtmlTemplate.HTML_TEMPLATE, featureIdHtml, featureHtml));
 
@@ -122,6 +124,11 @@ public class Compilador {
 
             //------------------ BUILD -----------------
             String html = Resource.loadResource("htmlTemplate/html/template_feature_pasta.html");
+
+            // monta indice
+            ObjectMapper mapper = new ObjectMapper();
+            String json = mapper.writeValueAsString(indice);
+            htmlJavascript.append(String.format(HtmlTemplate.HTML_JAVASCRIPT, String.format("var indice = %s;", json)));
 
             // adiciona resources
             htmlCss.append(String.format(HtmlTemplate.HTML_CSS, Resource.loadResource("htmlTemplate/dist/feature-pasta.min.css")));

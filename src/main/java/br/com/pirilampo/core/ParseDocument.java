@@ -14,8 +14,7 @@ import org.commonmark.renderer.html.HtmlRenderer;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -27,12 +26,27 @@ class ParseDocument {
     private File feature;
     @Getter
     private List<File> paginaHtmlAnexo;
+    @Getter
+    private Map<String, LinkedHashSet<String>> indice;
+    private String featureId;
 
     public ParseDocument(Parametro parametro, File feature, List<String> pathList){
         this.parametro = parametro;
         this.feature = feature;
         this.pathList = pathList;
         this.paginaHtmlAnexo = new ArrayList<>();
+        this.indice = new HashMap<>();
+        this.featureId = Feature.id(parametro, feature);
+    }
+
+    private void setIndice(String featureId, final String value){
+        if(!indice.containsKey(featureId)){
+            indice.put(featureId, new LinkedHashSet<>());
+        }
+
+        if(value.length() > 3) {
+            indice.get(featureId).add(value);
+        }
     }
 
     public static String getFeatureHtml(Parametro parametro, File feature, List<String> pathList) throws IOException {
@@ -183,6 +197,8 @@ class ParseDocument {
 
         txt = txt.replaceAll("<", "&lt;");
         txt = txt.replaceAll(">", "&gt;");
+
+        setIndice(featureId, txt);
 
         if(md && txt.length() >= 3) {
             try {

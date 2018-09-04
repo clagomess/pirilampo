@@ -48,7 +48,7 @@ gulp.task('js', function () {
 gulp.task('css', function () {
     gulp.src(filesExist([
         'node_modules/bootstrap/dist/css/bootstrap.css',
-        'node_modules/fancybox/source/jquery.fancybox.css',
+        'node_modules/fancybox/dist/css/jquery.fancybox.css',
         'css/simple-sidebar.css',
         'css/feature-base.css',
         'css/template-feature-pasta.css'
