@@ -80,13 +80,8 @@ public class Compilador {
         if(arquivos.size() > 0){
             for(File f : arquivos){
                 // monta nome menu
-                String htmlFeatureRoot = f.getAbsolutePath().replace(curDir.getAbsolutePath(), "");
-                htmlFeatureRoot = htmlFeatureRoot.replace(f.getName(), "");
-                htmlFeatureRoot = htmlFeatureRoot.replace(File.separator, " ");
-                htmlFeatureRoot = htmlFeatureRoot.trim();
-                htmlFeatureRoot = StringUtils.isEmpty(htmlFeatureRoot) ? parametro.getTxtNomeMenuRaiz() : htmlFeatureRoot;
-
-                String htmlFeatureId = htmlFeatureRoot + "_" + f.getName().replace(Resource.getExtension(f), ".html");
+                final String featureIdHtml = Feature.idHtml(parametro, f);
+                final String featureIdFeature = Feature.idFeature(parametro, f);
 
                 // Processa Master
                 if(!StringUtils.isEmpty(parametro.getTxtSrcFonteMaster())) {
@@ -97,22 +92,15 @@ public class Compilador {
                         for (File fm : arquivosMaster) {
                             String absoluteNFM = Resource.absoluteNameFeature(parametro.getTxtSrcFonteMaster(), fm.getAbsolutePath());
                             String absoluteNFB = Resource.absoluteNameFeature(parametro.getTxtSrcFonte(), f.getAbsolutePath());
-                            String absoluteNFMMd5 = Resource.md5(Resource.loadFeature(fm.getAbsolutePath()));
-                            String absoluteNFBMd5 = Resource.md5(Resource.loadFeature(f.getAbsolutePath()));
+                            String featureM = Resource.loadFeature(fm.getAbsolutePath());
+                            String featureB = Resource.loadFeature(f.getAbsolutePath());
 
                             if (absoluteNFM.equals(absoluteNFB)) {
-                                if(absoluteNFMMd5.equals(absoluteNFBMd5)){
+                                if(featureM.equals(featureB)){
                                     diferente = false;
                                 }else{
                                     fmd = fm;
-                                    // Debug
-                                    log.info(
-                                            "Diff Master/Branch: {} - {} - {} - {}",
-                                            absoluteNFMMd5,
-                                            absoluteNFBMd5,
-                                            absoluteNFM,
-                                            absoluteNFB
-                                    );
+                                    log.info("Diff Master/Branch: {} - {} - {} - {}", featureM.hashCode(), featureB.hashCode(), absoluteNFM, absoluteNFB);
                                 }
                                 break;
                             }
@@ -130,31 +118,15 @@ public class Compilador {
                         pathListMaster.add(parametro.getTxtSrcFonteMaster());
                         pathListMaster.add(fmd.getAbsolutePath().replace(fmd.getName(), ""));
 
-                        String featureHtml = getFeatureHtml(parametro, fmd.getAbsolutePath(), pathListMaster);
+                        final String featureHtml = getFeatureHtml(parametro, fmd.getAbsolutePath(), pathListMaster);
 
-                        htmlTemplate.append(String.format(
-                                HtmlTemplate.HTML_TEMPLATE,
-                                "master_" + htmlFeatureId,
-                                featureHtml
-                        ));
-                        htmlTemplate.append(String.format(
-                                HtmlTemplate.HTML_TEMPLATE,
-                                "master_" + htmlFeatureId.replace(".html", ".feature"),
-                                Resource.loadFeature(fmd.getAbsolutePath())
-                        ));
+                        htmlTemplate.append(String.format(HtmlTemplate.HTML_TEMPLATE, "master_" + featureIdHtml, featureHtml));
+                        htmlTemplate.append(String.format(HtmlTemplate.HTML_TEMPLATE, "master_" + featureIdFeature, Resource.loadFeature(fmd.getAbsolutePath())));
                     }
                 }
 
                 // Adiciona item de menu se deu tudo certo com a master
-                if(parametro.getTxtNomeMenuRaiz().equals(htmlFeatureRoot)){
-                    parseMenu.addMenuItem(
-                            htmlFeatureRoot +
-                            File.separator +
-                            f.getAbsolutePath().replace(curDir.getAbsolutePath(), "").replace(Resource.getExtension(f), ".feature")
-                    );
-                }else{
-                    parseMenu.addMenuItem(f.getAbsolutePath().replace(curDir.getAbsolutePath().replace(Resource.getExtension(f), ".feature"), ""));
-                }
+                parseMenu.addMenuItem(parametro, f);
 
                 // Gera a feture
                 List<String> pathList = new ArrayList<>();
@@ -163,15 +135,11 @@ public class Compilador {
 
                 String featureHtml = getFeatureHtml(parametro, f.getAbsolutePath(), pathList);
 
-                htmlTemplate.append(String.format(HtmlTemplate.HTML_TEMPLATE, htmlFeatureId, featureHtml));
+                htmlTemplate.append(String.format(HtmlTemplate.HTML_TEMPLATE, featureIdHtml, featureHtml));
 
                 // Salva as feature para diff
                 if(!StringUtils.isEmpty(parametro.getTxtSrcFonteMaster())){
-                    htmlTemplate.append(String.format(
-                            HtmlTemplate.HTML_TEMPLATE,
-                            htmlFeatureId.replace(".html", ".feature"),
-                            Resource.loadFeature(f.getAbsolutePath())
-                    ));
+                    htmlTemplate.append(String.format(HtmlTemplate.HTML_TEMPLATE, featureIdFeature, Resource.loadFeature(f.getAbsolutePath())));
                 }
             }
 

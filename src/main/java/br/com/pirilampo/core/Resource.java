@@ -83,19 +83,6 @@ public class Resource {
         return toReturn;
     }
 
-    public static String md5(String str){
-        String md5 = "";
-
-        try {
-            MessageDigest md = MessageDigest.getInstance("MD5");
-            md5 = String.format("%032x", new BigInteger(1, md.digest(str.getBytes())));
-        } catch (NoSuchAlgorithmException e) {
-            log.warn(Compilador.class.getName(), e);
-        }
-
-        return md5;
-    }
-
     public static String absoluteNameFeature(String path, String absolutePath){
         path = path.replaceAll("\\\\", "");
         absolutePath = absolutePath.replaceAll("\\\\", "");

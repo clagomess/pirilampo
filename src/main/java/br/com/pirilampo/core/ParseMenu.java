@@ -1,5 +1,8 @@
 package br.com.pirilampo.core;
 
+import br.com.pirilampo.bean.Parametro;
+
+import java.io.File;
 import java.util.*;
 
 public class ParseMenu {
@@ -11,6 +14,21 @@ public class ParseMenu {
 
     public ParseMenu(){
         menu = new TreeMap<>();
+    }
+
+    public void addMenuItem(Parametro parametro, File feature){
+        final String htmlFeatureRoot = Feature.root(parametro, feature);
+        File curDir = new File(parametro.getTxtSrcFonte());
+
+        if(parametro.getTxtNomeMenuRaiz().equals(htmlFeatureRoot)){
+            addMenuItem(
+                    htmlFeatureRoot +
+                    File.separator +
+                    feature.getAbsolutePath().replace(curDir.getAbsolutePath(), "").replace(Resource.getExtension(feature), ".feature")
+            );
+        }else{
+            addMenuItem(feature.getAbsolutePath().replace(curDir.getAbsolutePath().replace(Resource.getExtension(feature), ".feature"), ""));
+        }
     }
 
     public void addMenuItem(String item){
