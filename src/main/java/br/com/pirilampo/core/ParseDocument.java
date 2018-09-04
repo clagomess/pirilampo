@@ -1,5 +1,6 @@
 package br.com.pirilampo.core;
 
+import br.com.pirilampo.bean.Indice;
 import br.com.pirilampo.bean.Parametro;
 import br.com.pirilampo.constant.HtmlTemplate;
 import gherkin.AstBuilder;
@@ -27,7 +28,7 @@ class ParseDocument {
     @Getter
     private List<File> paginaHtmlAnexo;
     @Getter
-    private Map<String, LinkedHashSet<String>> indice;
+    private Map<String, Indice> indice;
     private String featureId;
 
     public ParseDocument(Parametro parametro, File feature, List<String> pathList){
@@ -39,14 +40,22 @@ class ParseDocument {
         this.featureId = Feature.id(parametro, feature);
     }
 
-    private void setIndice(String featureId, final String value){
+    private void setIndiceValue(final String value){
         if(!indice.containsKey(featureId)){
-            indice.put(featureId, new LinkedHashSet<>());
+            indice.put(featureId, new Indice());
         }
 
         if(value.length() > 3) {
-            indice.get(featureId).add(value);
+            indice.get(featureId).getValues().add(value);
         }
+    }
+
+    private void setIndiceName(final String name){
+        if(!indice.containsKey(featureId)){
+            indice.put(featureId, new Indice());
+        }
+
+        indice.get(featureId).setName(name);
     }
 
     public static String getFeatureHtml(Parametro parametro, File feature, List<String> pathList) throws IOException {
@@ -88,6 +97,7 @@ class ParseDocument {
 
         if(gd != null){
             html.append(String.format(HtmlTemplate.HTML_TITULO, format(gd.getFeature().getName(), false)));
+            setIndiceName(gd.getFeature().getName());
 
             if(gd.getFeature().getDescription() != null) {
                 html.append(String.format(HtmlTemplate.HTML_PARAGRAFO, format(gd.getFeature().getDescription())));
@@ -198,7 +208,7 @@ class ParseDocument {
         txt = txt.replaceAll("<", "&lt;");
         txt = txt.replaceAll(">", "&gt;");
 
-        setIndice(featureId, txt);
+        setIndiceValue(txt);
 
         if(md && txt.length() >= 3) {
             try {

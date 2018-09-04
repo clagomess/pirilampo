@@ -1,5 +1,6 @@
 package br.com.pirilampo.core;
 
+import br.com.pirilampo.bean.Indice;
 import br.com.pirilampo.bean.Parametro;
 import br.com.pirilampo.constant.HtmlTemplate;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,7 +25,7 @@ public class Compilador {
         StringBuilder htmlJavascript = new StringBuilder();
         StringBuilder htmlCss = new StringBuilder();
         List<File> paginaHtmlAnexo = new ArrayList<>();
-        Map<String, LinkedHashSet<String>> indice = new HashMap<>();
+        Map<String, Indice> indice = new HashMap<>();
 
         // -------- MASTER
         List<File> arquivosMaster = null;

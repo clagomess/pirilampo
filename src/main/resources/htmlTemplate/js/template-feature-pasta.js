@@ -23,12 +23,13 @@ var substringMatcher = function(strs) {
         var matches = [];
         var substrRegex = new RegExp(q, 'i');
 
-        $.each(strs, function(featureId, values) {
-            $.each(values, function(i, txt) {
+        $.each(strs, function (featureId, indiceItem) {
+            $.each(indiceItem.values, function (i, txt) {
                 if (substrRegex.test(txt)) {
                     matches.push({
-                        "feature":featureId,
-                        "txt":txt
+                        "url": featureId,
+                        "name": indiceItem.name,
+                        "txt": txt
                     });
                 }
             });
@@ -47,8 +48,8 @@ $('#busca').typeahead({
     display: 'txt',
     source: substringMatcher(indice),
     templates: {
-        suggestion: Handlebars.compile("<div><p><strong>{{feature}}</strong></p>{{txt}}</div>")
+        suggestion: Handlebars.compile("<div><p><strong>{{name}}</strong></p>{{txt}}</div>")
     }
 }).bind('typeahead:select', function(ev, suggestion) {
-    window.location = "#/feature/" + suggestion.feature + '/' + encodeURIComponent(suggestion.txt);
+    window.location = "#/feature/" + suggestion.url + '/' + encodeURIComponent(suggestion.txt);
 });
