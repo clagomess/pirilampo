@@ -12,13 +12,9 @@
 
     <appender name="appenderutil" class="br.com.pirilampo.util.AppenderUtil"/>
 
-    <!-- Application Loggers -->
-    <logger name="br.com.pirilampo">
-        <level value="info" />
-    </logger>
-
     <!-- Root Logger -->
     <root>
+        <level value="info"/>
         <appender-ref ref="console" />
         <appender-ref ref="appenderutil" />
     </root>
