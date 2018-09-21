@@ -121,6 +121,22 @@
     <build>
         <finalName>${project.artifactId}</finalName>
 
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <excludes>
+                    <exclude>htmlTemplate/node_modules/**</exclude>
+                    <exclude>htmlTemplate/css/**</exclude>
+                    <exclude>htmlTemplate/js/**</exclude>
+                    <exclude>htmlTemplate/build.sh</exclude>
+                    <exclude>htmlTemplate/gulpfile.js</exclude>
+                    <exclude>htmlTemplate/package.json</exclude>
+                    <exclude>htmlTemplate/yarn.lock</exclude>
+                    <exclude>htmlTemplate/yarn-error.log</exclude>
+                </excludes>
+            </resource>
+        </resources>
+
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -130,12 +146,6 @@
                     <source>1.8</source>
                     <target>1.8</target>
                     <encoding>UTF-8</encoding><!-- try to force encoding -->
-                    <excludes>
-                        <exclude>**/bower_components/**</exclude>
-                    </excludes>
-                    <testExcludes>
-                        <testExclude>**/bower_components/**</testExclude>
-                    </testExcludes>
                 </configuration>
             </plugin>
 
