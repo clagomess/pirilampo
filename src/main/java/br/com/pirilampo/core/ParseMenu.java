@@ -1,129 +1,101 @@
 package br.com.pirilampo.core;
 
+import br.com.pirilampo.bean.Menu;
 import br.com.pirilampo.bean.Parametro;
+import br.com.pirilampo.constant.HtmlTemplate;
+import lombok.Getter;
 
 import java.io.File;
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
+import java.util.OptionalInt;
+import java.util.stream.IntStream;
 
 public class ParseMenu {
-    private static Map<String, Object> menu;
-    private static int level;
-    private static String[] nodes;
+    @Getter
+    private Menu menu;
+    private Parametro parametro;
+    private int level;
+    private String[] nodes;
+    private int htmlNodeNum;
 
-    private static int htmlNodeNum;
+    private String featureId = "ID";
+    private String featureName = "TITULO";
 
-    public ParseMenu(){
-        menu = new TreeMap<>();
-    }
-
-    public void addMenuItem(Parametro parametro, File feature){
-        final String htmlFeatureRoot = Feature.root(parametro, feature);
-        File curDir = new File(parametro.getTxtSrcFonte());
-
-        if(parametro.getTxtNomeMenuRaiz().equals(htmlFeatureRoot)){
-            addMenuItem(
-                    htmlFeatureRoot +
-                    File.separator +
-                    feature.getAbsolutePath().replace(curDir.getAbsolutePath(), "").replace(Resource.getExtension(feature), ".feature")
-            );
-        }else{
-            addMenuItem(feature.getAbsolutePath().replace(curDir.getAbsolutePath().replace(Resource.getExtension(feature), ".feature"), ""));
-        }
+    public ParseMenu(Parametro parametro){
+        this.menu = new Menu(parametro.getTxtNomeMenuRaiz());
+        this.parametro = parametro;
     }
 
     public void addMenuItem(String item){
-        item = item.replaceFirst("(\\\\|/)", "");
+        item = item.replaceFirst("^[\\/|\\\\]", "");
         nodes = item.split("(\\\\|/)");
         level = 0;
 
-        walker(menu);
+        walker(menu.getFilho());
+    }
+
+    void addMenuItem(File feature){
+        final String curDir = (new File(parametro.getTxtSrcFonte())).getAbsolutePath();
+        this.featureId = Feature.id(parametro, feature);
+        this.featureName = Feature.name(feature);
+
+        addMenuItem(feature.getAbsolutePath().replace(curDir, ""));
     }
 
     public String getHtml(){
         htmlNodeNum = 0;
 
-        return walkerHtml(menu);
+        return getHtml(menu).toString();
     }
 
-    private String walkerHtml(Object node){
-        final String HTML_MENU_FILHO = "<li><a href=\"#/feature/%s\">%s</a></li>";
-        final String HTML_MENU_PAI = "<li><a href=\"javascript:;\" data-toggle=\"collapse\" data-target=\"#menu-%s\">" +
-                "%s</a><ul id=\"menu-%s\" class=\"collapse\">%s</ul></li>";
-
+    private StringBuilder getHtml(Menu node){
         StringBuilder buffer = new StringBuilder();
 
-        if(node instanceof Map){
-            Map<String, Object> nodeCasted = (Map<String, Object>) node;
-
-            for (Map.Entry<String, Object> entry : nodeCasted.entrySet()) {
+        if(node.getFilho().isEmpty()){
+            buffer.append(String.format(
+                    HtmlTemplate.HTML_MENU_FILHO,
+                    node.getUrl(),
+                    node.getTitulo()
+            ));
+        }else {
+            for (Menu item : node.getFilho()) {
                 htmlNodeNum++;
 
-                buffer.append(String.format(
-                        HTML_MENU_PAI,
-                        htmlNodeNum,
-                        entry.getKey(),
-                        htmlNodeNum,
-                        walkerHtml(entry.getValue())
-                ));
-            }
-        }else{
-            List<Map<String, String>> nodeCasted = (ArrayList<Map<String, String>>) node;
-
-            for (Map<String, String> item : nodeCasted){
-                buffer.append(String.format(
-                        HTML_MENU_FILHO,
-                        item.get("url"),
-                        item.get("name")
-                ));
-            }
-        }
-
-        return buffer.toString();
-    }
-
-    private Object walker (Object node){
-        if(level == nodes.length){
-            return node;
-        }
-
-        Object toReturn;
-
-        if(node instanceof Map){
-            Map<String, Object> nodeCasted = (Map<String, Object>) node;
-
-            if(!nodeCasted.containsKey(nodes[level])){
-                if(level == nodes.length - 2){
-                    nodeCasted.put(nodes[level], new ArrayList<String>());
+                if(!item.getFilho().isEmpty()) {
+                    buffer.append(String.format(
+                            HtmlTemplate.HTML_MENU_PAI,
+                            htmlNodeNum,
+                            item.getTitulo(),
+                            htmlNodeNum,
+                            getHtml(item)
+                    ));
                 }else{
-                    nodeCasted.put(nodes[level], new TreeMap<String, Object>());
+                    buffer.append(getHtml(item));
                 }
             }
-
-            level ++;
-            toReturn = walker(nodeCasted.get(nodes[level - 1]));
-        }else{
-            List<Map<String, String>> nodeCasted = (List<Map<String, String>>) node;
-
-            String htmlFeatureId = String.join(" ", nodes);
-            htmlFeatureId = htmlFeatureId.replace(nodes[nodes.length - 1], "");
-            htmlFeatureId = htmlFeatureId.trim();
-            htmlFeatureId = htmlFeatureId + "_" + nodes[nodes.length - 1].replace(".feature", "");
-
-            Map<String, String> link = new HashMap<>();
-            link.put("url", htmlFeatureId);
-            link.put("name", nodes[nodes.length - 1].replace(".feature", ""));
-
-            if(!nodeCasted.contains(link)) {
-                nodeCasted.add(link);
-            }
-
-            toReturn = nodeCasted;
         }
 
-        return toReturn;
+        return buffer;
     }
 
-    public Map<String, Object> getMenuMap(){
-        return menu;
+    private void walker(List<Menu> node){
+        OptionalInt oi = IntStream
+                .range(0, node.size())
+                .filter(i -> Objects.equals(node.get(i).getTitulo(), nodes[level]))
+                .findFirst();
+
+        if(oi.isPresent()){
+            if(level == nodes.length - 1){
+                node.get(oi.getAsInt()).setUrl(this.featureId);
+                node.get(oi.getAsInt()).setTitulo(this.featureName);
+            }else{
+                level++;
+                walker(node.get(oi.getAsInt()).getFilho());
+            }
+        }else{
+            node.add(new Menu(nodes[level]));
+            walker(node);
+        }
     }
 }

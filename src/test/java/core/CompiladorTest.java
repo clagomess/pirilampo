@@ -2,7 +2,6 @@ package core;
 
 import br.com.pirilampo.bean.Parametro;
 import br.com.pirilampo.core.Compilador;
-import br.com.pirilampo.core.ParseMenu;
 import br.com.pirilampo.main.Main;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -18,8 +17,6 @@ import org.junit.contrib.java.lang.system.ExpectedSystemExit;
 import java.io.*;
 import java.util.Base64;
 import java.util.Calendar;
-import java.util.List;
-import java.util.Map;
 
 @Slf4j
 public class CompiladorTest {
@@ -531,26 +528,6 @@ public class CompiladorTest {
             e.printStackTrace();
             Assert.fail();
         }
-    }
-
-    @Test
-    public void testAddMenuItem(){
-        ParseMenu pm = new ParseMenu();
-        pm.addMenuItem("Features\\\\001.feature");
-        pm.addMenuItem("\\bar\\002.feature");
-        pm.addMenuItem("\\bar\\foo\\003.feature");
-
-        Map<String, Object> menu = pm.getMenuMap();
-
-        log.info("MENU: {}", menu);
-
-        final String f001 = ((Map<String, String>) ((List) menu.get("Features")).get(0)).get("url");
-        final String f002 = ((Map<String, String>) ((List) menu.get("bar")).get(0)).get("url");
-        final String f003 = ((Map<String, String>) ((List) menu.get("bar")).get(1)).get("url");
-
-        Assert.assertTrue("Features_001".equals(f001));
-        Assert.assertTrue("bar_002".equals(f002));
-        Assert.assertTrue("bar foo_003".equals(f003));
     }
 
     @After

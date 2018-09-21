@@ -20,7 +20,7 @@ public class Compilador {
     }
 
     public void compilarPasta(Parametro parametro) throws Exception {
-        ParseMenu parseMenu = new ParseMenu();
+        ParseMenu parseMenu = new ParseMenu(parametro);
         StringBuilder htmlTemplate = new StringBuilder();
         StringBuilder htmlJavascript = new StringBuilder();
         StringBuilder htmlCss = new StringBuilder();
@@ -93,7 +93,7 @@ public class Compilador {
                 }
 
                 // Adiciona item de menu se deu tudo certo com a master
-                parseMenu.addMenuItem(parametro, f);
+                parseMenu.addMenuItem(f);
 
                 // Gera a feture
                 List<String> pathList = new ArrayList<>();
