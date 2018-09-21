@@ -27,20 +27,17 @@ public class ParseMenu {
         this.parametro = parametro;
     }
 
-    public void addMenuItem(String item){
+    public void addMenuItem(File feature){
+        final String curDir = (new File(parametro.getTxtSrcFonte())).getAbsolutePath();
+        this.featureId = Feature.id(parametro, feature);
+        this.featureName = Feature.name(feature);
+
+        String item = feature.getAbsolutePath().replace(curDir, "");
         item = item.replaceFirst("^[\\/|\\\\]", "");
         nodes = item.split("(\\\\|/)");
         level = 0;
 
         walker(menu.getFilho());
-    }
-
-    void addMenuItem(File feature){
-        final String curDir = (new File(parametro.getTxtSrcFonte())).getAbsolutePath();
-        this.featureId = Feature.id(parametro, feature);
-        this.featureName = Feature.name(feature);
-
-        addMenuItem(feature.getAbsolutePath().replace(curDir, ""));
     }
 
     public String getHtml(){

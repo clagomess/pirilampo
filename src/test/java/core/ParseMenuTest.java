@@ -1,22 +1,24 @@
 package core;
 
-import br.com.pirilampo.bean.Menu;
 import br.com.pirilampo.bean.Parametro;
 import br.com.pirilampo.core.ParseMenu;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
 public class ParseMenuTest {
     private List<String> itens = new ArrayList<>();
+    private Parametro parametro = new Parametro();
 
     @Before
     public void before(){
+        parametro.setTxtSrcFonte((new File("")).getAbsolutePath());
+
         itens.add("01 - Módulo I - Portal Público\\Login\\00_Login\\MDIC_US00_02 - Logout.feature");
         itens.add("01 - Módulo I - Portal Público\\Login\\00_Login\\MDIC_US00_01 - Login.feature");
         itens.add("01 - Módulo I - Portal Público\\Login\\01_Dashboard\\MDIC_US01_02 - Visualizar_Dashboard_Demais_Perfis.feature");
@@ -40,28 +42,12 @@ public class ParseMenuTest {
 
     @Test
     public void walker(){
-        ParseMenu pm = new ParseMenu(new Parametro());
+        ParseMenu pm = new ParseMenu(parametro);
 
         for(String item : itens){
-            pm.addMenuItem(item);
+            pm.addMenuItem(new File(item));
         }
 
         log.info("{}", pm.getMenu());
-    }
-
-    @Test
-    public void testAddMenuItem(){
-        ParseMenu pm = new ParseMenu(new Parametro());
-        pm.addMenuItem("Features\\\\001.feature");
-        pm.addMenuItem("\\bar\\002.feature");
-        pm.addMenuItem("\\bar\\foo\\003.feature");
-
-        Menu menu = pm.getMenu();
-
-        log.info("MENU: {}", menu);
-
-        Assert.assertEquals("Features", menu.getFilho().get(0).getTitulo());
-        Assert.assertEquals("bar", menu.getFilho().get(1).getTitulo());
-        Assert.assertEquals("foo", menu.getFilho().get(1).getFilho().get(1).getTitulo());
     }
 }
