@@ -1,14 +1,15 @@
 package br.com.pirilampo.core;
 
+import br.com.pirilampo.bean.Parametro;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.input.BOMInputStream;
+import org.apache.commons.lang.StringUtils;
 
 import java.io.*;
-import java.math.BigInteger;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -105,5 +106,28 @@ public class Resource {
         }
 
         return ext;
+    }
+
+    public static File absolute(Parametro parametro, File feature, String fileName){
+        File toReturn = null;
+        List<String> paths = new ArrayList<>();
+        paths.add(feature.getAbsolutePath().replace(feature.getName(), ""));
+        paths.add(parametro.getTxtSrcFonte());
+
+        if(StringUtils.isNotEmpty(parametro.getTxtSrcFonteMaster())){
+            paths.add(parametro.getTxtSrcFonteMaster());
+        }
+
+        paths.add(parametro.getTxtSrcFonteMaster());
+
+        for (String path : paths) {
+            File file = new File( path + File.separator + fileName);
+            if(file.isFile()){
+                toReturn = file;
+                break;
+            }
+        }
+
+        return toReturn;
     }
 }

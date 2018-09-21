@@ -80,12 +80,7 @@ public class Compilador {
                     }
 
                     if(fmd != null) {
-                        // PathListMaster
-                        List<String> pathListMaster = new ArrayList<>();
-                        pathListMaster.add(parametro.getTxtSrcFonteMaster());
-                        pathListMaster.add(fmd.getAbsolutePath().replace(fmd.getName(), ""));
-
-                        final String featureHtml = ParseDocument.getFeatureHtml(parametro, fmd, pathListMaster);
+                        final String featureHtml = ParseDocument.getFeatureHtml(parametro, fmd);
 
                         htmlTemplate.append(String.format(HtmlTemplate.HTML_TEMPLATE, "master_" + featureIdHtml, featureHtml));
                         htmlTemplate.append(String.format(HtmlTemplate.HTML_TEMPLATE, "master_" + featureIdFeature, Resource.loadFeature(fmd.getAbsolutePath())));
@@ -96,11 +91,7 @@ public class Compilador {
                 parseMenu.addMenuItem(f);
 
                 // Gera a feture
-                List<String> pathList = new ArrayList<>();
-                pathList.add(parametro.getTxtSrcFonte());
-                pathList.add(f.getAbsolutePath().replace(f.getName(), ""));
-
-                ParseDocument pd = new ParseDocument(parametro, f, pathList);
+                ParseDocument pd = new ParseDocument(parametro, f);
                 String featureHtml = pd.getFeatureHtml();
                 paginaHtmlAnexo.addAll(pd.getPaginaHtmlAnexo());
                 indice.putAll(pd.getIndice());
@@ -147,7 +138,7 @@ public class Compilador {
 
             // monta cabeçalho menu
             if(!StringUtils.isEmpty(parametro.getTxtLogoSrc())){
-                String logoString = ParseImage.parse(new File(parametro.getTxtLogoSrc()));
+                String logoString = ParseImage.parse(parametro, new File(parametro.getTxtLogoSrc()));
                 html = html.replace("#PROJECT_LOGO#", String.format("<img class=\"logo\" src=\"%s\">", logoString));
             }else{
                 html = html.replace("#PROJECT_LOGO#", String.format(
@@ -175,9 +166,7 @@ public class Compilador {
         File feature = new File(parametro.getTxtSrcFonte());
 
         // compila
-        List<String> pathList = new ArrayList<>();
-        pathList.add(feature.getAbsolutePath().replace(feature.getName(), ""));
-        String featureHtml = ParseDocument.getFeatureHtml(parametro, feature, pathList);
+        String featureHtml = ParseDocument.getFeatureHtml(parametro, feature);
 
         //------------------ BUILD -----------------
         String html = Resource.loadResource("htmlTemplate/html/template_feature.html");
@@ -204,10 +193,7 @@ public class Compilador {
         //------------------ BUILD -----------------
         String htmlTemplate = Resource.loadResource("htmlTemplate/html/template_feature_pdf.html");
         String css = Resource.loadResource("htmlTemplate/dist/feature-pdf.min.css");
-
-        List<String> pathList = new ArrayList<>();
-        pathList.add(feature.getAbsolutePath().replace(feature.getName(), ""));
-        String html = ParseDocument.getFeatureHtml(parametro, feature, pathList);
+        String html = ParseDocument.getFeatureHtml(parametro, feature);
 
         html = String.format(
                 HtmlTemplate.HTML_FEATURE_PDF,
@@ -237,11 +223,7 @@ public class Compilador {
 
         if(!arquivos.isEmpty()) {
             for (File f : arquivos) {
-                List<String> pathList = new ArrayList<>();
-                pathList.add(parametro.getTxtSrcFonte());
-                pathList.add(f.getAbsolutePath().replace(f.getName(), ""));
-
-                String rawHtml = ParseDocument.getFeatureHtml(parametro, f, pathList);
+                String rawHtml = ParseDocument.getFeatureHtml(parametro, f);
 
                 html.append(String.format(
                         HtmlTemplate.HTML_FEATURE_PDF,

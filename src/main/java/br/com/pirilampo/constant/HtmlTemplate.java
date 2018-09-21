@@ -30,6 +30,6 @@ final public class HtmlTemplate {
     public static final String HTML_MENU_FILHO = "\t\t<li><a href=\"#/feature/%s\">%s</a></li>\n";
     public static final String HTML_MENU_PAI = "<li>\n" +
             "\t<a href=\"javascript:;\" data-toggle=\"collapse\" data-target=\"#menu-%s\">%s</a>\n" +
-            "\t<ul id=\"menu-%s\" class=\"collapse\">\n%s</ul>\n" +
+            "\t<ul id=\"menu-%s\" class=\"collapse\">\n%s\t</ul>\n" +
             "</li>\n";
 }

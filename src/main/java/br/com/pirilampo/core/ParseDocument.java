@@ -15,14 +15,16 @@ import org.commonmark.renderer.html.HtmlRenderer;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Slf4j
 class ParseDocument {
     private GherkinDocument gd;
-    private List<String> pathList;
     private Parametro parametro;
     private File feature;
     @Getter
@@ -31,10 +33,9 @@ class ParseDocument {
     private Map<String, Indice> indice;
     private String featureId;
 
-    public ParseDocument(Parametro parametro, File feature, List<String> pathList){
+    public ParseDocument(Parametro parametro, File feature){
         this.parametro = parametro;
         this.feature = feature;
-        this.pathList = pathList;
         this.paginaHtmlAnexo = new ArrayList<>();
         this.indice = new HashMap<>();
         this.featureId = Feature.id(parametro, feature);
@@ -58,8 +59,8 @@ class ParseDocument {
         indice.get(featureId).setName(name);
     }
 
-    public static String getFeatureHtml(Parametro parametro, File feature, List<String> pathList) throws IOException {
-        ParseDocument pd = new ParseDocument(parametro, feature, pathList);
+    public static String getFeatureHtml(Parametro parametro, File feature) throws IOException {
+        ParseDocument pd = new ParseDocument(parametro, feature);
 
         return pd.getFeatureHtml();
     }
@@ -237,30 +238,26 @@ class ParseDocument {
             txt = txt.replaceAll("&quot;", "\"");
         }
 
-        // altera imagens para base64
-        if(parametro.getSitEmbedarImagens()) {
-            Pattern p = Pattern.compile("src=\"(.+?)\"");
-            Matcher m = p.matcher(txt);
+        // pega endereço ou base64 da imagem
+        Pattern p = Pattern.compile("src=\"(.+?)\"");
+        Matcher m = p.matcher(txt);
 
-            while (m.find()) {
-                String imgSrcBase64 = ParseImage.parse(m.group(1), pathList);
-                txt = txt.replace("src=\"" + m.group(1) + "\"", "src=\"" + imgSrcBase64 + "\"");
-            }
+        while (m.find()) {
+            String imgSrc = ParseImage.parse(parametro, feature, m.group(1));
+            txt = txt.replace("src=\"" + m.group(1) + "\"", "src=\"" + imgSrc + "\"");
         }
 
         // verifica html embeded
-        Pattern p = Pattern.compile("href=\"(.+)\\.html\"");
-        Matcher m = p.matcher(txt);
+        p = Pattern.compile("href=\"(.+)\\.html\"");
+        m = p.matcher(txt);
 
         while(m.find()) {
-            for (String path : pathList) {
-                File htmlEmbed = new File(path + File.separator + m.group(1) + ".html");
-                if (htmlEmbed.isFile()) {
-                    paginaHtmlAnexo.add(htmlEmbed);
-                    String urlHtmlEmbed = "#/html/" + m.group(1) + ".html";
-                    txt = txt.replace("href=\""+ m.group(1) +".html\"", "href=\"" + urlHtmlEmbed + "\"");
-                    break;
-                }
+            File htmlEmbed = Resource.absolute(parametro, feature, m.group(1) + ".html");
+
+            if (htmlEmbed.isFile()) {
+                paginaHtmlAnexo.add(htmlEmbed);
+                String urlHtmlEmbed = "#/html/" + m.group(1) + ".html";
+                txt = txt.replace("href=\""+ m.group(1) +".html\"", "href=\"" + urlHtmlEmbed + "\"");
             }
         }
 

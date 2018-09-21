@@ -1,51 +1,50 @@
 package br.com.pirilampo.core;
 
 
+import br.com.pirilampo.bean.Parametro;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URLConnection;
-import java.util.ArrayList;
 import java.util.Base64;
-import java.util.List;
 
 @Slf4j
 class ParseImage {
-    static String parse(String fileName, String path){
-        List<String> paths = new ArrayList<>();
-        paths.add(path);
-        return ParseImage.parse(fileName, paths);
-    }
-
-    static String parse(File file){
-        return ParseImage.parse(file.getName(), file.getAbsolutePath().replace(file.getName(), ""));
-    }
-
-    static String parse(String fileName, List<String> paths){
+    static String parse(Parametro parametro, File feature, String fileName){
         String toReturn = fileName;
+        File file = Resource.absolute(parametro, feature, fileName);
 
-        for (String path : paths) {
-            File image = new File( path + File.separator + fileName);
+        if(file != null){
+            toReturn = parse(parametro, file);
+        }
 
+        return toReturn;
+    }
 
-            if(image.isFile()){
-                try {
-                    byte[] base64 = Base64.getEncoder().encode(FileUtils.readFileToByteArray(image));
+    static String parse(Parametro parametro, File image){
+        String toReturn = image.getName();
 
-                    if(base64.length > 0){
-                        String mimeType = URLConnection.guessContentTypeFromName(image.getName());
+        if(parametro.getSitEmbedarImagens() || image.getAbsolutePath().equals(parametro.getTxtLogoSrc())) {
+            try {
+                byte[] base64 = Base64.getEncoder().encode(FileUtils.readFileToByteArray(image));
 
-                        toReturn = "data:" + mimeType + ";base64," + new String(base64);
-                    }
+                if (base64.length > 0) {
+                    String mimeType = URLConnection.guessContentTypeFromName(image.getName());
 
-                    break;
-                } catch (IOException e) {
-                    log.info(e.getMessage() + " - " + image.getAbsolutePath());
-                    log.warn(ParseImage.class.getName(), e);
+                    toReturn = "data:" + mimeType + ";base64," + new String(base64);
                 }
+            } catch (IOException e) {
+                log.info(e.getMessage() + " - " + image.getAbsolutePath());
+                log.warn(ParseImage.class.getName(), e);
             }
+        } else {
+            //@TODO: ver isso;
+            toReturn = image.getAbsolutePath().replace(parametro.getTxtSrcFonte(), "");
+            toReturn = toReturn.replaceFirst("^[\\/|\\\\]", "");
+            toReturn = toReturn.replaceAll("\\\\", "/");
+            toReturn = "../../" + toReturn;
         }
 
         return toReturn;
