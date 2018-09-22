@@ -14,7 +14,6 @@ public class Feature {
         htmlFeatureRoot = htmlFeatureRoot.replace(feature.getName(), "");
         htmlFeatureRoot = htmlFeatureRoot.replace(File.separator, " ");
         htmlFeatureRoot = htmlFeatureRoot.trim();
-        htmlFeatureRoot = StringUtils.isEmpty(htmlFeatureRoot) ? parametro.getTxtNomeMenuRaiz() : htmlFeatureRoot;
 
         return htmlFeatureRoot;
     }

@@ -23,7 +23,7 @@ public class ParseMenu {
     private String featureName = "TITULO";
 
     public ParseMenu(Parametro parametro){
-        this.menu = new Menu(parametro.getTxtNomeMenuRaiz());
+        this.menu = new Menu("ROOT");
         this.parametro = parametro;
     }
 

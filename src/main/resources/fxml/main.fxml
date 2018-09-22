@@ -82,21 +82,19 @@
         <columnConstraints>
             <ColumnConstraints hgrow="ALWAYS" />
             <ColumnConstraints hgrow="ALWAYS" />
+            <ColumnConstraints hgrow="ALWAYS" />
         </columnConstraints>
         <rowConstraints>
-            <RowConstraints vgrow="ALWAYS" />
             <RowConstraints vgrow="ALWAYS" />
             <RowConstraints vgrow="ALWAYS" />
             <RowConstraints vgrow="ALWAYS" />
         </rowConstraints>
         <Label GridPane.rowIndex="0" GridPane.columnIndex="0" text="Cor Menu:" />
         <Label GridPane.rowIndex="0" GridPane.columnIndex="1" text="Cor Texto Menu:" />
+        <Label GridPane.rowIndex="0" GridPane.columnIndex="2" text="Embedar Imagens?" />
         <ColorPicker fx:id="clrMenu" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
         <ColorPicker fx:id="clrTextoMenu" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
-        <Label GridPane.rowIndex="2" GridPane.columnIndex="0" text="Nome menu Raiz:" />
-        <Label GridPane.rowIndex="2" GridPane.columnIndex="1" text="Embedar Imagens?" />
-        <TextField GridPane.rowIndex="3" GridPane.columnIndex="0" fx:id="txtNomeMenuRaiz"/>
-        <CheckBox GridPane.rowIndex="3" GridPane.columnIndex="1" fx:id="sitEmbedarImagens"/>
+        <CheckBox fx:id="sitEmbedarImagens" GridPane.rowIndex="1" GridPane.columnIndex="2" />
     </GridPane>
     <Separator prefWidth="200.0" GridPane.rowIndex="8" />
 

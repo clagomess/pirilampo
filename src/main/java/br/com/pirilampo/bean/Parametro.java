@@ -19,7 +19,6 @@ public class Parametro {
     private LayoutPdf tipLayoutPdf = LayoutPdf.RETRATO;
     private String clrMenu = "#14171A";
     private String clrTextoMenu = "#DDDDDD";
-    private String txtNomeMenuRaiz = "Features";
     private Boolean sitEmbedarImagens = true;
     private Compilacao tipCompilacao = Compilacao.PASTA;
     private String txtSrcFonte;
@@ -33,7 +32,6 @@ public class Parametro {
         this.tipLayoutPdf = LayoutPdf.valueOf((String) form.tipLayoutPdf.getSelectedToggle().getUserData());
         this.clrMenu = colorHex(form.clrMenu.getValue());
         this.clrTextoMenu = colorHex(form.clrTextoMenu.getValue());
-        this.txtNomeMenuRaiz = !StringUtils.isEmpty(form.txtNomeMenuRaiz.getText()) ? form.txtNomeMenuRaiz.getText() : this.txtNomeMenuRaiz;
         this.sitEmbedarImagens = form.sitEmbedarImagens.isSelected();
         this.tipCompilacao = Compilacao.valueOf((String) form.tipCompilacao.getSelectedToggle().getUserData());
         this.txtSrcFonte = form.txtSrcFonte.getText();
@@ -55,7 +53,6 @@ public class Parametro {
         this.txtLogoSrc = !StringUtils.isEmpty(properties.getProperty("txtLogoSrc")) ? properties.getProperty("txtLogoSrc") : this.txtLogoSrc;
         this.clrMenu = !StringUtils.isEmpty(properties.getProperty("clrMenu")) ? properties.getProperty("clrMenu") : this.clrMenu;
         this.clrTextoMenu = !StringUtils.isEmpty(properties.getProperty("clrTextoMenu")) ? properties.getProperty("clrTextoMenu") : this.clrTextoMenu;
-        this.txtNomeMenuRaiz = !StringUtils.isEmpty(properties.getProperty("txtNomeMenuRaiz")) ? properties.getProperty("txtNomeMenuRaiz") : this.txtNomeMenuRaiz;
         this.sitEmbedarImagens = !StringUtils.isEmpty(properties.getProperty("sitEmbedarImagens")) ? Boolean.valueOf(properties.getProperty("sitEmbedarImagens")) : this.sitEmbedarImagens;
     }
 

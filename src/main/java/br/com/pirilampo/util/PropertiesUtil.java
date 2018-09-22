@@ -64,7 +64,6 @@ public class PropertiesUtil {
         prop.setProperty("txtLogoSrc", parametro.getTxtLogoSrc() != null ? parametro.getTxtLogoSrc() : "");
         prop.setProperty("clrMenu", parametro.getClrMenu());
         prop.setProperty("clrTextoMenu", parametro.getClrTextoMenu());
-        prop.setProperty("txtNomeMenuRaiz", parametro.getTxtNomeMenuRaiz());
         prop.setProperty("sitEmbedarImagens", parametro.getSitEmbedarImagens().toString());
 
         return prop;

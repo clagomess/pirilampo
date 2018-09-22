@@ -90,7 +90,6 @@ public class CompiladorTest {
     public void testCompileFeaturePath(){
         Compilador compilador = new Compilador();
         parametro.setClrMenu("#666");
-        parametro.setTxtNomeMenuRaiz("NOME_MENU_RAIZ_666");
         parametro.setTxtLogoSrc(resourcePath + File.separator + "logo_xxx.png");
         parametro.setTxtSrcFonte(resourcePath + File.separator + "feature");
         parametro.setTxtOutputTarget(criarPasta().getAbsolutePath());
@@ -105,7 +104,6 @@ public class CompiladorTest {
             Assert.assertNotEquals(htmlString, "");
 
             Assert.assertTrue(htmlString.contains(parametro.getClrMenu()));
-            Assert.assertTrue(htmlString.contains(parametro.getTxtNomeMenuRaiz()));
             Assert.assertFalse(htmlString.contains((new File(parametro.getTxtLogoSrc())).getName()));
             Assert.assertFalse(htmlString.contains("logo_xxx.png"));
             Assert.assertTrue(htmlString.contains("#/html/html_embed.html"));

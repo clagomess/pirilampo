@@ -14,7 +14,6 @@ public class MainForm {
     @FXML protected ToggleGroup tipLayoutPdf;
     @FXML protected ColorPicker clrMenu;
     @FXML protected ColorPicker clrTextoMenu;
-    @FXML protected TextField txtNomeMenuRaiz;
     @FXML protected CheckBox sitEmbedarImagens;
     @FXML protected ToggleGroup tipCompilacao;
     @FXML protected TextField txtSrcFonte;
@@ -31,7 +30,6 @@ public class MainForm {
         this.txtLogoSrc.setText(parametro.getTxtLogoSrc());
         this.clrMenu.setValue(Color.web(parametro.getClrMenu()));
         this.clrTextoMenu.setValue(Color.web(parametro.getClrTextoMenu()));
-        this.txtNomeMenuRaiz.setText(parametro.getTxtNomeMenuRaiz());
         this.sitEmbedarImagens.setSelected(parametro.getSitEmbedarImagens());
     }
 }
