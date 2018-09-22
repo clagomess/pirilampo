@@ -9,7 +9,10 @@ import org.apache.commons.lang.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 public class Compilador {
@@ -150,14 +153,14 @@ public class Compilador {
 
             // Grava
             // Cria Diretório se não existir */html/feature/
-            String outDir = (parametro.getTxtOutputTarget() != null ? parametro.getTxtOutputTarget() : curDir.getParent() + "/html/");
+            String outDir = (StringUtils.isNotEmpty(parametro.getTxtOutputTarget()) ? parametro.getTxtOutputTarget() : curDir.getParent() + File.separator + "html");
             File outDirF = new File(outDir);
 
             if(!outDirF.exists()){
                 outDirF.mkdir();
             }
 
-            Resource.writeHtml(html, outDir + "index.html");
+            Resource.writeHtml(html, outDir + File.separator + "index.html");
         }
     }
 
@@ -180,8 +183,8 @@ public class Compilador {
         html = html.replace("#HTML_TEMPLATE#", featureHtml);
 
         // Grava
-        String outDir = (parametro.getTxtOutputTarget() != null ? parametro.getTxtOutputTarget() : feature.getParent());
-        outDir += String.format("/%s.html", feature.getName().replace(Resource.getExtension(feature), ""));
+        String outDir = (StringUtils.isNotEmpty(parametro.getTxtOutputTarget()) ? parametro.getTxtOutputTarget() : feature.getParent());
+        outDir += File.separator + feature.getName().replace(Resource.getExtension(feature), "") + ".html";
 
         Resource.writeHtml(html, outDir);
     }
@@ -207,7 +210,8 @@ public class Compilador {
 
         ParsePdf pp = new ParsePdf();
 
-        String path = feature.getParent() + String.format("/%s.pdf", feature.getName().replace(Resource.getExtension(feature), ""));
+        String path = (StringUtils.isNotEmpty(parametro.getTxtOutputTarget()) ? parametro.getTxtOutputTarget() : feature.getParent());
+        path += File.separator + feature.getName().replace(Resource.getExtension(feature), "") + ".pdf";
 
         pp.buildHtml(path, html, css, parametro.getTipLayoutPdf().getValue());
     }
@@ -242,14 +246,14 @@ public class Compilador {
 
             ParsePdf pp = new ParsePdf();
 
-            String outDir = curDir.getParent() + "/html/";
+            String outDir = (StringUtils.isNotEmpty(parametro.getTxtOutputTarget()) ? parametro.getTxtOutputTarget() : curDir.getParent() + File.separator + "html");
             File outDirF = new File(outDir);
 
             if(!outDirF.exists()){
                 outDirF.mkdir();
             }
 
-            pp.buildHtml(outDir + "index.pdf", html.toString(), css, parametro.getTipLayoutPdf().getValue());
+            pp.buildHtml(outDir + File.separator + "index.pdf", html.toString(), css, parametro.getTipLayoutPdf().getValue());
         }
     }
 }
