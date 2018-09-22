@@ -11,6 +11,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.input.BOMInputStream;
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.lang.StringUtils;
 import org.commonmark.renderer.html.HtmlRenderer;
 
 import java.io.*;
@@ -41,12 +42,18 @@ class ParseDocument {
         this.featureId = Feature.id(parametro, feature);
     }
 
-    private void setIndiceValue(final String value){
+    private void setIndiceValue(String value){
         if(!indice.containsKey(featureId)){
             indice.put(featureId, new Indice());
         }
 
-        if(value.length() > 3) {
+        if(StringUtils.isNotEmpty(value) && value.length() > 3) {
+            value = value.replaceAll("<(|\\/)(.+?)>", "");
+            value = value.replaceAll("&lt;", "");
+            value = value.replaceAll("&gt;", "");
+        }
+
+        if(StringUtils.isNotEmpty(value) && value.length() > 3) {
             indice.get(featureId).getValues().add(value);
         }
     }
@@ -209,8 +216,6 @@ class ParseDocument {
         txt = txt.replaceAll("<", "&lt;");
         txt = txt.replaceAll(">", "&gt;");
 
-        setIndiceValue(txt);
-
         if(md && txt.length() >= 3) {
             try {
                 txt = txt.replaceAll("( *)(\\n)( *)", "\n");
@@ -260,6 +265,8 @@ class ParseDocument {
                 txt = txt.replace("href=\""+ m.group(1) +".html\"", "href=\"" + urlHtmlEmbed + "\"");
             }
         }
+
+        setIndiceValue(txt);
 
         return txt;
     }
