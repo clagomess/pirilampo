@@ -23,6 +23,7 @@ public class MainForm {
     @FXML protected Button btnGerarHtml;
     @FXML protected Button btnGerarPdf;
     @FXML protected ProgressBar progressBar;
+    @FXML protected TextArea txtConsole;
 
     protected void setData(Parametro parametro){
         this.txtNome.setText(parametro.getTxtNome());

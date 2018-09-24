@@ -34,6 +34,7 @@
         <RowConstraints vgrow="ALWAYS" />
         <RowConstraints vgrow="ALWAYS" />
         <RowConstraints vgrow="ALWAYS" />
+        <RowConstraints vgrow="ALWAYS" />
     </rowConstraints>
     <padding>
         <Insets bottom="14.0" left="14.0" right="14.0" top="14.0" />
@@ -142,4 +143,5 @@
         <Button GridPane.columnIndex="1" fx:id="btnGerarPdf" onAction="#compilarPdf" text="Gerar PDF"/>
     </GridPane>
     <ProgressBar  GridPane.rowIndex="13" fx:id="progressBar" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" progress="0.0" />
+    <TextArea fx:id="txtConsole" GridPane.rowIndex="14" maxHeight="60" editable="false" style="-fx-font-family: monospace;" wrapText="true"/>
 </GridPane>

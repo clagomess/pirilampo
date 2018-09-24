@@ -3,6 +3,7 @@ package br.com.pirilampo.core;
 import br.com.pirilampo.bean.Indice;
 import br.com.pirilampo.bean.Parametro;
 import br.com.pirilampo.constant.HtmlTemplate;
+import br.com.pirilampo.exception.FeatureException;
 import gherkin.AstBuilder;
 import gherkin.Parser;
 import gherkin.TokenMatcher;
@@ -68,13 +69,13 @@ class ParseDocument {
         indice.get(featureId).setName(name);
     }
 
-    public static String getFeatureHtml(Parametro parametro, File feature) throws IOException {
+    public static String getFeatureHtml(Parametro parametro, File feature) throws Exception {
         ParseDocument pd = new ParseDocument(parametro, feature);
 
         return pd.getFeatureHtml();
     }
 
-    public String getFeatureHtml() throws IOException {
+    public String getFeatureHtml() throws Exception {
         Parser<GherkinDocument> parser = new Parser<>(new AstBuilder());
         TokenMatcher matcher = new TokenMatcher();
         String html = null;
@@ -91,12 +92,9 @@ class ParseDocument {
                 html = getHtml();
             }
 
-            Compilador.LOG.append("OK: ").append(feature.getAbsolutePath()).append("\n");
             log.info("OK: {}", feature.getAbsolutePath());
         } catch (Exception e){
-            Compilador.LOG.append("ERRRROU: ").append(feature.getAbsolutePath()).append("\n");
-            log.warn("ERRRROU: " + feature.getAbsolutePath());
-            throw e;
+            throw new FeatureException(e, feature);
         }
 
         return html;

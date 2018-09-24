@@ -9,7 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -168,7 +167,7 @@ public class Compilador {
         }
     }
 
-    public void compilarFeature(Parametro parametro) throws IOException {
+    public void compilarFeature(Parametro parametro) throws Exception {
         // Abre feature
         File feature = new File(parametro.getTxtSrcFonte());
 

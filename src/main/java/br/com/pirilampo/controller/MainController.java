@@ -6,6 +6,7 @@ import br.com.pirilampo.constant.Compilacao;
 import br.com.pirilampo.core.Compilador;
 import br.com.pirilampo.util.ExceptionUtil;
 import br.com.pirilampo.util.PropertiesUtil;
+import br.com.pirilampo.util.UiConsoleUtil;
 import javafx.application.Platform;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
@@ -54,6 +55,8 @@ public class MainController extends MainForm implements Initializable {
 
         clrMenu.setValue(Color.web(parametro.getClrMenu()));
         clrTextoMenu.setValue(Color.web(parametro.getClrTextoMenu()));
+
+        txtConsole.textProperty().bind(UiConsoleUtil.logDataProperty());
     }
 
     public void selecionarFonte(){
@@ -148,7 +151,7 @@ public class MainController extends MainForm implements Initializable {
                 }
 
                 Platform.runLater(() -> showDialog(Alert.AlertType.INFORMATION, MSG_OPE_SUCESSO));
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 Platform.runLater(() -> ExceptionUtil.showDialog(e));
             } finally {
                 Platform.runLater(() -> progressBar.setProgress(0));
@@ -186,7 +189,7 @@ public class MainController extends MainForm implements Initializable {
 
     private void showDialog(Alert.AlertType alertType, String msg){
         Alert alert = new Alert(alertType);
-        alert.setTitle(msg);
+        alert.setHeaderText(msg);
 
         alert.showAndWait();
     }
