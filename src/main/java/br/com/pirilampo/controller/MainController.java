@@ -2,6 +2,7 @@ package br.com.pirilampo.controller;
 
 import br.com.pirilampo.bean.MainForm;
 import br.com.pirilampo.bean.Parametro;
+import br.com.pirilampo.constant.Artefato;
 import br.com.pirilampo.constant.Compilacao;
 import br.com.pirilampo.core.Compilador;
 import br.com.pirilampo.util.ExceptionUtil;
@@ -127,6 +128,7 @@ public class MainController extends MainForm implements Initializable {
 
         Compilador compilador = new Compilador();
         Parametro parametro = new Parametro(this);
+        parametro.setArtefato(isPdf ? Artefato.PDF : Artefato.HTML);
 
         new Thread(() -> {
             Platform.runLater(() -> progressBar.setProgress(-1));

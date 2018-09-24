@@ -2,6 +2,7 @@ package br.com.pirilampo.core;
 
 
 import br.com.pirilampo.bean.Parametro;
+import br.com.pirilampo.constant.Artefato;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 
@@ -26,7 +27,7 @@ class ParseImage {
     static String parse(Parametro parametro, File image){
         String toReturn = image.getName();
 
-        if(parametro.getSitEmbedarImagens() || image.getAbsolutePath().equals(parametro.getTxtLogoSrc())) {
+        if(parametro.getSitEmbedarImagens() || image.getAbsolutePath().equals(parametro.getTxtLogoSrc()) || parametro.getArtefato() == Artefato.PDF) {
             try {
                 byte[] base64 = Base64.getEncoder().encode(FileUtils.readFileToByteArray(image));
 

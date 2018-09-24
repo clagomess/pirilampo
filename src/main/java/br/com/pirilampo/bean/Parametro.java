@@ -1,5 +1,6 @@
 package br.com.pirilampo.bean;
 
+import br.com.pirilampo.constant.Artefato;
 import br.com.pirilampo.constant.Compilacao;
 import br.com.pirilampo.constant.LayoutPdf;
 import javafx.scene.paint.Color;
@@ -21,6 +22,7 @@ public class Parametro {
     private String clrTextoMenu = "#DDDDDD";
     private Boolean sitEmbedarImagens = true;
     private Compilacao tipCompilacao = Compilacao.PASTA;
+    private Artefato artefato = Artefato.HTML;
     private String txtSrcFonte;
     private String txtSrcFonteMaster;
     private String txtOutputTarget;
