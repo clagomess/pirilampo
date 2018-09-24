@@ -1,6 +1,7 @@
 package core;
 
 import br.com.pirilampo.bean.Parametro;
+import br.com.pirilampo.core.Feature;
 import br.com.pirilampo.core.ParseMenu;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Before;
@@ -45,7 +46,8 @@ public class ParseMenuTest {
         ParseMenu pm = new ParseMenu(parametro);
 
         for(String item : itens){
-            pm.addMenuItem(new File(item));
+            File f = new File(item);
+            pm.addMenuItem(f, Feature.name(f));
         }
 
         log.info("{}", pm.getMenu());

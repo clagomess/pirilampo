@@ -33,6 +33,8 @@ class ParseDocument {
     @Getter
     private Map<String, Indice> indice;
     private String featureId;
+    @Getter
+    private String featureTitulo = null;
 
     public ParseDocument(Parametro parametro, File feature){
         this.parametro = parametro;
@@ -104,6 +106,8 @@ class ParseDocument {
         StringBuilder html = new StringBuilder();
 
         if(gd != null){
+            featureTitulo = gd.getFeature().getName();
+
             html.append(String.format(HtmlTemplate.HTML_TITULO, format(gd.getFeature().getName(), false)));
             setIndiceName(gd.getFeature().getName());
 

@@ -90,9 +90,6 @@ public class Compilador {
                     }
                 }
 
-                // Adiciona item de menu se deu tudo certo com a master
-                parseMenu.addMenuItem(f);
-
                 // Gera a feture
                 ParseDocument pd = new ParseDocument(parametro, f);
                 String featureHtml = pd.getFeatureHtml();
@@ -100,6 +97,9 @@ public class Compilador {
                 indice.putAll(pd.getIndice());
 
                 htmlTemplate.append(String.format(HtmlTemplate.HTML_TEMPLATE, featureIdHtml, featureHtml));
+
+                // Adiciona item de menu se deu tudo certo com a master
+                parseMenu.addMenuItem(f, pd.getFeatureTitulo());
 
                 // Salva as feature para diff
                 if(!StringUtils.isEmpty(parametro.getTxtSrcFonteMaster())){

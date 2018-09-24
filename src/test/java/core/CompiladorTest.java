@@ -142,7 +142,7 @@ public class CompiladorTest {
         }
     }
 
-    @Test
+    @Test(timeout = 2000)
     public void testCompilePdf(){
         Compilador compilador = new Compilador();
 
@@ -180,7 +180,7 @@ public class CompiladorTest {
         }
     }
 
-    @Test
+    @Test(timeout = 2000)
     public void testCompilePdfPath(){
         Compilador compilador = new Compilador();
 

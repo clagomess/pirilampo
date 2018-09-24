@@ -27,10 +27,10 @@ public class ParseMenu {
         this.parametro = parametro;
     }
 
-    public void addMenuItem(File feature){
+    public void addMenuItem(File feature, String featureTitulo){
         final String curDir = (new File(parametro.getTxtSrcFonte())).getAbsolutePath();
         this.featureId = Feature.id(parametro, feature);
-        this.featureName = Feature.name(feature);
+        this.featureName = featureTitulo;
 
         String item = feature.getAbsolutePath().replace(curDir, "");
         item = item.replaceFirst("^[\\/|\\\\]", "");
