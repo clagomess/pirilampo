@@ -95,7 +95,7 @@
         <Label GridPane.rowIndex="0" GridPane.columnIndex="2" text="Embedar Imagens?" />
         <ColorPicker fx:id="clrMenu" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
         <ColorPicker fx:id="clrTextoMenu" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
-        <CheckBox fx:id="sitEmbedarImagens" GridPane.rowIndex="1" GridPane.columnIndex="2" />
+        <CheckBox fx:id="sitEmbedarImagens" GridPane.rowIndex="1" GridPane.columnIndex="2" selected="true"/>
     </GridPane>
     <Separator prefWidth="200.0" GridPane.rowIndex="8" />
 
