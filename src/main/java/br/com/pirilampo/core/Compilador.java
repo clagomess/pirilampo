@@ -17,12 +17,6 @@ import java.util.Map;
 
 @Slf4j
 public class Compilador {
-    public static StringBuilder LOG;
-
-    public Compilador(){
-        Compilador.LOG = new StringBuilder();
-    }
-
     public void compilarPasta(Parametro parametro) throws Exception {
         ParseMenu parseMenu = new ParseMenu(parametro);
         StringBuilder htmlTemplate = new StringBuilder();
