@@ -31,7 +31,7 @@ public class MainUi extends Application {
 
         if(root != null) {
             primaryStage.setTitle("Pirilampo - Ver.: " + mainUi.getVersion());
-            primaryStage.setScene(new Scene(root, 600, 600));
+            primaryStage.setScene(new Scene(root, 600, 650));
             primaryStage.getIcons().add(new Image("img_01.png"));
             primaryStage.setOnCloseRequest(t -> {
                 Platform.exit();
