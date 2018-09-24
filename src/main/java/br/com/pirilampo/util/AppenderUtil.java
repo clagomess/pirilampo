@@ -1,5 +1,6 @@
 package br.com.pirilampo.util;
 
+import br.com.pirilampo.bind.ConsoleBind;
 import org.apache.log4j.AppenderSkeleton;
 import org.apache.log4j.Level;
 import org.apache.log4j.spi.LoggingEvent;
@@ -8,9 +9,9 @@ public class AppenderUtil extends AppenderSkeleton {
     @Override
     protected void append(LoggingEvent event) {
         if((event.getLevel() == Level.ERROR || event.getLevel() == Level.WARN) && event.getThrowableInformation() != null){
-            UiConsoleUtil.setLogData(event.getThrowableInformation().getThrowable().getMessage());
+            ConsoleBind.setLogData(event.getThrowableInformation().getThrowable().getMessage());
         }else{
-            UiConsoleUtil.setLogData(event.getRenderedMessage());
+            ConsoleBind.setLogData(event.getRenderedMessage());
         }
     }
 

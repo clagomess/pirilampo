@@ -2,12 +2,13 @@ package br.com.pirilampo.controller;
 
 import br.com.pirilampo.bean.MainForm;
 import br.com.pirilampo.bean.Parametro;
+import br.com.pirilampo.bind.ConsoleBind;
+import br.com.pirilampo.bind.ProgressBind;
 import br.com.pirilampo.constant.Artefato;
 import br.com.pirilampo.constant.Compilacao;
 import br.com.pirilampo.core.Compilador;
 import br.com.pirilampo.util.ExceptionUtil;
 import br.com.pirilampo.util.PropertiesUtil;
-import br.com.pirilampo.util.UiConsoleUtil;
 import javafx.application.Platform;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
@@ -57,7 +58,8 @@ public class MainController extends MainForm implements Initializable {
         clrMenu.setValue(Color.web(parametro.getClrMenu()));
         clrTextoMenu.setValue(Color.web(parametro.getClrTextoMenu()));
 
-        txtConsole.textProperty().bind(UiConsoleUtil.getLogData());
+        txtConsole.textProperty().bind(ConsoleBind.getLogData());
+        progressBar.progressProperty().bind(ProgressBind.getProgress());
     }
 
     public void selecionarFonte(){
@@ -131,7 +133,7 @@ public class MainController extends MainForm implements Initializable {
         parametro.setArtefato(isPdf ? Artefato.PDF : Artefato.HTML);
 
         new Thread(() -> {
-            Platform.runLater(() -> progressBar.setProgress(-1));
+            ProgressBind.setProgress(-1);
             Platform.runLater(() -> root.setDisable(true));
 
             try {
@@ -157,7 +159,7 @@ public class MainController extends MainForm implements Initializable {
             } catch (Throwable e) {
                 Platform.runLater(() -> ExceptionUtil.showDialog(e));
             } finally {
-                Platform.runLater(() -> progressBar.setProgress(0));
+                ProgressBind.setProgress(0);
                 Platform.runLater(() -> root.setDisable(false));
             }
         }).start();
