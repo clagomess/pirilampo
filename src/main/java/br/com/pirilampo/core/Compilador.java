@@ -2,6 +2,7 @@ package br.com.pirilampo.core;
 
 import br.com.pirilampo.bean.Indice;
 import br.com.pirilampo.bean.Parametro;
+import br.com.pirilampo.bind.ProgressBind;
 import br.com.pirilampo.constant.Diff;
 import br.com.pirilampo.constant.HtmlTemplate;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -48,7 +49,13 @@ public class Compilador {
         final List<File> arquivos = ListarPasta.listarPasta(curDir);
 
         if(arquivos.size() > 0){
+            int progressNum = 1;
+
             for(File f : arquivos){
+                // progress
+                ProgressBind.setProgress(progressNum / (double) arquivos.size());
+                progressNum++;
+
                 // monta nome menu
                 final String featureIdHtml = Feature.idHtml(parametro, f);
                 final String featureIdFeature = Feature.idFeature(parametro, f);
@@ -229,7 +236,13 @@ public class Compilador {
         List<File> arquivos = ListarPasta.listarPasta(curDir);
 
         if(!arquivos.isEmpty()) {
+            int progressNum = 1;
             for (File f : arquivos) {
+                // progress
+                ProgressBind.setProgress(progressNum / (double) arquivos.size());
+                progressNum++;
+
+                // compila
                 String rawHtml = ParseDocument.getFeatureHtml(parametro, f);
 
                 html.append(String.format(
@@ -255,6 +268,9 @@ public class Compilador {
             if(!outDirF.exists()){
                 outDirF.mkdir();
             }
+
+            log.info("GERANDO PDF");
+            ProgressBind.setProgress(-1);
 
             pp.buildHtml(outDir + File.separator + "index.pdf", html.toString(), css, parametro.getTipLayoutPdf().getValue());
         }
