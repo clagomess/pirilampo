@@ -78,7 +78,7 @@ pirilampoApp.controller('featureController', function($scope, $route){
     });
 
     // fancyfox
-    jQuery('div[ng-view] img[src^="data"]').each(function(){
+    jQuery('div[ng-view] img').each(function(){
         if(!jQuery(this).hasClass('logo')) {
             var html = '<a href="' + jQuery(this).attr('src') + '" class="fancybox">';
             html += jQuery(this).parent().html();

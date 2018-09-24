@@ -40,11 +40,10 @@ class ParseImage {
                 log.warn(ParseImage.class.getName(), e);
             }
         } else {
-            //@TODO: ver isso;
-            toReturn = image.getAbsolutePath().replace(parametro.getTxtSrcFonte(), "");
+            toReturn = image.getAbsolutePath().replace((new File(parametro.getTxtSrcFonte())).getParent(), "");
             toReturn = toReturn.replaceFirst("^[\\/|\\\\]", "");
             toReturn = toReturn.replaceAll("\\\\", "/");
-            toReturn = "../../" + toReturn;
+            toReturn = "../" + toReturn;
         }
 
         return toReturn;
