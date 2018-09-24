@@ -1,7 +1,6 @@
 package br.com.pirilampo.core;
 
 import br.com.pirilampo.bean.Parametro;
-import org.apache.commons.lang.StringUtils;
 
 import java.io.File;
 
