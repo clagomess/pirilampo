@@ -153,6 +153,7 @@ public class MainController extends MainForm implements Initializable {
                 }
 
                 Platform.runLater(() -> showDialog(Alert.AlertType.INFORMATION, MSG_OPE_SUCESSO));
+                log.info(MSG_OPE_SUCESSO);
             } catch (Throwable e) {
                 Platform.runLater(() -> ExceptionUtil.showDialog(e));
             } finally {
