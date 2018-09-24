@@ -2,6 +2,7 @@ package br.com.pirilampo.core;
 
 import br.com.pirilampo.bean.Menu;
 import br.com.pirilampo.bean.Parametro;
+import br.com.pirilampo.constant.Diff;
 import br.com.pirilampo.constant.HtmlTemplate;
 import lombok.Getter;
 
@@ -21,16 +22,18 @@ public class ParseMenu {
 
     private String featureId = "ID";
     private String featureName = "TITULO";
+    private Diff diff = Diff.NAO_COMPARADO;
 
     public ParseMenu(Parametro parametro){
         this.menu = new Menu("ROOT");
         this.parametro = parametro;
     }
 
-    public void addMenuItem(File feature, String featureTitulo){
+    public void addMenuItem(File feature, Diff diff, String featureTitulo){
         final String curDir = (new File(parametro.getTxtSrcFonte())).getAbsolutePath();
         this.featureId = Feature.id(parametro, feature);
         this.featureName = featureTitulo;
+        this.diff = diff;
 
         String item = feature.getAbsolutePath().replace(curDir, "");
         item = item.replaceFirst("^[\\/|\\\\]", "");
@@ -53,6 +56,7 @@ public class ParseMenu {
             buffer.append(String.format(
                     HtmlTemplate.HTML_MENU_FILHO,
                     node.getUrl(),
+                    diffIcon(node.getDiff()),
                     node.getTitulo()
             ));
         }else {
@@ -86,6 +90,7 @@ public class ParseMenu {
             if(level == nodes.length - 1){
                 node.get(oi.getAsInt()).setUrl(this.featureId);
                 node.get(oi.getAsInt()).setTitulo(this.featureName);
+                node.get(oi.getAsInt()).setDiff(this.diff);
             }else{
                 level++;
                 walker(node.get(oi.getAsInt()).getFilho());
@@ -93,6 +98,17 @@ public class ParseMenu {
         }else{
             node.add(new Menu(nodes[level]));
             walker(node);
+        }
+    }
+
+    private String diffIcon(Diff diff){
+        switch (diff){
+            case NOVO:
+                return HtmlTemplate.HTML_MENU_ICON_DIFF_NOVO;
+            case DIFERENTE:
+                return HtmlTemplate.HTML_MENU_ICON_DIFF_DIFERENTE;
+            default:
+                return "";
         }
     }
 }

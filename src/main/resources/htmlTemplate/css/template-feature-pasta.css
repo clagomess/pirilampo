@@ -98,3 +98,19 @@ del {
     font-weight: bolder;
     margin: 0;
 }
+
+.icon-diff-novo,
+.icon-diff-diferente {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 8px;
+}
+
+.icon-diff-novo {
+    background-color: #2cbe4e;
+}
+
+.icon-diff-diferente {
+    background-color: #cb2431;
+}

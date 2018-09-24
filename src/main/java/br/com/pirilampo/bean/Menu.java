@@ -1,5 +1,6 @@
 package br.com.pirilampo.bean;
 
+import br.com.pirilampo.constant.Diff;
 import lombok.Data;
 import lombok.ToString;
 
@@ -13,6 +14,9 @@ public class Menu implements Comparable<Menu> {
 
     @ToString.Exclude
     private String url = null;
+
+    @ToString.Exclude
+    private Diff diff = Diff.NAO_COMPARADO;
 
     @ToString.Exclude
     private List<Menu> filho;

@@ -27,9 +27,11 @@ final public class HtmlTemplate {
     public static final String HTML_CHILDREN_TABLE_TD = "<td>%s</td>\n";
 
     // MENU
-    public static final String HTML_MENU_FILHO = "\t\t<li><a href=\"#/feature/%s\">%s</a></li>\n";
+    public static final String HTML_MENU_FILHO = "\t\t<li><a href=\"#/feature/%s\">%s%s</a></li>\n";
     public static final String HTML_MENU_PAI = "<li>\n" +
             "\t<a href=\"javascript:;\" data-toggle=\"collapse\" data-target=\"#menu-%s\">%s</a>\n" +
             "\t<ul id=\"menu-%s\" class=\"collapse\">\n%s\t</ul>\n" +
             "</li>\n";
+    public static final String HTML_MENU_ICON_DIFF_NOVO = "<span class=\"icon-diff-novo\"></span> ";
+    public static final String HTML_MENU_ICON_DIFF_DIFERENTE = "<span class=\"icon-diff-diferente\"></span> ";
 }

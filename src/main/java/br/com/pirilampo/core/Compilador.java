@@ -2,6 +2,7 @@ package br.com.pirilampo.core;
 
 import br.com.pirilampo.bean.Indice;
 import br.com.pirilampo.bean.Parametro;
+import br.com.pirilampo.constant.Diff;
 import br.com.pirilampo.constant.HtmlTemplate;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -52,10 +53,11 @@ public class Compilador {
                 // monta nome menu
                 final String featureIdHtml = Feature.idHtml(parametro, f);
                 final String featureIdFeature = Feature.idFeature(parametro, f);
+                Diff diff = Diff.NAO_COMPARADO;
 
                 // Processa Master
                 if(!StringUtils.isEmpty(parametro.getTxtSrcFonteMaster())) {
-                    boolean diferente = true;
+                    diff = Diff.NOVO;
                     File fmd = null;
 
                     if(arquivosMaster != null && !arquivosMaster.isEmpty()) {
@@ -67,18 +69,20 @@ public class Compilador {
 
                             if (absoluteNFM.equals(absoluteNFB)) {
                                 if(featureM.equals(featureB)){
-                                    diferente = false;
+                                    diff = Diff.IGUAL;
                                 }else{
+                                    diff = Diff.DIFERENTE;
                                     fmd = fm;
-                                    log.info("Diff Master/Branch: {} - {} - {} - {}", featureM.hashCode(), featureB.hashCode(), absoluteNFM, absoluteNFB);
                                 }
                                 break;
                             }
                         }
                     }
 
+                    log.info("Diff Master/Branch: {} - {}", diff, f.getAbsolutePath());
+
                     // pula para o proximo
-                    if(!diferente){
+                    if(diff.equals(Diff.IGUAL)){
                         continue;
                     }
 
@@ -99,7 +103,7 @@ public class Compilador {
                 htmlTemplate.append(String.format(HtmlTemplate.HTML_TEMPLATE, featureIdHtml, featureHtml));
 
                 // Adiciona item de menu se deu tudo certo com a master
-                parseMenu.addMenuItem(f, pd.getFeatureTitulo());
+                parseMenu.addMenuItem(f, diff, pd.getFeatureTitulo());
 
                 // Salva as feature para diff
                 if(!StringUtils.isEmpty(parametro.getTxtSrcFonteMaster())){

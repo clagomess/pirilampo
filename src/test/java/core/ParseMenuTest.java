@@ -1,6 +1,7 @@
 package core;
 
 import br.com.pirilampo.bean.Parametro;
+import br.com.pirilampo.constant.Diff;
 import br.com.pirilampo.core.Feature;
 import br.com.pirilampo.core.ParseMenu;
 import lombok.extern.slf4j.Slf4j;
@@ -47,7 +48,7 @@ public class ParseMenuTest {
 
         for(String item : itens){
             File f = new File(item);
-            pm.addMenuItem(f, Feature.name(f));
+            pm.addMenuItem(f, Diff.NAO_COMPARADO,Feature.name(f));
         }
 
         log.info("{}", pm.getMenu());
