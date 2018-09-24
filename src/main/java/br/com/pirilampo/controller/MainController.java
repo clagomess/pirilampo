@@ -186,7 +186,7 @@ public class MainController extends MainForm implements Initializable {
 
     private void showDialog(Alert.AlertType alertType, String msg){
         Alert alert = new Alert(alertType);
-        alert.setContentText(msg);
+        alert.setTitle(msg);
 
         alert.showAndWait();
     }
