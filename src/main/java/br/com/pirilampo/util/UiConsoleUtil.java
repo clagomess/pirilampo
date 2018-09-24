@@ -3,15 +3,13 @@ package br.com.pirilampo.util;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
+import lombok.Getter;
 
 public final class UiConsoleUtil {
+    @Getter
     private static StringProperty logData = new SimpleStringProperty();
 
-    public static StringProperty logDataProperty() {
-        return logData;
-    }
-
-    public static void setLogData(String data) {
+    static void setLogData(String data) {
         try {
             Platform.runLater(() -> logData.set(data));
         }catch (Exception ignored){}

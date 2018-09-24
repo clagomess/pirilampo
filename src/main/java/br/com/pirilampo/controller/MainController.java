@@ -57,7 +57,7 @@ public class MainController extends MainForm implements Initializable {
         clrMenu.setValue(Color.web(parametro.getClrMenu()));
         clrTextoMenu.setValue(Color.web(parametro.getClrTextoMenu()));
 
-        txtConsole.textProperty().bind(UiConsoleUtil.logDataProperty());
+        txtConsole.textProperty().bind(UiConsoleUtil.getLogData());
     }
 
     public void selecionarFonte(){
