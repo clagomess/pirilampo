@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<GridPane
+        vgap="10.0"
+        maxHeight="-Infinity"
+        maxWidth="-Infinity"
+        minHeight="-Infinity"
+        minWidth="-Infinity"
+        prefHeight="600.0"
+        prefWidth="600.0"
+        xmlns="http://javafx.com/javafx/8"
+        xmlns:fx="http://javafx.com/fxml/1"
+        fx:controller="br.com.pirilampo.controller.MainController"
+        fx:id="root"
+>
+    <columnConstraints>
+        <ColumnConstraints hgrow="ALWAYS" />
+    </columnConstraints>
+    <rowConstraints>
+        <RowConstraints vgrow="ALWAYS" />
+        <RowConstraints vgrow="ALWAYS" />
+        <RowConstraints vgrow="ALWAYS" />
+        <RowConstraints vgrow="ALWAYS" />
+        <RowConstraints vgrow="ALWAYS" />
+        <RowConstraints vgrow="ALWAYS" />
+        <RowConstraints vgrow="ALWAYS" />
+        <RowConstraints vgrow="ALWAYS" />
+        <RowConstraints vgrow="ALWAYS" />
+        <RowConstraints vgrow="ALWAYS" />
+        <RowConstraints vgrow="ALWAYS" />
+        <RowConstraints vgrow="ALWAYS" />
+        <RowConstraints vgrow="ALWAYS" />
+        <RowConstraints vgrow="ALWAYS" />
+        <RowConstraints vgrow="ALWAYS" />
+    </rowConstraints>
+    <padding>
+        <Insets bottom="14.0" left="14.0" right="14.0" top="14.0" />
+    </padding>
+    <Label GridPane.rowIndex="0" style="-fx-font-size: 12px; -fx-font-weight: bolder" text="Dados do Projeto" />
+    <GridPane GridPane.rowIndex="1" hgap="10.0" vgap="10.0">
+        <columnConstraints>
+            <ColumnConstraints hgrow="ALWAYS" />
+            <ColumnConstraints hgrow="ALWAYS" />
+            <ColumnConstraints hgrow="ALWAYS" />
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints vgrow="ALWAYS" />
+            <RowConstraints vgrow="ALWAYS" />
+        </rowConstraints>
+        <Label GridPane.columnIndex="0" text="Nome:" />
+        <Label GridPane.columnIndex="1" text="Versão:" />
+        <Label GridPane.columnIndex="2" text="Logo:" />
+        <TextField GridPane.rowIndex="1" GridPane.columnIndex="0" fx:id="txtNome" text="Pirilampo" />
+        <TextField GridPane.rowIndex="1" GridPane.columnIndex="1" fx:id="txtVersao" text="1.0" />
+        <GridPane hgap="10.0" GridPane.rowIndex="1" GridPane.columnIndex="2">
+            <columnConstraints>
+                <ColumnConstraints hgrow="ALWAYS" />
+                <ColumnConstraints hgrow="ALWAYS" />
+            </columnConstraints>
+            <TextField GridPane.columnIndex="0" fx:id="txtLogoSrc"/>
+            <Button GridPane.columnIndex="1" fx:id="btnSelecionarLogoSrc" onAction="#selecionarLogoSrc" text="Selecionar"/>
+        </GridPane>
+    </GridPane>
+    <Separator GridPane.rowIndex="2" prefWidth="200.0" />
+
+    <Label GridPane.rowIndex="3" text="Layout PDF" style="-fx-font-size: 12px; -fx-font-weight: bolder"/>
+    <fx:define>
+        <ToggleGroup fx:id="tipLayoutPdf" />
+    </fx:define>
+    <RadioButton GridPane.rowIndex="4" toggleGroup="$tipLayoutPdf" text="Retrato" userData="RETRATO" mnemonicParsing="false" selected="true"/>
+    <RadioButton GridPane.rowIndex="4" toggleGroup="$tipLayoutPdf" text="Paisagem" userData="PAISAGEM" mnemonicParsing="false">
+        <GridPane.margin>
+            <Insets left="100.0"/>
+        </GridPane.margin>
+    </RadioButton>
+    <Separator GridPane.rowIndex="5" prefWidth="200.0" />
+
+    <Label GridPane.rowIndex="6" text="Layout HTML" style="-fx-font-size: 12px; -fx-font-weight: bolder"/>
+    <GridPane GridPane.rowIndex="7" hgap="10.0" vgap="10.0">
+        <columnConstraints>
+            <ColumnConstraints hgrow="ALWAYS" />
+            <ColumnConstraints hgrow="ALWAYS" />
+            <ColumnConstraints hgrow="ALWAYS" />
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints vgrow="ALWAYS" />
+            <RowConstraints vgrow="ALWAYS" />
+            <RowConstraints vgrow="ALWAYS" />
+        </rowConstraints>
+        <Label GridPane.rowIndex="0" GridPane.columnIndex="0" text="Cor Menu:" />
+        <Label GridPane.rowIndex="0" GridPane.columnIndex="1" text="Cor Texto Menu:" />
+        <Label GridPane.rowIndex="0" GridPane.columnIndex="2" text="Embedar Imagens?" />
+        <ColorPicker fx:id="clrMenu" GridPane.rowIndex="1" GridPane.columnIndex="0"/>
+        <ColorPicker fx:id="clrTextoMenu" GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+        <CheckBox fx:id="sitEmbedarImagens" GridPane.rowIndex="1" GridPane.columnIndex="2" selected="true"/>
+    </GridPane>
+    <Separator prefWidth="200.0" GridPane.rowIndex="8" />
+
+    <Label GridPane.rowIndex="9" text="Gerar Documentação" style="-fx-font-size: 12px; -fx-font-weight: bolder" />
+    <GridPane GridPane.rowIndex="10" hgap="10.0">
+        <columnConstraints>
+            <ColumnConstraints hgrow="ALWAYS" />
+            <ColumnConstraints hgrow="ALWAYS" />
+            <ColumnConstraints hgrow="ALWAYS" />
+            <ColumnConstraints hgrow="ALWAYS" />
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints vgrow="ALWAYS" />
+        </rowConstraints>
+        <fx:define>
+            <ToggleGroup fx:id="tipCompilacao" />
+        </fx:define>
+        <RadioButton GridPane.columnIndex="0" toggleGroup="$tipCompilacao" onAction="#tipCompilacaoChange" text="Coletiva/Pasta" userData="PASTA" mnemonicParsing="false" selected="true"/>
+        <RadioButton GridPane.columnIndex="1" toggleGroup="$tipCompilacao" onAction="#tipCompilacaoChange" text="Individual" userData="FEATURE" mnemonicParsing="false"/>
+        <RadioButton GridPane.columnIndex="2" toggleGroup="$tipCompilacao" onAction="#tipCompilacaoChange" text="Diff/Comparação" userData="DIFF" mnemonicParsing="false"/>
+    </GridPane>
+    <GridPane GridPane.rowIndex="11" hgap="10.0" vgap="10.0">
+        <columnConstraints>
+            <ColumnConstraints hgrow="ALWAYS" />
+            <ColumnConstraints hgrow="ALWAYS" />
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints vgrow="ALWAYS" />
+        </rowConstraints>
+        <TextField GridPane.rowIndex="0" GridPane.columnIndex="0" fx:id="txtSrcFonte" promptText="Pasta/Feature Fonte"/>
+        <Button GridPane.rowIndex="0" GridPane.columnIndex="1" fx:id="btnSelecionarFonte" onAction="#selecionarFonte" text="Selecionar"/>
+        <TextField GridPane.rowIndex="1" GridPane.columnIndex="0" fx:id="txtSrcFonteMaster" promptText="Pasta Fonte Master" disable="true"/>
+        <Button GridPane.rowIndex="1" GridPane.columnIndex="1" fx:id="btnSelecionarFonteMaster" onAction="#selecionarFonteMaster" text="Selecionar" disable="true"/>
+    </GridPane>
+    <GridPane GridPane.rowIndex="12" hgap="10.0">
+        <columnConstraints>
+            <ColumnConstraints hgrow="ALWAYS" />
+            <ColumnConstraints hgrow="ALWAYS" />
+            <ColumnConstraints hgrow="ALWAYS" />
+        </columnConstraints>
+        <rowConstraints>
+            <RowConstraints vgrow="ALWAYS" />
+        </rowConstraints>
+        <Button GridPane.columnIndex="0" fx:id="btnGerarHtml" onAction="#compilarHtml" text="Gerar HTML"/>
+        <Button GridPane.columnIndex="1" fx:id="btnGerarPdf" onAction="#compilarPdf" text="Gerar PDF"/>
+    </GridPane>
+    <ProgressBar  GridPane.rowIndex="13" fx:id="progressBar" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" progress="0.0" />
+    <TextArea fx:id="txtConsole" GridPane.rowIndex="14" maxHeight="60" editable="false" style="-fx-font-family: monospace;" wrapText="true"/>
+</GridPane>

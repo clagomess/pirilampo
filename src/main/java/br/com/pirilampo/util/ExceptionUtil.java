@@ -1,36 +1,48 @@
 package br.com.pirilampo.util;
 
 
+import br.com.pirilampo.exception.FeatureException;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Priority;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 
+@Slf4j
 public class ExceptionUtil {
-    private static final Logger logger = LoggerFactory.getLogger(Compilador.class);
-
     private ExceptionUtil(){}
 
-    public static void showDialog(Exception e){
-        logger.warn(ExceptionUtil.class.getName(), e);
+    public static void showDialog(Throwable e){
+        log.error(ExceptionUtil.class.getName(), e);
 
-        String msg = e.getMessage();
-
-        if(!"".equals(Compilador.LOG.toString())){
-            msg += "\n\n";
-            msg += "LOG DE FEATURES COMPILADAS:\n";
-            msg += Compilador.LOG;
-        }
+        String titulo = e.getMessage();
+        String log = null;
 
         Alert alert = new Alert(Alert.AlertType.WARNING);
-        alert.setHeaderText("Erro ao executar a operação.");
         alert.setResizable(true);
 
-        if(msg.contains("\n")){ //textão
-            TextArea textArea = new TextArea(msg);
+        if(e instanceof FeatureException){
+            titulo = "Erro ao executar a operação.";
+            log = e.getMessage();
+            alert.setContentText("FEATURE: " + ((FeatureException) e).getFeature().getAbsolutePath());
+        }else{
+            if(e.getStackTrace().length > 0) {
+                StringBuilder trace = new StringBuilder();
+
+                for (StackTraceElement item : e.getStackTrace()) {
+                    trace.append(item.toString()).append("\n");
+                }
+
+                log = trace.toString();
+            }
+        }
+
+        alert.setHeaderText(titulo);
+
+        if(StringUtils.isNotEmpty(log)){
+            TextArea textArea = new TextArea(log);
             textArea.setEditable(false);
 
             textArea.setMaxWidth(Double.MAX_VALUE);
@@ -44,8 +56,6 @@ public class ExceptionUtil {
             expContent.add(textArea, 0, 1);
 
             alert.getDialogPane().setExpandableContent(expContent);
-        }else{
-            alert.setContentText(msg);
         }
 
         alert.showAndWait();

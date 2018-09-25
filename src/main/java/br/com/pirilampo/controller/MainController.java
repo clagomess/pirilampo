@@ -1,167 +1,172 @@
 package br.com.pirilampo.controller;
 
-import br.com.pirilampo.util.Compilador;
+import br.com.pirilampo.bean.MainForm;
+import br.com.pirilampo.bean.Parametro;
+import br.com.pirilampo.bind.ConsoleBind;
+import br.com.pirilampo.bind.ProgressBind;
+import br.com.pirilampo.constant.Artefato;
+import br.com.pirilampo.constant.Compilacao;
+import br.com.pirilampo.core.Compilador;
 import br.com.pirilampo.util.ExceptionUtil;
+import br.com.pirilampo.util.PropertiesUtil;
 import javafx.application.Platform;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
+import javafx.scene.paint.Color;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 
 import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
+@Slf4j
 public class MainController extends MainForm implements Initializable {
-    private final String MSG_SELECIONAR_PASTA = "É necessário selecionar uma pasta!";
-    private final String MSG_SELECIONAR_FEATURE = "É necessário selecionar uma feature!";
     private final String MSG_OPE_SUCESSO = "Operação realizada com sucesso!";
+    private final List<Color> cores = new ArrayList<>();
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        txtCorMenu.setText(Compilador.COR_MENU);
-        txtRootMenuNome.setText(Compilador.NOME_MENU_RAIZ);
+        Parametro parametro = new Parametro();
+
+        cores.add(Color.web(parametro.getClrTextoMenu()));
+        cores.add(Color.web(parametro.getClrMenu()));
+        cores.add(Color.web("#D50000"));
+        cores.add(Color.web("#E67C73"));
+        cores.add(Color.web("#F4511E"));
+        cores.add(Color.web("#F6BF26"));
+        cores.add(Color.web("#33B679"));
+        cores.add(Color.web("#0B8043"));
+        cores.add(Color.web("#039BE5"));
+        cores.add(Color.web("#3F51B5"));
+        cores.add(Color.web("#7986CB"));
+        cores.add(Color.web("#8E24AA"));
+        cores.add(Color.web("#616161"));
+        cores.add(Color.web("#FFFFFF"));
+        cores.add(Color.web("#040404"));
+
+        for(Color cor : cores){
+            clrMenu.getCustomColors().add(cor);
+            clrTextoMenu.getCustomColors().add(cor);
+        }
+
+        clrMenu.setValue(Color.web(parametro.getClrMenu()));
+        clrTextoMenu.setValue(Color.web(parametro.getClrTextoMenu()));
+
+        txtConsole.textProperty().bind(ConsoleBind.getLogData());
+        progressBar.progressProperty().bind(ProgressBind.getProgress());
     }
 
-    public void selecionarFeature(){
-        FileChooser chooser = new FileChooser();
-        chooser.setTitle("Selecionar Feature");
+    public void selecionarFonte(){
+        selecionarFonte(false);
+    }
 
-        FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Feature", "*.feature");
-        chooser.getExtensionFilters().add(extFilter);
+    public void selecionarFonteMaster(){
+        selecionarFonte(true);
+    }
 
-        File file = chooser.showOpenDialog(new Stage());
+    private void selecionarFonte(boolean isFonteMaster){
+        File file;
+        final Compilacao compilacao = Compilacao.valueOf((String) tipCompilacao.getSelectedToggle().getUserData());
+
+        if(compilacao == Compilacao.FEATURE){
+            FileChooser chooser = new FileChooser();
+            chooser.setTitle("Selecionar Fonte");
+
+            FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Feature", "*.feature");
+            chooser.getExtensionFilters().add(extFilter);
+
+            file = chooser.showOpenDialog(new Stage());
+        }else{
+            DirectoryChooser directoryChooser = new DirectoryChooser();
+            directoryChooser.setTitle("Selecionar Pasta");
+            file = directoryChooser.showDialog(new Stage());
+        }
 
         if(file != null) {
-            txtFeatureSrc.setText(file.getAbsolutePath());
+            if(!isFonteMaster && compilacao != Compilacao.FEATURE){
+                setData(PropertiesUtil.getData(file.getAbsolutePath()));
+            }
+
+            if(isFonteMaster){
+                txtSrcFonteMaster.setText(file.getAbsolutePath());
+
+                if(txtSrcFonte.getText().equals(txtSrcFonteMaster.getText())){
+                    showDialog(Alert.AlertType.WARNING, "As pastas para comparação não podem ser iguais.");
+                    txtSrcFonte.setText("");
+                    txtSrcFonteMaster.setText("");
+                }
+            } else {
+                txtSrcFonte.setText(file.getAbsolutePath());
+            }
         }
     }
 
-    public void featureGerarHtml(){
+    public void compilarPdf(){
+        compilar(true);
+    }
+
+    public void compilarHtml(){
+        compilar(false);
+    }
+
+    private void compilar(boolean isPdf){
+        final Compilacao compilacao = Compilacao.valueOf((String) tipCompilacao.getSelectedToggle().getUserData());
+
+        if(StringUtils.isEmpty(txtSrcFonte.getText())){
+            showDialog(Alert.AlertType.WARNING, compilacao == Compilacao.FEATURE ? "Favor selecionar uma feature!" : "Favor selecionar uma pasta");
+            return;
+        }
+
+        if(compilacao == Compilacao.DIFF && StringUtils.isEmpty(txtSrcFonteMaster.getText())){
+            showDialog(Alert.AlertType.WARNING, "É necessário selecionar a pasta MASTER para realizar a comparação.");
+            return;
+        }
+
         Compilador compilador = new Compilador();
+        Parametro parametro = new Parametro(this);
+        parametro.setArtefato(isPdf ? Artefato.PDF : Artefato.HTML);
 
-        if (txtFeatureSrc.getText() != null && !"".equals(txtFeatureSrc.getText().trim())) {
-            new Thread(() -> {
-                Platform.runLater(() -> progressBar.setProgress(-1));
-                Platform.runLater(this::desabilitarBotoes);
+        new Thread(() -> {
+            ProgressBind.setProgress(-1);
+            Platform.runLater(() -> root.setDisable(true));
 
-                try {
-                    compilador.compilarFeature(txtFeatureSrc.getText(), txtNome.getText(), txtVersao.getText(), null);
-
-                    Platform.runLater(() -> alertInfo(MSG_OPE_SUCESSO));
-                } catch (Exception e) {
-                    Platform.runLater(() -> ExceptionUtil.showDialog(e));
+            try {
+                if(!isPdf && compilacao == Compilacao.FEATURE){
+                    compilador.compilarFeature(parametro);
                 }
 
-                Platform.runLater(() -> progressBar.setProgress(0));
-                Platform.runLater(this::habilitarBotoes);
-            }).start();
-        } else {
-            alertWarning(MSG_SELECIONAR_FEATURE);
-        }
-    }
-
-    public void featureGerarPdf(){
-        Compilador compilador = new Compilador();
-
-        if(txtFeatureSrc.getText() != null && !"".equals(txtFeatureSrc.getText().trim())) {
-            new Thread(() -> {
-                Platform.runLater(() -> progressBar.setProgress(-1));
-                Platform.runLater(this::desabilitarBotoes);
-
-                try {
-                    compilador.compilarFeaturePdf(
-                            txtFeatureSrc.getText(),
-                            txtNome.getText(),
-                            txtVersao.getText(),
-                            (String) rdoLayoutPdf.getSelectedToggle().getUserData()
-                    );
-
-                    Platform.runLater(() -> alertInfo(MSG_OPE_SUCESSO));
-                } catch (Exception e) {
-                    Platform.runLater(() -> ExceptionUtil.showDialog(e));
+                if(!isPdf && (compilacao == Compilacao.PASTA || compilacao == Compilacao.DIFF)){
+                    compilador.compilarPasta(parametro);
+                    PropertiesUtil.setData(parametro);
                 }
 
-                Platform.runLater(() -> progressBar.setProgress(0));
-                Platform.runLater(this::habilitarBotoes);
-            }).start();
-        }else{
-            alertWarning(MSG_SELECIONAR_FEATURE);
-        }
-    }
-
-    public void selecionarPasta(){
-        DirectoryChooser directoryChooser = new DirectoryChooser();
-        directoryChooser.setTitle("Selecionar Pasta");
-
-        File directory = directoryChooser.showDialog(new Stage());
-
-        if(directory != null) {
-            txtPastaSrc.setText(directory.getAbsolutePath());
-        }
-    }
-
-    public void pastaGerarHtml(){
-        Compilador compilador = new Compilador();
-
-        if(txtPastaSrc.getText() != null && !"".equals(txtPastaSrc.getText().trim())) {
-            Compilador.setConfig(
-                    txtCorMenu.getText(),
-                    txtRootMenuNome.getText(),
-                    new File(txtBrandSrc.getText())
-            );
-
-            new Thread(() -> {
-                Platform.runLater(() -> progressBar.setProgress(-1));
-                Platform.runLater(this::desabilitarBotoes);
-
-                try {
-                    compilador.compilarPasta(txtPastaSrc.getText(), null, txtNome.getText(), txtVersao.getText(), null);
-
-                    Platform.runLater(() -> alertInfo(MSG_OPE_SUCESSO));
-                } catch (Exception e) {
-                    Platform.runLater(() -> ExceptionUtil.showDialog(e));
+                if(isPdf && compilacao == Compilacao.FEATURE){
+                    compilador.compilarFeaturePdf(parametro);
                 }
 
-                Platform.runLater(() -> progressBar.setProgress(0));
-                Platform.runLater(this::habilitarBotoes);
-            }).start();
-        }else{
-            alertWarning(MSG_SELECIONAR_PASTA);
-        }
-    }
-
-    public void pastaGerarPdf(){
-        Compilador compilador = new Compilador();
-
-        if(txtPastaSrc.getText() != null && !"".equals(txtPastaSrc.getText().trim())) {
-            new Thread(() -> {
-                Platform.runLater(() -> progressBar.setProgress(-1));
-                Platform.runLater(this::desabilitarBotoes);
-
-                try {
-                    compilador.compilarPastaPdf(
-                            txtPastaSrc.getText(),
-                            txtNome.getText(),
-                            txtVersao.getText(),
-                            (String) rdoLayoutPdf.getSelectedToggle().getUserData()
-                    );
-
-                    Platform.runLater(() -> alertInfo(MSG_OPE_SUCESSO));
-                } catch (Exception e) {
-                    Platform.runLater(() -> ExceptionUtil.showDialog(e));
+                if(isPdf && compilacao == Compilacao.PASTA){
+                    compilador.compilarPastaPdf(parametro);
                 }
 
-                Platform.runLater(() -> progressBar.setProgress(0));
-                Platform.runLater(this::habilitarBotoes);
-            }).start();
-        }else{
-            alertWarning(MSG_SELECIONAR_PASTA);
-        }
+                Platform.runLater(() -> showDialog(Alert.AlertType.INFORMATION, MSG_OPE_SUCESSO));
+                log.info(MSG_OPE_SUCESSO);
+            } catch (Throwable e) {
+                Platform.runLater(() -> ExceptionUtil.showDialog(e));
+            } finally {
+                ProgressBind.setProgress(0);
+                Platform.runLater(() -> root.setDisable(false));
+            }
+        }).start();
     }
 
-    public void selecionarBrand(){
+
+    public void selecionarLogoSrc(){
         FileChooser chooser = new FileChooser();
         chooser.setTitle("Selecionar Imagens");
 
@@ -174,47 +179,23 @@ public class MainController extends MainForm implements Initializable {
         File file = chooser.showOpenDialog(new Stage());
 
         if(file != null) {
-            txtBrandSrc.setText(file.getAbsolutePath());
+            txtLogoSrc.setText(file.getAbsolutePath());
         }
     }
 
-    private void alertWarning(String msg){
-        Alert alert = new Alert(Alert.AlertType.WARNING);
-        alert.setContentText(msg);
+    public void tipCompilacaoChange(){
+        final Compilacao compilacao = Compilacao.valueOf((String) tipCompilacao.getSelectedToggle().getUserData());
+
+        txtSrcFonte.setText("");
+        txtSrcFonteMaster.setText("");
+        txtSrcFonteMaster.setDisable(compilacao != Compilacao.DIFF);
+        btnSelecionarFonteMaster.setDisable(compilacao != Compilacao.DIFF);
+    }
+
+    private void showDialog(Alert.AlertType alertType, String msg){
+        Alert alert = new Alert(alertType);
+        alert.setHeaderText(msg);
 
         alert.showAndWait();
-    }
-
-    private void alertInfo(String msg){
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setContentText(msg);
-
-        alert.showAndWait();
-    }
-
-    private void desabilitarBotoes(){
-        btnSelecionarFeature.setDisable(true);
-        btnFeatureGerarHtml.setDisable(true);
-        btnFeatureGerarPdf.setDisable(true);
-        btnSelecionarPasta.setDisable(true);
-        btnPastaGerarHtml.setDisable(true);
-        btnPastaGerarPdf.setDisable(true);
-        txtRootMenuNome.setDisable(true);
-        txtBrandSrc.setDisable(true);
-        btnBrandSrc.setDisable(true);
-        txtCorMenu.setDisable(true);
-    }
-
-    private void habilitarBotoes(){
-        btnSelecionarFeature.setDisable(false);
-        btnFeatureGerarHtml.setDisable(false);
-        btnFeatureGerarPdf.setDisable(false);
-        btnSelecionarPasta.setDisable(false);
-        btnPastaGerarHtml.setDisable(false);
-        btnPastaGerarPdf.setDisable(false);
-        txtRootMenuNome.setDisable(false);
-        txtBrandSrc.setDisable(false);
-        btnBrandSrc.setDisable(false);
-        txtCorMenu.setDisable(false);
     }
 }

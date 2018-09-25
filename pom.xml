@@ -102,6 +102,20 @@
             <version>1.16.1</version>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.0</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.9.6</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -109,13 +123,17 @@
 
         <resources>
             <resource>
-                <directory>src/main/java</directory>
-                <includes>
-                    <include>**/*.fxml</include>
-                    <include>**/resources/img_01.png</include>
-                    <include>**/htmlTemplate/dist/*.*</include>
-                    <include>**/htmlTemplate/html/*.*</include>
-                </includes>
+                <directory>src/main/resources</directory>
+                <excludes>
+                    <exclude>htmlTemplate/node_modules/**</exclude>
+                    <exclude>htmlTemplate/css/**</exclude>
+                    <exclude>htmlTemplate/js/**</exclude>
+                    <exclude>htmlTemplate/build.sh</exclude>
+                    <exclude>htmlTemplate/gulpfile.js</exclude>
+                    <exclude>htmlTemplate/package.json</exclude>
+                    <exclude>htmlTemplate/yarn.lock</exclude>
+                    <exclude>htmlTemplate/yarn-error.log</exclude>
+                </excludes>
             </resource>
         </resources>
 
@@ -128,12 +146,6 @@
                     <source>1.8</source>
                     <target>1.8</target>
                     <encoding>UTF-8</encoding><!-- try to force encoding -->
-                    <excludes>
-                        <exclude>**/bower_components/**</exclude>
-                    </excludes>
-                    <testExcludes>
-                        <testExclude>**/bower_components/**</testExclude>
-                    </testExcludes>
                 </configuration>
             </plugin>
 
