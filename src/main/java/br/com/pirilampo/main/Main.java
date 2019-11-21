@@ -9,6 +9,7 @@ import org.apache.commons.cli.*;
 public class Main {
 
     public static void main(String[] args) throws Exception {
+        SystemCheck.check();
         Main main = new Main();
         log.info("Pirilampo - Ver.: {}", main.getVersion());
 
