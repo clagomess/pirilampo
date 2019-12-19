@@ -7,7 +7,7 @@
 
     <groupId>pirilampo</groupId>
     <artifactId>pirilampo</artifactId>
-    <version>1.1.7</version>
+    <version>1.1.8</version>
     <name>Pirilampo</name>
     <description>Gerador de documentação com base features escritos na linguagem Gherkin (Cucumber)</description>
 
