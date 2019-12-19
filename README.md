@@ -10,7 +10,7 @@
 ## Sobre
 Pirilampo é um sistema gerador de documentação com base features escritos na linguagem Gherkin ([Cucumber](https://cucumber.io/docs/reference)) e com suporte a markedown ([CommonMark](http://commonmark.org/)).
 
-## Instalação:
+## Instalação
  - Java JRE 8
  - Download: <a href="https://github.com/clagomess/pirilampo/releases/latest">https://github.com/clagomess/pirilampo/releases/latest</a>
  
@@ -23,7 +23,7 @@ Pirilampo é um sistema gerador de documentação com base features escritos na 
 doc_exemplo/
 ├── feature/
 │   └── Independência do Brasil/
-│	    └──001 - Introdução.feature
+│       └── 001 - Introdução.feature
 └── html/
 ```
 
