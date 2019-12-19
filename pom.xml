@@ -3,14 +3,18 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-    <artifactId>pirilampo</artifactId>
-    <name>pirilampo</name>
     <modelVersion>4.0.0</modelVersion>
+
     <groupId>pirilampo</groupId>
-    <version>1.1.7</version>
+    <artifactId>pirilampo</artifactId>
+    <version>1.1.8</version>
+    <name>Pirilampo</name>
+    <description>Gerador de documentação com base features escritos na linguagem Gherkin (Cucumber)</description>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
 
     <dependencies>
@@ -142,11 +146,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>2.3.2</version>
-                <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                    <encoding>UTF-8</encoding><!-- try to force encoding -->
-                </configuration>
             </plugin>
 
             <plugin>
@@ -193,6 +192,48 @@
                                     <mainClass>br.com.pirilampo.main.Main</mainClass>
                                 </transformer>
                             </transformers>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>com.akathist.maven.plugins.launch4j</groupId>
+                <artifactId>launch4j-maven-plugin</artifactId>
+                <version>1.7.25</version>
+                <executions>
+                    <execution>
+                        <id>exe</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>launch4j</goal>
+                        </goals>
+                        <configuration>
+                            <headerType>gui</headerType>
+                            <outfile>target/${project.name}.exe</outfile>
+                            <jar>target/${project.artifactId}.jar</jar>
+                            <errTitle>enccg</errTitle>
+                            <icon>src/main/resources/img_02.ico</icon>
+                            <classPath>
+                                <mainClass>br.com.pirilampo.main.Main</mainClass>
+                            </classPath>
+                            <jre>
+                                <minVersion>${java.version}</minVersion>
+                            </jre>
+                            <versionInfo>
+                                <fileVersion>${project.version}.0</fileVersion>
+                                <txtFileVersion>${project.version}</txtFileVersion>
+                                <fileDescription>${project.description}</fileDescription>
+                                <copyright>MIT</copyright>
+                                <productVersion>${project.version}.0</productVersion>
+                                <txtProductVersion>${project.version}</txtProductVersion>
+                                <productName>${project.name}</productName>
+                                <internalName>${project.artifactId}</internalName>
+                                <originalFilename>${project.name}.exe</originalFilename>
+                                <language>
+                                    PORTUGUESE_BRAZIL|ENGLISH_UK|ENGLISH_US
+                                </language>
+                            </versionInfo>
                         </configuration>
                     </execution>
                 </executions>

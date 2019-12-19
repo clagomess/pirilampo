@@ -1,23 +1,30 @@
-# Pirilampo
+<p align="center">
+    <img src="https://raw.githubusercontent.com/clagomess/pirilampo/master/src/main/resources/img_01.png" width="64">
+</p>
 
+<p align="center">
+    <a href="https://github.com/clagomess/pirilampo/releases/latest"><img src="https://img.shields.io/github/release/clagomess/pirilampo.svg?maxAge=2592000" alt="GitHub Release"></a>
+    <a href="https://travis-ci.org/clagomess/pirilampo"><img src="https://travis-ci.org/clagomess/pirilampo.svg?branch=master" alt="Travis Build"></a>
+</p>
+
+## Sobre
 Pirilampo é um sistema gerador de documentação com base features escritos na linguagem Gherkin ([Cucumber](https://cucumber.io/docs/reference)) e com suporte a markedown ([CommonMark](http://commonmark.org/)).
 
-[![GitHub release](https://img.shields.io/github/release/clagomess/pirilampo.svg?maxAge=2592000)](https://github.com/clagomess/pirilampo/releases/latest)
-[![Travis Build](https://travis-ci.org/clagomess/pirilampo.svg?branch=master)](https://travis-ci.org/clagomess/pirilampo)
-
-## Pré-requisito:
+## Instalação
  - Java JRE 8
+ - Download: <a href="https://github.com/clagomess/pirilampo/releases/latest">https://github.com/clagomess/pirilampo/releases/latest</a>
  
 ## Imagem do Sistema
-<img src="https://cloud.githubusercontent.com/assets/9750668/17646018/1c4e2160-618e-11e6-8625-6d0e7298b6ed.jpg" width="400">
+<img src="https://raw.githubusercontent.com/clagomess/pirilampo/master/readme_assets/img_01.png" width="400">
  
 ## Exemplos
 ### Estrutura de pasta
 ```
-feature/
-  Independência do Brasil/
-	  001 - Introdução.feature
-html/
+doc_exemplo/
+├── feature/
+│   └── Independência do Brasil/
+│       └── 001 - Introdução.feature
+└── html/
 ```
 
 #### Feature: 001 - Introdução.feature
@@ -36,4 +43,4 @@ Funcionalidade: Introdução
 
 Html Individual | Html Múltiplas Feature | PDF Feature
 --------------- | ---------------------- | -----------
-![screenshot- domain date time](https://cloud.githubusercontent.com/assets/9750668/17646023/8c0855de-618e-11e6-9eff-894473aa4b1a.png) | ![screenshot- domain date time _2](https://cloud.githubusercontent.com/assets/9750668/17646025/93b7b43c-618e-11e6-94b9-24e5b12e1aec.png) | ![screenshot- domain date time _3](https://cloud.githubusercontent.com/assets/9750668/17646026/97c24920-618e-11e6-95d8-b65bb965c7b1.png)
+![a](https://raw.githubusercontent.com/clagomess/pirilampo/master/readme_assets/img_02.png) | ![b](https://raw.githubusercontent.com/clagomess/pirilampo/master/readme_assets/img_03.png) | ![c](https://raw.githubusercontent.com/clagomess/pirilampo/master/readme_assets/img_04.png)
