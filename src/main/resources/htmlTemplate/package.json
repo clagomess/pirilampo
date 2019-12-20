@@ -14,7 +14,7 @@
     "angular-resource": "1.5.8",
     "angular-route": "1.5.8",
     "angular-ui-router": "0.2.18",
-    "bootstrap": "3.3.7",
+    "bootstrap": "3.4.1",
     "fancybox": "2.1.6",
     "handlebars": "^4.5.3",
     "jquery": "2.2.1",
