@@ -135,8 +135,7 @@
                     <exclude>htmlTemplate/build.sh</exclude>
                     <exclude>htmlTemplate/gulpfile.js</exclude>
                     <exclude>htmlTemplate/package.json</exclude>
-                    <exclude>htmlTemplate/yarn.lock</exclude>
-                    <exclude>htmlTemplate/yarn-error.log</exclude>
+                    <exclude>htmlTemplate/package-lock.json</exclude>
                 </excludes>
             </resource>
         </resources>
