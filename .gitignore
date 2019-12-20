@@ -1,5 +1,4 @@
 .idea
 *.iml
 src/main/resources/htmlTemplate/node_modules
-yarn-error.log
 /target

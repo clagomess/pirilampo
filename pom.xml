@@ -135,8 +135,7 @@
                     <exclude>htmlTemplate/build.sh</exclude>
                     <exclude>htmlTemplate/gulpfile.js</exclude>
                     <exclude>htmlTemplate/package.json</exclude>
-                    <exclude>htmlTemplate/yarn.lock</exclude>
-                    <exclude>htmlTemplate/yarn-error.log</exclude>
+                    <exclude>htmlTemplate/package-lock.json</exclude>
                 </excludes>
             </resource>
         </resources>
@@ -212,7 +211,7 @@
                             <headerType>gui</headerType>
                             <outfile>target/${project.name}.exe</outfile>
                             <jar>target/${project.artifactId}.jar</jar>
-                            <errTitle>enccg</errTitle>
+                            <errTitle>${project.name}</errTitle>
                             <icon>src/main/resources/img_02.ico</icon>
                             <classPath>
                                 <mainClass>br.com.pirilampo.main.Main</mainClass>
