@@ -218,6 +218,7 @@
                             </classPath>
                             <jre>
                                 <minVersion>${java.version}</minVersion>
+                                <jdkPreference>jreOnly</jdkPreference>
                             </jre>
                             <versionInfo>
                                 <fileVersion>${project.version}.0</fileVersion>
