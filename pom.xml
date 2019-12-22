@@ -7,7 +7,7 @@
 
     <groupId>pirilampo</groupId>
     <artifactId>pirilampo</artifactId>
-    <version>1.1.8</version>
+    <version>1.1.9</version>
     <name>Pirilampo</name>
     <description>Gerador de documentação com base features escritos na linguagem Gherkin (Cucumber)</description>
 
@@ -234,6 +234,28 @@
                                     PORTUGUESE_BRAZIL|ENGLISH_UK|ENGLISH_US
                                 </language>
                             </versionInfo>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>net.jsign</groupId>
+                <artifactId>jsign-maven-plugin</artifactId>
+                <version>2.1</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                        <configuration>
+                            <file>target/${project.name}.exe</file>
+                            <name>${project.name}</name>
+                            <url>https://github.com/clagomess/pirilampo</url>
+                            <keystore>keystore/pirilampo.jks</keystore>
+                            <alias>pirilampo</alias>
+                            <storepass>9WPGe4wN</storepass>
                         </configuration>
                     </execution>
                 </executions>
