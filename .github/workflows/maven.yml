@@ -15,4 +15,4 @@ jobs:
           java-version: 1.8
           java-package: jdk+fx
       - name: Build with Maven
-        run: mvn compile package -DskipTests
+        run: mvn compile package
