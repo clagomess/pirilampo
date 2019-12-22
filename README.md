@@ -4,7 +4,7 @@
 
 <p align="center">
     <a href="https://github.com/clagomess/pirilampo/releases/latest"><img src="https://img.shields.io/github/release/clagomess/pirilampo.svg?maxAge=2592000" alt="GitHub Release"></a>
-    <a href="https://travis-ci.org/clagomess/pirilampo"><img src="https://travis-ci.org/clagomess/pirilampo.svg?branch=master" alt="Travis Build"></a>
+    <a href="https://github.com/clagomess/pirilampo/actions"><img src="https://img.shields.io/github/workflow/status/clagomess/pirilampo/Java CI" alt="GitHub Workflow"></a>
 </p>
 
 ## Sobre
