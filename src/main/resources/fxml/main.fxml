@@ -78,8 +78,20 @@
     </RadioButton>
     <Separator GridPane.rowIndex="5" prefWidth="200.0" />
 
-    <Label GridPane.rowIndex="6" text="Layout HTML" style="-fx-font-size: 12px; -fx-font-weight: bolder"/>
-    <GridPane GridPane.rowIndex="7" hgap="10.0" vgap="10.0">
+    <Label GridPane.rowIndex="6" text="Layout Painel" style="-fx-font-size: 12px; -fx-font-weight: bolder"/>
+    <fx:define>
+        <ToggleGroup fx:id="tipPainelFechado" />
+    </fx:define>
+    <RadioButton GridPane.rowIndex="7" toggleGroup="$tipPainelFechado" text="Aberto" userData="ABERTO" mnemonicParsing="false" selected="true"/>
+    <RadioButton GridPane.rowIndex="7" toggleGroup="$tipPainelFechado" text="Fechado" userData="FECHADO" mnemonicParsing="false">
+        <GridPane.margin>
+            <Insets left="100.0"/>
+        </GridPane.margin>
+    </RadioButton>
+    <Separator GridPane.rowIndex="8" prefWidth="200.0" />
+
+    <Label GridPane.rowIndex="9" text="Layout HTML" style="-fx-font-size: 12px; -fx-font-weight: bolder"/>
+    <GridPane GridPane.rowIndex="10" hgap="10.0" vgap="10.0">
         <columnConstraints>
             <ColumnConstraints hgrow="ALWAYS" />
             <ColumnConstraints hgrow="ALWAYS" />
@@ -99,8 +111,8 @@
     </GridPane>
     <Separator prefWidth="200.0" GridPane.rowIndex="8" />
 
-    <Label GridPane.rowIndex="9" text="Gerar Documentação" style="-fx-font-size: 12px; -fx-font-weight: bolder" />
-    <GridPane GridPane.rowIndex="10" hgap="10.0">
+    <Label GridPane.rowIndex="11" text="Gerar Documentação" style="-fx-font-size: 12px; -fx-font-weight: bolder" />
+    <GridPane GridPane.rowIndex="12" hgap="10.0">
         <columnConstraints>
             <ColumnConstraints hgrow="ALWAYS" />
             <ColumnConstraints hgrow="ALWAYS" />
@@ -117,7 +129,7 @@
         <RadioButton GridPane.columnIndex="1" toggleGroup="$tipCompilacao" onAction="#tipCompilacaoChange" text="Individual" userData="FEATURE" mnemonicParsing="false"/>
         <RadioButton GridPane.columnIndex="2" toggleGroup="$tipCompilacao" onAction="#tipCompilacaoChange" text="Diff/Comparação" userData="DIFF" mnemonicParsing="false"/>
     </GridPane>
-    <GridPane GridPane.rowIndex="11" hgap="10.0" vgap="10.0">
+    <GridPane GridPane.rowIndex="13" hgap="10.0" vgap="10.0">
         <columnConstraints>
             <ColumnConstraints hgrow="ALWAYS" />
             <ColumnConstraints hgrow="ALWAYS" />
@@ -130,7 +142,7 @@
         <TextField GridPane.rowIndex="1" GridPane.columnIndex="0" fx:id="txtSrcFonteMaster" promptText="Pasta Fonte Master" disable="true"/>
         <Button GridPane.rowIndex="1" GridPane.columnIndex="1" fx:id="btnSelecionarFonteMaster" onAction="#selecionarFonteMaster" text="Selecionar" disable="true"/>
     </GridPane>
-    <GridPane GridPane.rowIndex="12" hgap="10.0">
+    <GridPane GridPane.rowIndex="14" hgap="10.0">
         <columnConstraints>
             <ColumnConstraints hgrow="ALWAYS" />
             <ColumnConstraints hgrow="ALWAYS" />
@@ -142,6 +154,6 @@
         <Button GridPane.columnIndex="0" fx:id="btnGerarHtml" onAction="#compilarHtml" text="Gerar HTML"/>
         <Button GridPane.columnIndex="1" fx:id="btnGerarPdf" onAction="#compilarPdf" text="Gerar PDF"/>
     </GridPane>
-    <ProgressBar  GridPane.rowIndex="13" fx:id="progressBar" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" progress="0.0" />
-    <TextArea fx:id="txtConsole" GridPane.rowIndex="14" maxHeight="60" editable="false" style="-fx-font-family: monospace;" wrapText="true"/>
+    <ProgressBar  GridPane.rowIndex="15" fx:id="progressBar" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" progress="0.0" />
+    <TextArea fx:id="txtConsole" GridPane.rowIndex="16" maxHeight="60" editable="false" style="-fx-font-family: monospace;" wrapText="true"/>
 </GridPane>

@@ -12,6 +12,7 @@ public class MainForm {
     @FXML protected TextField txtLogoSrc;
     @FXML protected Button btnSelecionarLogoSrc;
     @FXML protected ToggleGroup tipLayoutPdf;
+    @FXML protected ToggleGroup tipPainelFechado;
     @FXML protected ColorPicker clrMenu;
     @FXML protected ColorPicker clrTextoMenu;
     @FXML protected CheckBox sitEmbedarImagens;

@@ -50,7 +50,7 @@ public class ParsePdf {
         }
     }
 
-    public void buildHtml(String path, String html, String css, String layout) throws Exception {
+    public void buildHtml(String path, String html, String css, String layout, String painelFechado) throws Exception {
         // Apply preferences and build metadata.
         Document document = new Document(layout.equals("R") ? PageSize.A4 : PageSize.A4.rotate());
         PdfWriter pw = PdfWriter.getInstance(document, new FileOutputStream(path));

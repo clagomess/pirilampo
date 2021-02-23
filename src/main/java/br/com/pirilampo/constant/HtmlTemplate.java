@@ -17,6 +17,7 @@ final public class HtmlTemplate {
     public static final String HTML_CHILDREN = "<div class=\"panel panel-default\">\n" +
             "<div class=\"panel-heading\" style=\"cursor: pointer;\" data-toggle=\"collapse\" data-target=\"#scenario-%s\"><h3>%s</h3></div>\n%s\n</div>\n";
     public static final String HTML_CHILDREN_BODY = "<div id=\"scenario-%s\" class=\"panel-body collapse in\">%s</div>\n";
+    public static final String HTML_CHILDREN_BODY_CLOSED = "<div id=\"scenario-%s\" class=\"panel-body collapse\">%s</div>\n";
     public static final String HTML_CHILDREN_TABLE = "<div class=\"table-responsive\">\n" +
             "<table class=\"table table-condensed table-bordered table-hover table-striped\">\n" +
             "<thead>\n%s\n</thead>\n" +

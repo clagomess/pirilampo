@@ -3,6 +3,7 @@ package br.com.pirilampo.bean;
 import br.com.pirilampo.constant.Artefato;
 import br.com.pirilampo.constant.Compilacao;
 import br.com.pirilampo.constant.LayoutPdf;
+import br.com.pirilampo.constant.PainelFechado;
 import javafx.scene.paint.Color;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,6 +19,7 @@ public class Parametro {
     private String txtVersao = "1.0";
     private String txtLogoSrc;
     private LayoutPdf tipLayoutPdf = LayoutPdf.RETRATO;
+    private PainelFechado tipPainelFechado = PainelFechado.ABERTO;
     private String clrMenu = "#14171A";
     private String clrTextoMenu = "#DDDDDD";
     private Boolean sitEmbedarImagens = true;
@@ -32,6 +34,7 @@ public class Parametro {
         this.txtVersao = !StringUtils.isEmpty(form.txtVersao.getText()) ? form.txtVersao.getText() : this.txtVersao;
         this.txtLogoSrc = form.txtLogoSrc.getText();
         this.tipLayoutPdf = LayoutPdf.valueOf((String) form.tipLayoutPdf.getSelectedToggle().getUserData());
+        this.tipPainelFechado = PainelFechado.valueOf((String) form.tipPainelFechado.getSelectedToggle().getUserData());
         this.clrMenu = colorHex(form.clrMenu.getValue());
         this.clrTextoMenu = colorHex(form.clrTextoMenu.getValue());
         this.sitEmbedarImagens = form.sitEmbedarImagens.isSelected();
