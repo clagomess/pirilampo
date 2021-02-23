@@ -3,6 +3,7 @@ package br.com.pirilampo.core;
 import br.com.pirilampo.bean.Indice;
 import br.com.pirilampo.bean.Parametro;
 import br.com.pirilampo.constant.HtmlTemplate;
+import br.com.pirilampo.constant.PainelFechado;
 import br.com.pirilampo.exception.FeatureException;
 import gherkin.AstBuilder;
 import gherkin.Parser;
@@ -15,7 +16,10 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.commonmark.renderer.html.HtmlRenderer;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -72,10 +76,10 @@ class ParseDocument {
     public static String getFeatureHtml(Parametro parametro, File feature) throws Exception {
         ParseDocument pd = new ParseDocument(parametro, feature);
 
-        return pd.getFeatureHtml();
+        return pd.getFeatureHtml(parametro.getTipPainelFechado().getValue());
     }
 
-    public String getFeatureHtml() throws Exception {
+    public String getFeatureHtml(String painelFechado) throws Exception {
         Parser<GherkinDocument> parser = new Parser<>(new AstBuilder());
         TokenMatcher matcher = new TokenMatcher();
         String html = null;
@@ -89,7 +93,7 @@ class ParseDocument {
             this.gd = parser.parse(in, matcher);
 
             if (this.gd != null) {
-                html = getHtml();
+                html = getHtml(painelFechado);
             }
 
             log.info("OK: {}", feature.getAbsolutePath());
@@ -100,7 +104,7 @@ class ParseDocument {
         return html;
     }
 
-    private String getHtml(){
+    private String getHtml(String painelFechado){
         StringBuilder html = new StringBuilder();
 
         if(gd != null){
@@ -192,11 +196,17 @@ class ParseDocument {
                     }
                 }
 
+                String bodyHtml = String.format(HtmlTemplate.HTML_CHILDREN_BODY, scenarioIdx, body);
+
+                if (PainelFechado.FECHADO.getValue().equals(painelFechado)) {
+                    bodyHtml = String.format(HtmlTemplate.HTML_CHILDREN_BODY_CLOSED, scenarioIdx, body);
+                }
+
                 html.append(String.format(
                         HtmlTemplate.HTML_CHILDREN,
                         scenarioIdx,
                         StringEscapeUtils.escapeHtml("".equals(sd.getName()) ? sd.getKeyword() : sd.getName()),
-                        String.format(HtmlTemplate.HTML_CHILDREN_BODY, scenarioIdx, body)
+                        bodyHtml
                 ));
 
                 scenarioIdx++;

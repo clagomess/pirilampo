@@ -96,7 +96,7 @@ public class Compilador {
 
                 // Gera a feture
                 ParseDocument pd = new ParseDocument(parametro, f);
-                String featureHtml = pd.getFeatureHtml();
+                String featureHtml = pd.getFeatureHtml(parametro.getTipPainelFechado().getValue());
                 paginaHtmlAnexo.addAll(pd.getPaginaHtmlAnexo());
                 indice.putAll(pd.getIndice());
 
@@ -217,7 +217,7 @@ public class Compilador {
         String path = (StringUtils.isNotEmpty(parametro.getTxtOutputTarget()) ? parametro.getTxtOutputTarget() : feature.getParent());
         path += File.separator + feature.getName().replace(Resource.getExtension(feature), "") + ".pdf";
 
-        pp.buildHtml(path, html, css, parametro.getTipLayoutPdf().getValue());
+        pp.buildHtml(path, html, css, parametro.getTipLayoutPdf().getValue(), parametro.getTipPainelFechado().getValue());
     }
 
     public void compilarPastaPdf(Parametro parametro) throws Exception {
@@ -266,7 +266,7 @@ public class Compilador {
             log.info("GERANDO PDF");
             ProgressBind.setProgress(-1);
 
-            pp.buildHtml(outDir + File.separator + "index.pdf", html.toString(), css, parametro.getTipLayoutPdf().getValue());
+            pp.buildHtml(outDir + File.separator + "index.pdf", html.toString(), css, parametro.getTipLayoutPdf().getValue(), parametro.getTipPainelFechado().getValue());
         }
     }
 }

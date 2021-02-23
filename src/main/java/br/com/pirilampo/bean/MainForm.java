@@ -1,5 +1,6 @@
 package br.com.pirilampo.bean;
 
+import br.com.pirilampo.constant.PainelFechado;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
@@ -12,6 +13,7 @@ public class MainForm {
     @FXML protected TextField txtLogoSrc;
     @FXML protected Button btnSelecionarLogoSrc;
     @FXML protected ToggleGroup tipLayoutPdf;
+    @FXML protected ToggleGroup tipPainelFechado;
     @FXML protected ColorPicker clrMenu;
     @FXML protected ColorPicker clrTextoMenu;
     @FXML protected CheckBox sitEmbedarImagens;
@@ -32,5 +34,13 @@ public class MainForm {
         this.clrMenu.setValue(Color.web(parametro.getClrMenu()));
         this.clrTextoMenu.setValue(Color.web(parametro.getClrTextoMenu()));
         this.sitEmbedarImagens.setSelected(parametro.getSitEmbedarImagens());
+
+        if(parametro.getTipPainelFechado() != null) {
+            this.tipPainelFechado.getToggles().forEach(toggle -> {
+                if(PainelFechado.valueOf(toggle.getUserData().toString()).equals(parametro.getTipPainelFechado())) {
+                    toggle.setSelected(true);
+                }
+            });
+        }
     }
 }

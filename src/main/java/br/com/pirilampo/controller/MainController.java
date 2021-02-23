@@ -24,6 +24,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.prefs.Preferences;
 
 @Slf4j
 public class MainController extends MainForm implements Initializable {
@@ -74,6 +75,10 @@ public class MainController extends MainForm implements Initializable {
         File file;
         final Compilacao compilacao = Compilacao.valueOf((String) tipCompilacao.getSelectedToggle().getUserData());
 
+        Preferences prefs = Preferences.userRoot().node(getClass().getName());
+
+        String folder = prefs.get("LAST_USED_FOLDER", "");
+
         if(compilacao == Compilacao.FEATURE){
             FileChooser chooser = new FileChooser();
             chooser.setTitle("Selecionar Fonte");
@@ -81,14 +86,30 @@ public class MainController extends MainForm implements Initializable {
             FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("Feature", "*.feature");
             chooser.getExtensionFilters().add(extFilter);
 
+            if(folder != "") {
+                File folderFile = new File(folder);
+                if(folderFile.exists()) {
+                    chooser.setInitialDirectory(new File(folder));
+                }
+            }
+
             file = chooser.showOpenDialog(new Stage());
         }else{
             DirectoryChooser directoryChooser = new DirectoryChooser();
             directoryChooser.setTitle("Selecionar Pasta");
+
+            if(folder != "") {
+                File folderFile = new File(folder);
+                if(folderFile.exists()) {
+                    directoryChooser.setInitialDirectory(new File(folder));
+                }
+            }
+
             file = directoryChooser.showDialog(new Stage());
         }
 
         if(file != null) {
+            prefs.put("LAST_USED_FOLDER", file.getAbsolutePath());
             if(!isFonteMaster && compilacao != Compilacao.FEATURE){
                 setData(PropertiesUtil.getData(file.getAbsolutePath()));
             }
