@@ -1,5 +1,6 @@
 package br.com.pirilampo.bean;
 
+import br.com.pirilampo.constant.PainelFechado;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
@@ -33,5 +34,13 @@ public class MainForm {
         this.clrMenu.setValue(Color.web(parametro.getClrMenu()));
         this.clrTextoMenu.setValue(Color.web(parametro.getClrTextoMenu()));
         this.sitEmbedarImagens.setSelected(parametro.getSitEmbedarImagens());
+
+        if(parametro.getTipPainelFechado() != null) {
+            this.tipPainelFechado.getToggles().forEach(toggle -> {
+                if(PainelFechado.valueOf(toggle.getUserData().toString()).equals(parametro.getTipPainelFechado())) {
+                    toggle.setSelected(true);
+                }
+            });
+        }
     }
 }

@@ -59,6 +59,7 @@ public class Parametro {
         this.clrMenu = !StringUtils.isEmpty(properties.getProperty("clrMenu")) ? properties.getProperty("clrMenu") : this.clrMenu;
         this.clrTextoMenu = !StringUtils.isEmpty(properties.getProperty("clrTextoMenu")) ? properties.getProperty("clrTextoMenu") : this.clrTextoMenu;
         this.sitEmbedarImagens = !StringUtils.isEmpty(properties.getProperty("sitEmbedarImagens")) ? Boolean.valueOf(properties.getProperty("sitEmbedarImagens")) : this.sitEmbedarImagens;
+        this.tipPainelFechado = !StringUtils.isEmpty(properties.getProperty("tipPainelFechado")) ? PainelFechado.valueOf(properties.getProperty("tipPainelFechado")) : this.tipPainelFechado;
     }
 
     public String colorHex(Color color){

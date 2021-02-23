@@ -65,6 +65,7 @@ public class PropertiesUtil {
         prop.setProperty("clrMenu", parametro.getClrMenu());
         prop.setProperty("clrTextoMenu", parametro.getClrTextoMenu());
         prop.setProperty("sitEmbedarImagens", parametro.getSitEmbedarImagens().toString());
+        prop.setProperty("tipPainelFechado", parametro.getTipPainelFechado().toString());
 
         return prop;
     }
