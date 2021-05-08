@@ -16,7 +16,7 @@
     "angular-ui-router": "0.2.18",
     "bootstrap": "3.3.7",
     "fancybox": "2.1.6",
-    "handlebars": "^4.5.3",
+    "handlebars": "^4.7.7",
     "jquery": "2.2.1",
     "jquery-prettytextdiff": "^1.0.4",
     "typeahead.js": "0.11.1"
