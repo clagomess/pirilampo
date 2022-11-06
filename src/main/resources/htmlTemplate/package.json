@@ -24,7 +24,7 @@
   "devDependencies": {
     "files-exist": "^1.1.0",
     "googlediff": "^0.1.0",
-    "gulp": "^3.9.1",
+    "gulp": "^4.0.2",
     "gulp-clean-css": "^3.10.0",
     "gulp-concat": "^2.6.1",
     "gulp-logger": "^0.0.2",
