@@ -8,8 +8,14 @@
     <groupId>pirilampo</groupId>
     <artifactId>pirilampo</artifactId>
     <version>1.2.0</version>
+    <packaging>pom</packaging>
     <name>Pirilampo</name>
     <description>Gerador de documentação com base features escritos na linguagem Gherkin (Cucumber)</description>
+    <modules>
+        <module>core</module>
+        <module>gui</module>
+        <module>cli</module>
+    </modules>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
