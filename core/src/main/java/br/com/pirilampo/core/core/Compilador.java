@@ -8,7 +8,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 
-import java.io.File;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -168,28 +169,44 @@ public class Compilador {
     }
 
     public void compilarFeature(ParametroDto parametro) throws Exception {
-        // Abre feature
         File feature = new File(parametro.getTxtSrcFonte());
+        ParseDocument parseDocument = new ParseDocument(parametro, feature);
 
-        // compila
-        String featureHtml = null; //@TODO ParseDocument.getFeatureHtml(parametro, feature);
+        String outFile = String.format(
+                "%s%s%s.html",
+                File.separator,
+                StringUtils.isNotEmpty(parametro.getTxtOutputTarget()) ?
+                        parametro.getTxtOutputTarget() :
+                        feature.getParent(),
+                feature.getName().replace(Resource.getExtension(feature), "")
+        );
 
-        //------------------ BUILD -----------------
-        String html = Resource.loadResource("htmlTemplate/html/template_feature.html");
+        try (
+                FileOutputStream fos = new FileOutputStream(outFile);
+                BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos, StandardCharsets.UTF_8));
+                PrintWriter out = new PrintWriter(bw);
+        ){
+            out.print("<!DOCTYPE html><html lang=\"en\"><head>");
+            out.print("<meta charset=\"utf-8\">");
+            out.print("<meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">");
+            out.print("<meta name=\"viewport\" content=\"width=device-width, shrink-to-fit=no, initial-scale=1\">");
+            out.print(String.format("<title>%s</title>", parametro.getTxtNome()));
+            out.print("<style>");
+            out.print(Resource.loadResource("htmlTemplate/dist/feature.min.css")); //@TODO: está usando muita memoria
+            out.print("</style>");
+            out.print("</head><body>");
+            out.print("<div class=\"container\"><div class=\"row\"><div class=\"col-sm-12\">");
+            out.print(String.format(
+                    "<h1 class=\"page-header\">%s <small>%s <em>%s</em></small></h1>",
+                    parametro.getTxtNome(),
+                    feature.getName().replace(Resource.getExtension(feature), ""),
+                    parametro.getTxtVersao()
+            ));
 
-        String htmlCss = String.format(HtmlTemplate.HTML_CSS, Resource.loadResource("htmlTemplate/dist/feature.min.css"));
+            parseDocument.build(out);
 
-        html = html.replace("#PROJECT_NAME#", parametro.getTxtNome());
-        html = html.replace("#PROJECT_VERSION#", parametro.getTxtVersao());
-        html = html.replace("#PROJECT_FEATURE#", feature.getName().replace(Resource.getExtension(feature), ""));
-        html = html.replace("#HTML_CSS#", htmlCss);
-        html = html.replace("#HTML_TEMPLATE#", featureHtml);
-
-        // Grava
-        String outDir = (StringUtils.isNotEmpty(parametro.getTxtOutputTarget()) ? parametro.getTxtOutputTarget() : feature.getParent());
-        outDir += File.separator + feature.getName().replace(Resource.getExtension(feature), "") + ".html";
-
-        Resource.writeHtml(html, outDir);
+            out.print("</div></div></div></body></html>");
+        }
     }
 
     public void compilarFeaturePdf(ParametroDto parametro) throws Exception {
