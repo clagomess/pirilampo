@@ -13,7 +13,7 @@
         prefWidth="600.0"
         xmlns="http://javafx.com/javafx/8"
         xmlns:fx="http://javafx.com/fxml/1"
-        fx:controller="br.com.pirilampo.controller.MainController"
+        fx:controller="br.com.pirilampo.gui.ui.MainController"
         fx:id="root"
 >
     <columnConstraints>

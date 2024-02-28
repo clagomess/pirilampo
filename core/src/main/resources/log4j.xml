@@ -10,12 +10,9 @@
         </layout>
     </appender>
 
-    <appender name="appenderutil" class="br.com.pirilampo.util.AppenderUtil"/>
-
     <!-- Root Logger -->
     <root>
         <level value="info"/>
         <appender-ref ref="console" />
-        <appender-ref ref="appenderutil" />
     </root>
 </log4j:configuration>
