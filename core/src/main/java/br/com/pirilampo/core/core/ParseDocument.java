@@ -1,15 +1,13 @@
 package br.com.pirilampo.core.core;
 
-import br.com.pirilampo.bean.Indice;
-import br.com.pirilampo.bean.Parametro;
-import br.com.pirilampo.core.constant.HtmlTemplate;
-import br.com.pirilampo.constant.PainelFechado;
-import br.com.pirilampo.exception.FeatureException;
+import br.com.pirilampo.core.bean.Indice;
+import br.com.pirilampo.core.dto.ParametroDto;
+import br.com.pirilampo.core.enums.PainelEnum;
+import br.com.pirilampo.core.exception.FeatureException;
 import gherkin.AstBuilder;
 import gherkin.Parser;
 import gherkin.TokenMatcher;
 import gherkin.ast.*;
-import gherkin.ast.Feature;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.input.BOMInputStream;
@@ -17,10 +15,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 import org.commonmark.renderer.html.HtmlRenderer;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,18 +26,42 @@ import java.util.regex.Pattern;
 
 @Slf4j
 class ParseDocument {
-    private GherkinDocument gd;
-    private Parametro parametro;
-    private File feature;
+    private final ParametroDto parametro;
+    private final File feature;
+
     @Getter
-    private List<File> paginaHtmlAnexo;
+    private final List<File> paginaHtmlAnexo;
+
     @Getter
-    private Map<String, Indice> indice;
-    private String featureId;
+    private final Map<String, Indice> indice;
+    private final String featureId;
+
     @Getter
     private String featureTitulo = null;
 
-    public ParseDocument(Parametro parametro, File feature){
+    private static final String HTML_TITULO = "<h2>%s</h2>\n";
+    private static final String HTML_PARAGRAFO = "<p>%s</p>\n";
+    private static final String HTML_STEP = "<p><span class=\"keyword\">%s</span> %s</p>\n";
+
+    private static final String HTML_OPEN_CHILDREN = "<div class=\"panel panel-default\">\n" +
+            "<div class=\"panel-heading\" style=\"cursor: pointer;\" data-toggle=\"collapse\" data-target=\"#scenario-%s\"><h3>%s</h3></div>";
+
+    private static final String HTML_OPEN_CHILDREN_BODY = "<div id=\"scenario-%s\" class=\"panel-body collapse in\">";
+    private static final String HTML_OPEN_CHILDREN_BODY_CLOSED = "<div id=\"scenario-%s\" class=\"panel-body collapse\">";
+
+    private static final String HTML_CLOSE_CHILDREN = "</div>";
+    private static final String HTML_CLOSE_CHILDREN_BODY = "</div>";
+
+
+    private static final String HTML_OPEN_CHILDREN_TABLE = "<div class=\"table-responsive\">\n" +
+            "<table class=\"table table-condensed table-bordered table-hover table-striped\">\n";
+
+    private static final String HTML_CLOSE_CHILDREN_TABLE = "</table></div>";
+
+    private static final String HTML_CHILDREN_TABLE_TH = "<th>%s</th>\n";
+    private static final String HTML_CHILDREN_TABLE_TD = "<td>%s</td>\n";
+
+    public ParseDocument(ParametroDto parametro, File feature){
         this.parametro = parametro;
         this.feature = feature;
         this.paginaHtmlAnexo = new ArrayList<>();
@@ -74,147 +93,141 @@ class ParseDocument {
         indice.get(featureId).setName(name);
     }
 
-    public static String getFeatureHtml(Parametro parametro, File feature) throws Exception {
-        ParseDocument pd = new ParseDocument(parametro, feature);
-
-        return pd.getFeatureHtml(parametro.getTipPainelFechado().getValue());
-    }
-
-    public String getFeatureHtml(String painelFechado) throws Exception {
-        Parser<GherkinDocument> parser = new Parser<>(new AstBuilder());
-        TokenMatcher matcher = new TokenMatcher();
-        String html = null;
-
-        try (FileInputStream fis = new FileInputStream(feature)) {
-            // BOMInputStream para caso o arquivo possuir BOM
-            BOMInputStream bis = new BOMInputStream(fis);
-
-            Reader in = new InputStreamReader(bis, StandardCharsets.UTF_8);
-
-            this.gd = parser.parse(in, matcher);
-
-            if (this.gd != null) {
-                html = getHtml(painelFechado);
+    public void build(PrintWriter out) throws Exception {
+        try (
+                FileInputStream fis = new FileInputStream(feature);
+                BOMInputStream bis = new BOMInputStream(fis);
+                Reader in = new InputStreamReader(bis, StandardCharsets.UTF_8);
+        ) {
+            GherkinDocument gd = new Parser<>(new AstBuilder()).parse(in, new TokenMatcher());
+            if (gd != null){
+                featureTitulo = gd.getFeature().getName();
+                setIndiceName(gd.getFeature().getName());
+                build(gd, out);
             }
 
             log.info("OK: {}", feature.getAbsolutePath());
-        } catch (Exception e){
+        } catch (Throwable e) {
             throw new FeatureException(e, feature);
         }
-
-        return html;
     }
 
-    private String getHtml(String painelFechado){
-        StringBuilder html = new StringBuilder();
+    private void parseStepDataTable(DataTable dataTable, PrintWriter out){
+        if(dataTable.getRows().isEmpty()) return;
 
-        if(gd != null){
-            featureTitulo = gd.getFeature().getName();
+        out.print(HTML_OPEN_CHILDREN_TABLE);
 
-            html.append(String.format(HtmlTemplate.HTML_TITULO, format(gd.getFeature().getName(), false)));
-            setIndiceName(gd.getFeature().getName());
+        out.print("<thead><tr>");
 
-            if(gd.getFeature().getDescription() != null) {
-                html.append(String.format(HtmlTemplate.HTML_PARAGRAFO, format(gd.getFeature().getDescription())));
-            }
-
-            int scenarioIdx = 0;
-            for (ScenarioDefinition sd : gd.getFeature().getChildren()){
-                StringBuilder body = new StringBuilder();
-
-                if(sd.getDescription() != null){
-                    body.append(String.format(HtmlTemplate.HTML_PARAGRAFO, format(sd.getDescription())));
-                }
-
-                for (Step step : sd.getSteps()){
-                    body.append(String.format(HtmlTemplate.HTML_STEP, step.getKeyword(), format(step.getText())));
-
-                    if(step.getArgument() != null){
-                        if(step.getArgument() instanceof DataTable) {
-                            StringBuilder htmlTrH = new StringBuilder();
-                            StringBuilder htmlTrD = new StringBuilder();
-                            int i = 0;
-
-                            for (TableRow tr : ((DataTable) step.getArgument()).getRows()) {
-                                StringBuilder htmlTc = new StringBuilder();
-                                for (TableCell tc : tr.getCells()) {
-                                    if (i == 0) {
-                                        htmlTc.append(String.format(HtmlTemplate.HTML_CHILDREN_TABLE_TH, format(tc.getValue(), false)));
-                                    } else {
-                                        htmlTc.append(String.format(HtmlTemplate.HTML_CHILDREN_TABLE_TD, format(tc.getValue())));
-                                    }
-                                }
-
-                                if (i == 0) {
-                                    htmlTrH.append(String.format(HtmlTemplate.HTML_CHILDREN_TABLE_TR, htmlTc));
-                                } else {
-                                    htmlTrD.append(String.format(HtmlTemplate.HTML_CHILDREN_TABLE_TR, htmlTc));
-                                }
-
-                                i++;
-                            }
-
-                            body.append(String.format(HtmlTemplate.HTML_CHILDREN_TABLE, htmlTrH, htmlTrD));
-                        }
-
-                        if(step.getArgument() instanceof DocString) {
-                            body.append(String.format(HtmlTemplate.HTML_CODE, format(((DocString) step.getArgument()).getContent(), false)));
-                        }
-                    }
-                }
-
-                if(sd instanceof ScenarioOutline) {
-                    for (Examples examples : ((ScenarioOutline) sd).getExamples()){
-                        body.append(String.format(HtmlTemplate.HTML_STEP, examples.getKeyword(), ":"));
-
-                        StringBuilder htmlTrH = new StringBuilder();
-                        StringBuilder htmlTrD = new StringBuilder();
-                        StringBuilder htmlTc = new StringBuilder();
-
-                        if(examples.getTableHeader() != null) {
-                            for (TableCell tc : examples.getTableHeader().getCells()) {
-                                htmlTc.append(String.format(HtmlTemplate.HTML_CHILDREN_TABLE_TH, format(tc.getValue(), false)));
-                            }
-
-                            htmlTrH.append(String.format(HtmlTemplate.HTML_CHILDREN_TABLE_TR, htmlTc));
-                        }
-
-                        if(examples.getTableBody() != null) {
-                            for (TableRow tr : examples.getTableBody()) {
-                                htmlTc = new StringBuilder();
-
-                                for (TableCell tc : tr.getCells()) {
-                                    htmlTc.append(String.format(HtmlTemplate.HTML_CHILDREN_TABLE_TD, format(tc.getValue())));
-                                }
-
-                                htmlTrD.append(String.format(HtmlTemplate.HTML_CHILDREN_TABLE_TR, htmlTc));
-                            }
-                        }
-
-                        if(!"".equals(htmlTrH.toString()) || !"".equals(htmlTrD.toString())) {
-                            body.append(String.format(HtmlTemplate.HTML_CHILDREN_TABLE, htmlTrH, htmlTrD));
-                        }
-                    }
-                }
-
-                String bodyHtml = String.format(HtmlTemplate.HTML_CHILDREN_BODY, scenarioIdx, body);
-
-                if (PainelFechado.FECHADO.getValue().equals(painelFechado)) {
-                    bodyHtml = String.format(HtmlTemplate.HTML_CHILDREN_BODY_CLOSED, scenarioIdx, body);
-                }
-
-                html.append(String.format(
-                        HtmlTemplate.HTML_CHILDREN,
-                        scenarioIdx,
-                        StringEscapeUtils.escapeHtml("".equals(sd.getName()) ? sd.getKeyword() : sd.getName()),
-                        bodyHtml
-                ));
-
-                scenarioIdx++;
-            }
+        for (TableCell tc : dataTable.getRows().get(0).getCells()) {
+            out.print(String.format(HTML_CHILDREN_TABLE_TH, format(tc.getValue(), false)));
         }
 
-        return html.toString();
+        out.print("</tr></thead>");
+
+        out.print("<tbody>");
+        int i = 0;
+        for (TableRow tr : dataTable.getRows()) {
+            if(i++ == 0) continue;
+
+            out.print("<tr>");
+            for (TableCell tc : tr.getCells()) {
+                out.print(String.format(HTML_CHILDREN_TABLE_TD, format(tc.getValue())));
+            }
+            out.print("</tr>");
+        }
+
+        out.print("</tbody>");
+        out.print(HTML_CLOSE_CHILDREN_TABLE);
+    }
+
+    private void parseStepDocString(DocString docString, PrintWriter out){
+        out.print("<pre>");
+        out.print(format(docString.getContent(), false));
+        out.print("</pre>");
+    }
+
+    private void parseScenarioOutlineExamples(Examples examples, PrintWriter out){
+        out.print(String.format(HTML_STEP, examples.getKeyword(), ":"));
+        out.print(HTML_OPEN_CHILDREN_TABLE);
+
+        if(examples.getTableHeader() != null) {
+            out.print("<thead><tr>");
+
+            for (TableCell tc : examples.getTableHeader().getCells()) {
+                out.print(String.format(HTML_CHILDREN_TABLE_TH, format(tc.getValue(), false)));
+            }
+
+            out.print("</tr></thead>");
+        }
+
+        if(examples.getTableBody() != null) {
+            out.print("<tbody>");
+
+            for (TableRow tr : examples.getTableBody()) {
+                out.print("<tr>");
+
+                for (TableCell tc : tr.getCells()) {
+                    out.print(String.format(HTML_CHILDREN_TABLE_TD, format(tc.getValue())));
+                }
+                out.print("</tr>");
+            }
+
+            out.print("</tbody>");
+        }
+
+        out.print(HTML_CLOSE_CHILDREN_TABLE);
+    }
+
+    private void build(GherkinDocument gd, PrintWriter out){
+        out.print(String.format(HTML_TITULO, format(gd.getFeature().getName(), false)));
+
+        if(StringUtils.isNotBlank(gd.getFeature().getDescription())) {
+            out.print(String.format(HTML_PARAGRAFO, format(gd.getFeature().getDescription())));
+        }
+
+        int scenarioIdx = 0;
+        for (ScenarioDefinition sd : gd.getFeature().getChildren()){
+            out.print(String.format(
+                    HTML_OPEN_CHILDREN,
+                    scenarioIdx,
+                    StringEscapeUtils.escapeHtml(StringUtils.isBlank(sd.getName()) ? sd.getKeyword() : sd.getName())
+            ));
+
+            if (parametro.getTipPainel() == PainelEnum.FECHADO) {
+                out.print(String.format(HTML_OPEN_CHILDREN_BODY_CLOSED, scenarioIdx));
+            }else{
+                out.print(String.format(HTML_OPEN_CHILDREN_BODY, scenarioIdx));
+            }
+
+            if(StringUtils.isNotBlank(sd.getDescription())){
+                out.print(String.format(HTML_PARAGRAFO, format(sd.getDescription())));
+            }
+
+            for (Step step : sd.getSteps()){
+                out.print(String.format(HTML_STEP, step.getKeyword(), format(step.getText())));
+                if(step.getArgument() == null) continue;
+
+                if(step.getArgument() instanceof DataTable) {
+                    parseStepDataTable((DataTable) step.getArgument(), out);
+                }
+
+                if(step.getArgument() instanceof DocString) {
+                    parseStepDocString((DocString) step.getArgument(), out);
+                }
+            }
+
+            if(sd instanceof ScenarioOutline) {
+                for (Examples examples : ((ScenarioOutline) sd).getExamples()){
+                    parseScenarioOutlineExamples(examples, out);
+                }
+            }
+
+            out.print(HTML_CLOSE_CHILDREN_BODY);
+            out.print(HTML_CLOSE_CHILDREN);
+
+            scenarioIdx++;
+        }
     }
 
     /**
