@@ -1,7 +1,6 @@
 package br.com.pirilampo.core.compilers;
 
 import br.com.pirilampo.core.bean.Menu;
-import br.com.pirilampo.core.constant.HtmlTemplate;
 import br.com.pirilampo.core.dto.ParametroDto;
 import br.com.pirilampo.core.enums.DiffEnum;
 import lombok.Getter;
@@ -24,13 +23,21 @@ public class ParseMenu extends Compiler {
     private String featureName = "TITULO";
     private DiffEnum diff = DiffEnum.NAO_COMPARADO;
 
+    public static final String HTML_MENU_FILHO = "\t\t<li><a href=\"#/feature/%s\">%s%s</a></li>\n";
+    public static final String HTML_MENU_PAI = "<li>\n" +
+            "\t<a href=\"javascript:;\" data-toggle=\"collapse\" data-target=\"#menu-%s\">%s</a>\n" +
+            "\t<ul id=\"menu-%s\" class=\"collapse\">\n%s\t</ul>\n" +
+            "</li>\n";
+    public static final String HTML_MENU_ICON_DIFF_NOVO = "<span class=\"icon-diff-novo\"></span> ";
+    public static final String HTML_MENU_ICON_DIFF_DIFERENTE = "<span class=\"icon-diff-diferente\"></span> ";
+
     public ParseMenu(ParametroDto parametro){
         this.menu = new Menu("ROOT");
         this.parametro = parametro;
     }
 
     public void addMenuItem(File feature, DiffEnum diff, String featureTitulo){
-        final String curDir = (new File(parametro.getTxtSrcFonte())).getAbsolutePath();
+        final String curDir = parametro.getTxtSrcFonte().getAbsolutePath();
         this.featureId = getFeatureMetadata(parametro, feature).getId();
         this.featureName = featureTitulo;
         this.diff = diff;
@@ -54,7 +61,7 @@ public class ParseMenu extends Compiler {
 
         if(node.getFilho().isEmpty()){
             buffer.append(String.format(
-                    HtmlTemplate.HTML_MENU_FILHO,
+                    HTML_MENU_FILHO,
                     node.getUrl(),
                     diffIcon(node.getDiff()),
                     node.getTitulo()
@@ -65,7 +72,7 @@ public class ParseMenu extends Compiler {
 
                 if(!item.getFilho().isEmpty()) {
                     buffer.append(String.format(
-                            HtmlTemplate.HTML_MENU_PAI,
+                            HTML_MENU_PAI,
                             htmlNodeNum,
                             item.getTitulo(),
                             htmlNodeNum,
@@ -104,9 +111,9 @@ public class ParseMenu extends Compiler {
     private String diffIcon(DiffEnum diff){
         switch (diff){
             case NOVO:
-                return HtmlTemplate.HTML_MENU_ICON_DIFF_NOVO;
+                return HTML_MENU_ICON_DIFF_NOVO;
             case DIFERENTE:
-                return HtmlTemplate.HTML_MENU_ICON_DIFF_DIFERENTE;
+                return HTML_MENU_ICON_DIFF_DIFERENTE;
             default:
                 return "";
         }

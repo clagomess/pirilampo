@@ -45,12 +45,12 @@ public class FolderToHTMLCompiler extends Compiler {
         for (File featureMaster : arquivosMaster) {
             // @TODO: reduce comparing
             String absoluteFeatureMaster = Resource.absoluteNameFeature(
-                    parametro.getTxtSrcFonteMaster(),
+                    parametro.getTxtSrcFonteMaster().getAbsolutePath(),
                     featureMaster.getAbsolutePath()
             );
 
             String absoluteFeatureBranch = Resource.absoluteNameFeature(
-                    parametro.getTxtSrcFonte(),
+                    parametro.getTxtSrcFonte().getAbsolutePath(),
                     featureBranch.getAbsolutePath()
             );
 

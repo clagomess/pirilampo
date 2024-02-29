@@ -41,7 +41,7 @@ class ParseImage {
                 log.warn(log.getName(), e);
             }
         } else {
-            toReturn = image.getAbsolutePath().replace((new File(parametro.getTxtSrcFonte())).getParent(), "");
+            toReturn = image.getAbsolutePath().replace(parametro.getTxtSrcFonte().getParent(), "");
             toReturn = toReturn.replaceFirst("^[\\/|\\\\]", "");
             toReturn = toReturn.replaceAll("\\\\", "/");
             toReturn = "../" + toReturn;

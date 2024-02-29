@@ -1,6 +1,5 @@
 package br.com.pirilampo.core.dto;
 
-import br.com.pirilampo.core.bean.MainForm;
 import br.com.pirilampo.core.enums.ArtefatoEnum;
 import br.com.pirilampo.core.enums.CompilacaoEnum;
 import br.com.pirilampo.core.enums.LayoutPdfEnum;
@@ -9,7 +8,6 @@ import javafx.scene.paint.Color;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.commons.cli.CommandLine;
-import org.apache.commons.lang.StringUtils;
 
 import java.io.File;
 import java.util.Properties;
@@ -31,7 +29,7 @@ public class ParametroDto {
     private File txtSrcFonteMaster;
     private File txtOutputTarget;
 
-    public ParametroDto(MainForm form){
+    // public ParametroDto(MainForm form){
         /*
         this.txtNome = !StringUtils.isEmpty(form.txtNome.getText()) ? form.txtNome.getText() : this.txtNome;
         this.txtVersao = !StringUtils.isEmpty(form.txtVersao.getText()) ? form.txtVersao.getText() : this.txtVersao;
@@ -45,7 +43,7 @@ public class ParametroDto {
         this.txtSrcFonte = form.txtSrcFonte.getText();
         this.txtSrcFonteMaster = form.txtSrcFonteMaster.getText();
          */
-    }
+    // }
 
     public ParametroDto(CommandLine cmd){
         /*

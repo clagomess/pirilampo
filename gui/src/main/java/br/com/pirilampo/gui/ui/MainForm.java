@@ -1,4 +1,4 @@
-package br.com.pirilampo.core.bean;
+package br.com.pirilampo.gui.ui;
 
 import br.com.pirilampo.core.dto.ParametroDto;
 import br.com.pirilampo.core.enums.PainelEnum;

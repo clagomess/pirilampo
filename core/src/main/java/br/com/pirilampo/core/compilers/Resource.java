@@ -56,13 +56,13 @@ public class Resource {
         File toReturn = null;
         List<String> paths = new ArrayList<>();
         paths.add(feature.getAbsolutePath().replace(feature.getName(), ""));
-        paths.add(parametro.getTxtSrcFonte());
+        paths.add(parametro.getTxtSrcFonte().getAbsolutePath());
 
-        if(StringUtils.isNotEmpty(parametro.getTxtSrcFonteMaster())){
-            paths.add(parametro.getTxtSrcFonteMaster());
+        if(parametro.getTxtSrcFonteMaster() != null){
+            paths.add(parametro.getTxtSrcFonteMaster().getAbsolutePath());
         }
 
-        paths.add(parametro.getTxtSrcFonteMaster());
+        paths.add(parametro.getTxtSrcFonteMaster().getAbsolutePath());
 
         for (String path : paths) {
             File file = new File( path + File.separator + fileName);

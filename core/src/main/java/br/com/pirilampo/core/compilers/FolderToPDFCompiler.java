@@ -1,6 +1,5 @@
 package br.com.pirilampo.core.compilers;
 
-import br.com.pirilampo.core.constant.HtmlTemplate;
 import br.com.pirilampo.core.dto.ParametroDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,12 +12,15 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FolderToPDFCompiler extends Compiler {
     private final ParametroDto parametro;
+    
+    public static final String HTML_FEATURE_PDF = "<h1 class=\"page-header\">%s <small>%s <em>%s</em></small></h1>\n" +
+            "%s\n<span style=\"page-break-after: always\"></span>";
 
     public void build(ParametroDto parametro) throws Exception {
         StringBuilder html = new StringBuilder();
 
         // Abre pasta root
-        File curDir = new File(parametro.getTxtSrcFonte());
+        File curDir = parametro.getTxtSrcFonte();
 
         // Popula com arquivos feature
         List<File> arquivos = listFolder(curDir);
@@ -34,7 +36,7 @@ public class FolderToPDFCompiler extends Compiler {
                 String rawHtml = null; //@TODO ParseDocument.getFeatureHtml(parametro, f);
 
                 html.append(String.format(
-                        HtmlTemplate.HTML_FEATURE_PDF,
+                        HTML_FEATURE_PDF,
                         parametro.getTxtNome(),
                         f.getName().replace(Resource.getExtension(f), ""),
                         parametro.getTxtVersao(),
@@ -50,7 +52,7 @@ public class FolderToPDFCompiler extends Compiler {
 
             ParsePdf pp = new ParsePdf();
 
-            String outDir = (StringUtils.isNotEmpty(parametro.getTxtOutputTarget()) ? parametro.getTxtOutputTarget() : curDir.getParent() + File.separator + "html");
+            String outDir = (parametro.getTxtOutputTarget() != null ? parametro.getTxtOutputTarget().getAbsolutePath() : curDir.getParent() + File.separator + "html");
             File outDirF = new File(outDir);
 
             if(!outDirF.exists()){

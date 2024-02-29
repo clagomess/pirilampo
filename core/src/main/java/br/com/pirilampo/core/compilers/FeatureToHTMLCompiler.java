@@ -2,7 +2,6 @@ package br.com.pirilampo.core.compilers;
 
 import br.com.pirilampo.core.dto.FeatureMetadataDto;
 import br.com.pirilampo.core.dto.ParametroDto;
-import org.apache.commons.lang.StringUtils;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -14,7 +13,7 @@ public class FeatureToHTMLCompiler extends Compiler {
 
     public FeatureToHTMLCompiler(ParametroDto parametro) {
         this.parametro = parametro;
-        this.feature = new File(parametro.getTxtSrcFonte());
+        this.feature = parametro.getTxtSrcFonte();
         this.featureMetadataDto = getFeatureMetadata(parametro, feature);
     }
 
@@ -24,7 +23,7 @@ public class FeatureToHTMLCompiler extends Compiler {
         String outFile = String.format(
                 "%s%s%s.html",
                 File.separator,
-                StringUtils.isNotEmpty(parametro.getTxtOutputTarget()) ?
+                parametro.getTxtOutputTarget() != null ?
                         parametro.getTxtOutputTarget() :
                         feature.getParent(),
                 feature.getName().replace(Resource.getExtension(feature), "")
