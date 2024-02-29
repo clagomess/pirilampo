@@ -68,9 +68,9 @@ public abstract class Compiler {
         }
     }
 
-    protected void writeFileToOut(String filename, PrintWriter out) throws IOException {
+    protected void writeFileToOut(File file, PrintWriter out) throws IOException {
         try (
-                FileInputStream fis = new FileInputStream(filename);
+                FileInputStream fis = new FileInputStream(file);
                 BOMInputStream bis = new BOMInputStream(fis);
                 BufferedReader br = new BufferedReader(new InputStreamReader(bis, StandardCharsets.UTF_8));
         ){

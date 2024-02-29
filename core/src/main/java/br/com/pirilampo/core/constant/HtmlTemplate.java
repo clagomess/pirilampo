@@ -1,7 +1,7 @@
 package br.com.pirilampo.core.constant;
 
 final public class HtmlTemplate {
-    public static final String HTML_TEMPLATE = "<script type=\"text/ng-template\" id=\"%s\">%s</script>\n";
+
     public static final String HTML_JAVASCRIPT = "<script type=\"text/javascript\">%s</script>\n";
     public static final String HTML_CSS = "<style>%s</style>\n";
     public static final String HTML_FEATURE_PDF = "<h1 class=\"page-header\">%s <small>%s <em>%s</em></small></h1>\n" +
