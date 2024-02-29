@@ -1,9 +1,7 @@
-package br.com.pirilampo.core.core;
+package br.com.pirilampo.core.compilers;
 
 import br.com.pirilampo.core.dto.ParametroDto;
 import br.com.pirilampo.core.enums.DiffEnum;
-import br.com.pirilampo.core.core.Feature;
-import br.com.pirilampo.core.core.ParseMenu;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Before;
 import org.junit.Test;

@@ -1,4 +1,4 @@
-package br.com.pirilampo.core.core;
+package br.com.pirilampo.core.compilers;
 
 
 import br.com.pirilampo.core.dto.ParametroDto;

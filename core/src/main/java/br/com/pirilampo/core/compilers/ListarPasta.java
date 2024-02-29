@@ -1,4 +1,4 @@
-package br.com.pirilampo.core.core;
+package br.com.pirilampo.core.compilers;
 
 import java.io.File;
 import java.util.ArrayList;

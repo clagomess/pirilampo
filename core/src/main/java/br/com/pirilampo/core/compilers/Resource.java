@@ -1,4 +1,4 @@
-package br.com.pirilampo.core.core;
+package br.com.pirilampo.core.compilers;
 
 import br.com.pirilampo.core.dto.ParametroDto;
 import lombok.extern.slf4j.Slf4j;
