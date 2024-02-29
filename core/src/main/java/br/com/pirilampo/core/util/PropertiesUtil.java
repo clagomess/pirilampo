@@ -59,6 +59,7 @@ public class PropertiesUtil {
 
     public static Properties parametroToProperties(ParametroDto parametro){
         Properties prop = new Properties();
+        /* @TODO: check
         prop.setProperty("txtNome", parametro.getTxtNome());
         prop.setProperty("txtVersao", parametro.getTxtVersao());
         prop.setProperty("txtLogoSrc", parametro.getTxtLogoSrc() != null ? parametro.getTxtLogoSrc() : "");
@@ -66,7 +67,7 @@ public class PropertiesUtil {
         prop.setProperty("clrTextoMenu", parametro.getClrTextoMenu());
         prop.setProperty("sitEmbedarImagens", parametro.getSitEmbedarImagens().toString());
         prop.setProperty("tipPainelFechado", parametro.getTipPainel().toString());
-
+        */
         return prop;
     }
 }

@@ -2,8 +2,11 @@ package br.com.pirilampo.core.compilers;
 
 import br.com.pirilampo.core.dto.FeatureMetadataDto;
 import br.com.pirilampo.core.dto.ParametroDto;
+import org.apache.commons.io.input.BOMInputStream;
 
-import java.io.File;
+import java.io.*;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -30,10 +33,8 @@ public abstract class Compiler {
     }
 
     protected FeatureMetadataDto getFeatureMetadata(ParametroDto parametro, File feature){
-        File curDir = new File(parametro.getTxtSrcFonte());
-
         String htmlFeatureRoot = feature.getAbsolutePath()
-                .replace(curDir.getAbsolutePath(), "")
+                .replace(parametro.getTxtSrcFonte().getAbsolutePath(), "")
                 .replace(feature.getName(), "")
                 .replace(File.separator, " ")
                 .trim();
@@ -45,5 +46,38 @@ public abstract class Compiler {
         result.setIdFeature(result.getId() + ".feature");
 
         return result;
+    }
+
+    protected void writeResourceToOut(String resource, PrintWriter out) throws IOException {
+        URL url = Thread.currentThread().getContextClassLoader().getResource(resource);
+        if(url == null){
+            throw new FileNotFoundException(String.format(
+                    "Resource %s not loaded",
+                    resource
+            ));
+        }
+
+        try(
+                FileReader fr = new FileReader(url.getFile());
+                BufferedReader br = new BufferedReader(fr)
+        ){
+            int value;
+            while ((value = br.read()) != -1) {
+                out.print((char) value);
+            }
+        }
+    }
+
+    protected void writeFileToOut(String filename, PrintWriter out) throws IOException {
+        try (
+                FileInputStream fis = new FileInputStream(filename);
+                BOMInputStream bis = new BOMInputStream(fis);
+                BufferedReader br = new BufferedReader(new InputStreamReader(bis, StandardCharsets.UTF_8));
+        ){
+            int value;
+            while ((value = br.read()) != -1) {
+                out.print((char) value);
+            }
+        }
     }
 }

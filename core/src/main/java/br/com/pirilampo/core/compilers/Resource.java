@@ -2,12 +2,10 @@ package br.com.pirilampo.core.compilers;
 
 import br.com.pirilampo.core.dto.ParametroDto;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.input.BOMInputStream;
 import org.apache.commons.lang.StringUtils;
 
-import java.io.*;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -15,73 +13,19 @@ import java.util.regex.Pattern;
 
 @Slf4j
 public class Resource {
+    /** @deprecated @TODO: to be removed **/
     public static void writeHtml(String html, String path) throws IOException {
-        try (FileOutputStream fos = new FileOutputStream(path)){
-            OutputStreamWriter osw = new OutputStreamWriter(fos, StandardCharsets.UTF_8);
-            Writer out = new BufferedWriter(osw);
-            out.write(html);
-            out.flush();
-        }catch (Exception e){
-            throw e;
-        }
+
     }
 
+    /** @deprecated @TODO: to be removed **/
     public static String loadResource(String src) throws IOException {
-        StringBuilder buffer = new StringBuilder();
-        String linha;
-
-        URL url = Thread.currentThread().getContextClassLoader().getResource(src);
-
-        if(url != null) {
-            BufferedReader br;
-
-            try (FileReader fr = new FileReader(url.getFile())) {
-                br = new BufferedReader(fr, 200 * 1024);
-
-                while ((linha = br.readLine()) != null) {
-                    buffer.append(linha).append("\n");
-                }
-            } catch (Exception e) {
-                try(InputStreamReader isr = new InputStreamReader(url.openStream())){
-                    br = new BufferedReader(isr, 200 * 1024);
-
-                    while ((linha = br.readLine()) != null) {
-                        buffer.append(linha).append("\n");
-                    }
-                } catch(Exception ea){
-                    log.warn(log.getName(), e);
-                    log.warn(log.getName(), ea);
-                }
-            }
-        } else {
-            log.warn("Falha ao carregar Resource");
-        }
-
-        return buffer.toString();
+        return null;
     }
 
+    /** @deprecated @TODO: to be removed **/
     public static String loadFeature(String pathFeature){
-        StringBuilder buffer = new StringBuilder();
-        String toReturn = "";
-        String linha;
-        BufferedReader br;
-
-        try (FileInputStream fis = new FileInputStream(pathFeature)){
-            BOMInputStream bis = new BOMInputStream(fis);
-
-            br = new BufferedReader(new InputStreamReader(bis, StandardCharsets.UTF_8));
-
-            while ((linha = br.readLine()) != null) {
-                buffer.append(linha).append("\n");
-            }
-
-            toReturn = buffer.toString().replaceAll("\\t", "   ");
-            toReturn = toReturn.trim();
-        }catch (Exception e){
-            log.warn(log.getName(), e);
-        }
-
-        return toReturn;
+        return null;
     }
 
     public static String absoluteNameFeature(String path, String absolutePath){
