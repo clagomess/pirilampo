@@ -39,7 +39,7 @@ public class ParsePdf {
                     return Image.getInstance(src);
                 }
             } catch (BadElementException | IOException ex) {
-                log.warn(ParsePdf.class.getName(), ex);
+                log.warn(log.getName(), ex);
                 return null;
             }
         }

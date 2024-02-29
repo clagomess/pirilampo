@@ -25,7 +25,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Slf4j
-class ParseDocument {
+class ParseDocument extends Compiler {
     private final ParametroDto parametro;
     private final File feature;
 
@@ -66,7 +66,7 @@ class ParseDocument {
         this.feature = feature;
         this.paginaHtmlAnexo = new ArrayList<>();
         this.indice = new HashMap<>();
-        this.featureId = Feature.id(parametro, feature);
+        this.featureId = getFeatureMetadata(parametro, feature).getId();
     }
 
     private void setIndiceValue(String value){
@@ -254,7 +254,7 @@ class ParseDocument {
                 txt = txt.replaceFirst("^<p>(.+)<\\/p>", "$1");
                 txt = txt.trim();
             } catch (Exception e) {
-                log.warn(ParseDocument.class.getName(), e);
+                log.warn(log.getName(), e);
             }
         }
 

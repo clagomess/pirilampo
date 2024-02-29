@@ -38,7 +38,7 @@ class ParseImage {
                 }
             } catch (IOException e) {
                 log.info(e.getMessage() + " - " + image.getAbsolutePath());
-                log.warn(ParseImage.class.getName(), e);
+                log.warn(log.getName(), e);
             }
         } else {
             toReturn = image.getAbsolutePath().replace((new File(parametro.getTxtSrcFonte())).getParent(), "");

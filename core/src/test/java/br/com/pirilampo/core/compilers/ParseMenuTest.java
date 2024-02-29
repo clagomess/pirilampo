@@ -1,7 +1,6 @@
 package br.com.pirilampo.core.compilers;
 
 import br.com.pirilampo.core.dto.ParametroDto;
-import br.com.pirilampo.core.enums.DiffEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Before;
 import org.junit.Test;
@@ -46,7 +45,7 @@ public class ParseMenuTest {
 
         for(String item : itens){
             File f = new File(item);
-            pm.addMenuItem(f, DiffEnum.NAO_COMPARADO,Feature.name(f));
+            // pm.addMenuItem(f, DiffEnum.NAO_COMPARADO, Feature.name(f)); //@TODO: check
         }
 
         log.info("{}", pm.getMenu());

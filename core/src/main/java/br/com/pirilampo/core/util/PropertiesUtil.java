@@ -21,13 +21,13 @@ public class PropertiesUtil {
 
                 prop.load(input);
             } catch (IOException ex) {
-                log.warn(PropertiesUtil.class.getName(), ex);
+                log.warn(log.getName(), ex);
             } finally {
                 if (input != null) {
                     try {
                         input.close();
                     } catch (IOException e) {
-                        log.warn(PropertiesUtil.class.getName(), e);
+                        log.warn(log.getName(), e);
                     }
                 }
             }
@@ -53,7 +53,7 @@ public class PropertiesUtil {
             Properties prop = parametroToProperties(parametro);
             prop.store(output, null);
         } catch (IOException ex) {
-            log.error(PropertiesUtil.class.getName(), ex);
+            log.error(log.getName(), ex);
         }
     }
 

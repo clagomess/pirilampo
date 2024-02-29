@@ -1,9 +1,9 @@
 package br.com.pirilampo.core.compilers;
 
 import br.com.pirilampo.core.bean.Menu;
+import br.com.pirilampo.core.constant.HtmlTemplate;
 import br.com.pirilampo.core.dto.ParametroDto;
 import br.com.pirilampo.core.enums.DiffEnum;
-import br.com.pirilampo.core.constant.HtmlTemplate;
 import lombok.Getter;
 
 import java.io.File;
@@ -12,7 +12,7 @@ import java.util.Objects;
 import java.util.OptionalInt;
 import java.util.stream.IntStream;
 
-public class ParseMenu {
+public class ParseMenu extends Compiler {
     @Getter
     private Menu menu;
     private ParametroDto parametro;
@@ -31,7 +31,7 @@ public class ParseMenu {
 
     public void addMenuItem(File feature, DiffEnum diff, String featureTitulo){
         final String curDir = (new File(parametro.getTxtSrcFonte())).getAbsolutePath();
-        this.featureId = Feature.id(parametro, feature);
+        this.featureId = getFeatureMetadata(parametro, feature).getId();
         this.featureName = featureTitulo;
         this.diff = diff;
 

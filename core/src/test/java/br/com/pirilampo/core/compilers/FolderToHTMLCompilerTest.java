@@ -23,7 +23,7 @@ import java.util.Calendar;
 import java.util.List;
 
 @Slf4j
-public class CompiladorTest {
+public class FolderToHTMLCompilerTest {
     private final String projectName = "XXX_PROJECT_NAME_XXX";
     private final String projectVersion = "1.2.3";
     private final String featureName = "xxx.Feature";
@@ -85,14 +85,13 @@ public class CompiladorTest {
 
     @Test
     public void testCompileFeaturePath(){
-        Compilador compilador = new Compilador();
         parametro.setClrMenu("#666");
         parametro.setTxtLogoSrc(resourcePath + File.separator + "logo_xxx.png");
         parametro.setTxtSrcFonte(resourcePath + File.separator + "feature");
         parametro.setTxtOutputTarget(criarPasta().getAbsolutePath());
 
         try {
-            compilador.compilarPasta(parametro);
+            new FolderToHTMLCompiler(parametro).build();
 
             String html = parametro.getTxtOutputTarget() + File.separator + "index.html";
             Assert.assertTrue((new File(html)).isFile());
@@ -106,18 +105,17 @@ public class CompiladorTest {
             Assert.assertTrue(htmlString.contains("#/html/html_embed.html"));
             Assert.assertTrue(htmlString.contains("html_embed_txt"));
         }catch (Exception e){
-            log.error(CompiladorTest.class.getName(), e);
+            log.error(log.getName(), e);
             Assert.fail();
         }
     }
 
     @Test
-    public void testCompileFeature(){
-        Compilador compilador = new Compilador();
+    public void testCompileFeature(){;
         try {
             parametro.setTxtSrcFonte(resourcePath + File.separator + "feature/xxx.Feature");
             parametro.setTxtOutputTarget(criarPasta().getAbsolutePath());
-            compilador.compilarFeature(parametro);
+            new FolderToHTMLCompiler(parametro).build();
 
             String html = parametro.getTxtOutputTarget() + File.separator + featureName.replace(featureExt, ".html");
 
@@ -134,19 +132,18 @@ public class CompiladorTest {
             Assert.assertFalse(htmlString.contains("&lt;br&gt;"));
             Assert.assertTrue(htmlString.contains("<br/>"));
         }catch (Exception e){
-            log.error(CompiladorTest.class.getName(), e);
+            log.error(log.getName(), e);
             Assert.fail();
         }
     }
 
     @Test(timeout = 8000)
     public void testCompilePdf(){
-        Compilador compilador = new Compilador();
 
         try {
             parametro.setTxtSrcFonte(resourcePath + File.separator + "feature/xxx.Feature");
             parametro.setTxtOutputTarget(criarPasta().getAbsolutePath());
-            compilador.compilarFeaturePdf(parametro);
+            new FolderToHTMLCompiler(parametro).build();
 
             String pdf = parametro.getTxtOutputTarget() + File.separator + featureName.replace(featureExt, ".pdf");
             Assert.assertTrue((new File(pdf)).isFile());
@@ -172,19 +169,18 @@ public class CompiladorTest {
 
             Assert.assertTrue(possuiImagens);
         }catch (Exception e){
-            log.error(CompiladorTest.class.getName(), e);
+            log.error(log.getName(), e);
             Assert.fail();
         }
     }
 
     @Test(timeout = 8000)
     public void testCompilePdfPath(){
-        Compilador compilador = new Compilador();
 
         try {
             parametro.setTxtSrcFonte(resourcePath + File.separator + "feature");
             parametro.setTxtOutputTarget(criarPasta().getAbsolutePath());
-            compilador.compilarPastaPdf(parametro);
+            new FolderToHTMLCompiler(parametro).build();
             String pdf = parametro.getTxtOutputTarget() + File.separator + "index.pdf";
             Assert.assertTrue((new File(pdf)).isFile());
 
@@ -196,20 +192,18 @@ public class CompiladorTest {
 
             pdfDocument.close();
         }catch (Exception e){
-            log.error(CompiladorTest.class.getName(), e);
+            log.error(log.getName(), e);
             Assert.fail();
         }
     }
 
     @Test
     public void testCompileFeatureMaster() {
-        Compilador compilador = new Compilador();
-
         try {
             parametro.setTxtSrcFonte(resourcePath + File.separator + "feature");
             parametro.setTxtSrcFonteMaster(resourcePath + File.separator + "master");
             parametro.setTxtOutputTarget(criarPasta().getAbsolutePath());
-            compilador.compilarPasta(parametro);
+            new FolderToHTMLCompiler(parametro).build();
 
             String html = parametro.getTxtOutputTarget() + File.separator + "index.html";
             Assert.assertTrue((new File(html)).isFile());
@@ -218,7 +212,7 @@ public class CompiladorTest {
 
             Assert.assertTrue(htmlString.contains("YYY_MASTER_YYY"));
         }catch (Exception e){
-            log.error(CompiladorTest.class.getName(), e);
+            log.error(log.getName(), e);
             Assert.fail();
         }
     }

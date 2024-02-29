@@ -15,7 +15,7 @@ public class ExceptionUtil {
     private ExceptionUtil(){}
 
     public static void showDialog(Throwable e){
-        log.error(ExceptionUtil.class.getName(), e);
+        log.error(log.getName(), e);
 
         String titulo = e.getMessage();
         String log = null;

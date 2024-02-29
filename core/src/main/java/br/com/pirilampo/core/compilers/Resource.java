@@ -49,8 +49,8 @@ public class Resource {
                         buffer.append(linha).append("\n");
                     }
                 } catch(Exception ea){
-                    log.warn(Compilador.class.getName(), e);
-                    log.warn(Compilador.class.getName(), ea);
+                    log.warn(log.getName(), e);
+                    log.warn(log.getName(), ea);
                 }
             }
         } else {
@@ -78,7 +78,7 @@ public class Resource {
             toReturn = buffer.toString().replaceAll("\\t", "   ");
             toReturn = toReturn.trim();
         }catch (Exception e){
-            log.warn(Compilador.class.getName(), e);
+            log.warn(log.getName(), e);
         }
 
         return toReturn;
