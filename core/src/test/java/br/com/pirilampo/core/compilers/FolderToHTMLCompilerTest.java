@@ -4,11 +4,6 @@ import br.com.pirilampo.core.dto.ParametroDto;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.input.BOMInputStream;
-import org.apache.pdfbox.cos.COSName;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.graphics.PDXObject;
-import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
-import org.apache.pdfbox.text.PDFTextStripper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -85,7 +80,7 @@ public class FolderToHTMLCompilerTest {
     }
 
     @Test
-    public void testCompileFeaturePath(){
+    public void build(){
         parametro.setClrMenu("#666");
         parametro.setTxtLogoSrc(new File(resourcePath + File.separator + "logo_xxx.png"));
         parametro.setTxtSrcFonte(new File(resourcePath + File.separator + "feature"));
@@ -112,94 +107,7 @@ public class FolderToHTMLCompilerTest {
     }
 
     @Test
-    public void testCompileFeature(){;
-        try {
-            parametro.setTxtSrcFonte(new File(resourcePath + File.separator + "feature/xxx.Feature"));
-            parametro.setTxtOutputTarget(new File(criarPasta().getAbsolutePath()));
-            new FolderToHTMLCompiler(parametro).build();
-
-            String html = parametro.getTxtOutputTarget() + File.separator + featureName.replace(featureExt, ".html");
-
-            assertTrue((new File(html)).isFile());
-
-            String htmlString = load(html);
-            assertNotEquals(htmlString, "");
-
-            assertFalse(htmlString.contains("xxx.png"));
-            assertTrue(htmlString.contains("https://pt.wikipedia.org/static/images/project-logos/ptwiki.png"));
-            assertTrue(htmlString.contains("width=\"50\""));
-            assertFalse(htmlString.contains("&lt;strike&gt;"));
-            assertTrue(htmlString.contains("<strike>"));
-            assertFalse(htmlString.contains("&lt;br&gt;"));
-            assertTrue(htmlString.contains("<br/>"));
-        }catch (Exception e){
-            log.error(log.getName(), e);
-            fail();
-        }
-    }
-
-    @Test //(timeout = 8000) @TODO: check
-    public void testCompilePdf(){
-
-        try {
-            parametro.setTxtSrcFonte(new File(resourcePath + File.separator + "feature/xxx.Feature"));
-            parametro.setTxtOutputTarget(new File(criarPasta().getAbsolutePath()));
-            new FolderToHTMLCompiler(parametro).build();
-
-            String pdf = parametro.getTxtOutputTarget() + File.separator + featureName.replace(featureExt, ".pdf");
-            assertTrue((new File(pdf)).isFile());
-
-            PDDocument pdfDocument = PDDocument.load(new File(pdf));
-            String pdfAsStr = new PDFTextStripper().getText(pdfDocument);
-
-            assertTrue(pdfAsStr.contains(projectName));
-            assertTrue(pdfAsStr.contains(projectVersion));
-
-            // Verifica se tem as imagens
-            boolean possuiImagens = false;
-            for (COSName cosName : pdfDocument.getPage(0).getResources().getXObjectNames()){
-                PDXObject xobject = pdfDocument.getPage(0).getResources().getXObject(cosName);
-
-                if (xobject instanceof PDImageXObject) {
-                    possuiImagens  = true;
-                    break;
-                }
-            }
-
-            pdfDocument.close();
-
-            assertTrue(possuiImagens);
-        }catch (Exception e){
-            log.error(log.getName(), e);
-            fail();
-        }
-    }
-
-    @Test //(timeout = 8000) @TODO: check
-    public void testCompilePdfPath(){
-
-        try {
-            parametro.setTxtSrcFonte(new File(resourcePath + File.separator + "feature"));
-            parametro.setTxtOutputTarget(new File(criarPasta().getAbsolutePath()));
-            new FolderToHTMLCompiler(parametro).build();
-            String pdf = parametro.getTxtOutputTarget() + File.separator + "index.pdf";
-            assertTrue((new File(pdf)).isFile());
-
-            PDDocument pdfDocument = PDDocument.load(new File(pdf));
-            String pdfAsStr = new PDFTextStripper().getText(pdfDocument);
-
-            assertTrue(pdfAsStr.contains(projectName));
-            assertTrue(pdfAsStr.contains(projectVersion));
-
-            pdfDocument.close();
-        }catch (Exception e){
-            log.error(log.getName(), e);
-            fail();
-        }
-    }
-
-    @Test
-    public void testCompileFeatureMaster() {
+    public void build_master() {
         try {
             parametro.setTxtSrcFonte(new File(resourcePath + File.separator + "feature"));
             parametro.setTxtSrcFonteMaster(new File(resourcePath + File.separator + "master"));

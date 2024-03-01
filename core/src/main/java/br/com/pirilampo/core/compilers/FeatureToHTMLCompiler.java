@@ -22,10 +22,10 @@ public class FeatureToHTMLCompiler extends Compiler {
 
         String outFile = String.format(
                 "%s%s%s.html",
-                File.separator,
                 parametro.getTxtOutputTarget() != null ?
                         parametro.getTxtOutputTarget() :
                         feature.getParent(),
+                File.separator,
                 feature.getName().replace(Resource.getExtension(feature), "")
         );
 
