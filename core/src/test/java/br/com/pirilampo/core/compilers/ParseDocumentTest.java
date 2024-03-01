@@ -16,7 +16,7 @@ public class ParseDocumentTest {
         val parametro = new ParametroDto();
         val file = new File("C:\\Users\\claudio\\DESENV_JAVA\\pirilampo\\core\\src\\test\\resources\\feature\\xxx.Feature");
 
-        parametro.setTxtSrcFonte(file.getAbsolutePath());
+        parametro.setTxtSrcFonte(file);
 
         ParseDocument parseDocument = new ParseDocument(
                 parametro,

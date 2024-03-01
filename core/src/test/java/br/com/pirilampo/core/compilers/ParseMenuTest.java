@@ -16,7 +16,7 @@ public class ParseMenuTest {
 
     @Before
     public void before(){
-        parametro.setTxtSrcFonte((new File("")).getAbsolutePath());
+        parametro.setTxtSrcFonte(new File(""));
 
         itens.add("01 - Módulo I - Portal Público\\Login\\00_Login\\MDIC_US00_02 - Logout.feature");
         itens.add("01 - Módulo I - Portal Público\\Login\\00_Login\\MDIC_US00_01 - Login.feature");

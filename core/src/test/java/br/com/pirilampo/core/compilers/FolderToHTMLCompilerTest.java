@@ -86,9 +86,9 @@ public class FolderToHTMLCompilerTest {
     @Test
     public void testCompileFeaturePath(){
         parametro.setClrMenu("#666");
-        parametro.setTxtLogoSrc(resourcePath + File.separator + "logo_xxx.png");
-        parametro.setTxtSrcFonte(resourcePath + File.separator + "feature");
-        parametro.setTxtOutputTarget(criarPasta().getAbsolutePath());
+        parametro.setTxtLogoSrc(new File(resourcePath + File.separator + "logo_xxx.png"));
+        parametro.setTxtSrcFonte(new File(resourcePath + File.separator + "feature"));
+        parametro.setTxtOutputTarget(new File(criarPasta().getAbsolutePath()));
 
         try {
             new FolderToHTMLCompiler(parametro).build();
@@ -100,7 +100,7 @@ public class FolderToHTMLCompilerTest {
             Assert.assertNotEquals(htmlString, "");
 
             Assert.assertTrue(htmlString.contains(parametro.getClrMenu()));
-            Assert.assertFalse(htmlString.contains((new File(parametro.getTxtLogoSrc())).getName()));
+            Assert.assertFalse(htmlString.contains((new File(String.valueOf(parametro.getTxtLogoSrc()))).getName()));
             Assert.assertFalse(htmlString.contains("logo_xxx.png"));
             Assert.assertTrue(htmlString.contains("#/html/html_embed.html"));
             Assert.assertTrue(htmlString.contains("html_embed_txt"));
@@ -113,8 +113,8 @@ public class FolderToHTMLCompilerTest {
     @Test
     public void testCompileFeature(){;
         try {
-            parametro.setTxtSrcFonte(resourcePath + File.separator + "feature/xxx.Feature");
-            parametro.setTxtOutputTarget(criarPasta().getAbsolutePath());
+            parametro.setTxtSrcFonte(new File(resourcePath + File.separator + "feature/xxx.Feature"));
+            parametro.setTxtOutputTarget(new File(criarPasta().getAbsolutePath()));
             new FolderToHTMLCompiler(parametro).build();
 
             String html = parametro.getTxtOutputTarget() + File.separator + featureName.replace(featureExt, ".html");
@@ -141,8 +141,8 @@ public class FolderToHTMLCompilerTest {
     public void testCompilePdf(){
 
         try {
-            parametro.setTxtSrcFonte(resourcePath + File.separator + "feature/xxx.Feature");
-            parametro.setTxtOutputTarget(criarPasta().getAbsolutePath());
+            parametro.setTxtSrcFonte(new File(resourcePath + File.separator + "feature/xxx.Feature"));
+            parametro.setTxtOutputTarget(new File(criarPasta().getAbsolutePath()));
             new FolderToHTMLCompiler(parametro).build();
 
             String pdf = parametro.getTxtOutputTarget() + File.separator + featureName.replace(featureExt, ".pdf");
@@ -178,8 +178,8 @@ public class FolderToHTMLCompilerTest {
     public void testCompilePdfPath(){
 
         try {
-            parametro.setTxtSrcFonte(resourcePath + File.separator + "feature");
-            parametro.setTxtOutputTarget(criarPasta().getAbsolutePath());
+            parametro.setTxtSrcFonte(new File(resourcePath + File.separator + "feature"));
+            parametro.setTxtOutputTarget(new File(criarPasta().getAbsolutePath()));
             new FolderToHTMLCompiler(parametro).build();
             String pdf = parametro.getTxtOutputTarget() + File.separator + "index.pdf";
             Assert.assertTrue((new File(pdf)).isFile());
@@ -200,9 +200,9 @@ public class FolderToHTMLCompilerTest {
     @Test
     public void testCompileFeatureMaster() {
         try {
-            parametro.setTxtSrcFonte(resourcePath + File.separator + "feature");
-            parametro.setTxtSrcFonteMaster(resourcePath + File.separator + "master");
-            parametro.setTxtOutputTarget(criarPasta().getAbsolutePath());
+            parametro.setTxtSrcFonte(new File(resourcePath + File.separator + "feature"));
+            parametro.setTxtSrcFonteMaster(new File(resourcePath + File.separator + "master"));
+            parametro.setTxtOutputTarget(new File(criarPasta().getAbsolutePath()));
             new FolderToHTMLCompiler(parametro).build();
 
             String html = parametro.getTxtOutputTarget() + File.separator + "index.html";

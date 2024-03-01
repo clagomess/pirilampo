@@ -62,8 +62,6 @@ public class Resource {
             paths.add(parametro.getTxtSrcFonteMaster().getAbsolutePath());
         }
 
-        paths.add(parametro.getTxtSrcFonteMaster().getAbsolutePath());
-
         for (String path : paths) {
             File file = new File( path + File.separator + fileName);
             if(file.isFile()){
