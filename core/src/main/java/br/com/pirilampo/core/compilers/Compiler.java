@@ -19,7 +19,7 @@ public abstract class Compiler {
         return buffer;
     }
 
-    protected void listFolder(List<File> buffer, File curDir) throws Exception {
+    private void listFolder(List<File> buffer, File curDir) throws Exception {
         File[] filesList = curDir.listFiles();
         if(filesList == null) throw new Exception("Pasta não localizada!");
 

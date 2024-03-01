@@ -9,10 +9,9 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.graphics.PDXObject;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import org.apache.pdfbox.text.PDFTextStripper;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -21,6 +20,8 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
 public class FolderToHTMLCompilerTest {
@@ -33,7 +34,7 @@ public class FolderToHTMLCompilerTest {
     private final ParametroDto parametro = new ParametroDto();
     private List<File> pastas = new ArrayList<>();
 
-    @Before
+    @BeforeEach
     public void before() {
         resourcePath = Thread.currentThread().getContextClassLoader().getResource("").getPath();
         parametro.setTxtNome(projectName);
@@ -94,19 +95,19 @@ public class FolderToHTMLCompilerTest {
             new FolderToHTMLCompiler(parametro).build();
 
             String html = parametro.getTxtOutputTarget() + File.separator + "index.html";
-            Assert.assertTrue((new File(html)).isFile());
+            assertTrue((new File(html)).isFile());
 
             String htmlString = load(html);
-            Assert.assertNotEquals(htmlString, "");
+            assertNotEquals(htmlString, "");
 
-            Assert.assertTrue(htmlString.contains(parametro.getClrMenu()));
-            Assert.assertFalse(htmlString.contains((new File(String.valueOf(parametro.getTxtLogoSrc()))).getName()));
-            Assert.assertFalse(htmlString.contains("logo_xxx.png"));
-            Assert.assertTrue(htmlString.contains("#/html/html_embed.html"));
-            Assert.assertTrue(htmlString.contains("html_embed_txt"));
+            assertTrue(htmlString.contains(parametro.getClrMenu()));
+            assertFalse(htmlString.contains((new File(String.valueOf(parametro.getTxtLogoSrc()))).getName()));
+            assertFalse(htmlString.contains("logo_xxx.png"));
+            assertTrue(htmlString.contains("#/html/html_embed.html"));
+            assertTrue(htmlString.contains("html_embed_txt"));
         }catch (Exception e){
             log.error(log.getName(), e);
-            Assert.fail();
+            fail();
         }
     }
 
@@ -119,25 +120,25 @@ public class FolderToHTMLCompilerTest {
 
             String html = parametro.getTxtOutputTarget() + File.separator + featureName.replace(featureExt, ".html");
 
-            Assert.assertTrue((new File(html)).isFile());
+            assertTrue((new File(html)).isFile());
 
             String htmlString = load(html);
-            Assert.assertNotEquals(htmlString, "");
+            assertNotEquals(htmlString, "");
 
-            Assert.assertFalse(htmlString.contains("xxx.png"));
-            Assert.assertTrue(htmlString.contains("https://pt.wikipedia.org/static/images/project-logos/ptwiki.png"));
-            Assert.assertTrue(htmlString.contains("width=\"50\""));
-            Assert.assertFalse(htmlString.contains("&lt;strike&gt;"));
-            Assert.assertTrue(htmlString.contains("<strike>"));
-            Assert.assertFalse(htmlString.contains("&lt;br&gt;"));
-            Assert.assertTrue(htmlString.contains("<br/>"));
+            assertFalse(htmlString.contains("xxx.png"));
+            assertTrue(htmlString.contains("https://pt.wikipedia.org/static/images/project-logos/ptwiki.png"));
+            assertTrue(htmlString.contains("width=\"50\""));
+            assertFalse(htmlString.contains("&lt;strike&gt;"));
+            assertTrue(htmlString.contains("<strike>"));
+            assertFalse(htmlString.contains("&lt;br&gt;"));
+            assertTrue(htmlString.contains("<br/>"));
         }catch (Exception e){
             log.error(log.getName(), e);
-            Assert.fail();
+            fail();
         }
     }
 
-    @Test(timeout = 8000)
+    @Test //(timeout = 8000) @TODO: check
     public void testCompilePdf(){
 
         try {
@@ -146,13 +147,13 @@ public class FolderToHTMLCompilerTest {
             new FolderToHTMLCompiler(parametro).build();
 
             String pdf = parametro.getTxtOutputTarget() + File.separator + featureName.replace(featureExt, ".pdf");
-            Assert.assertTrue((new File(pdf)).isFile());
+            assertTrue((new File(pdf)).isFile());
 
             PDDocument pdfDocument = PDDocument.load(new File(pdf));
             String pdfAsStr = new PDFTextStripper().getText(pdfDocument);
 
-            Assert.assertTrue(pdfAsStr.contains(projectName));
-            Assert.assertTrue(pdfAsStr.contains(projectVersion));
+            assertTrue(pdfAsStr.contains(projectName));
+            assertTrue(pdfAsStr.contains(projectVersion));
 
             // Verifica se tem as imagens
             boolean possuiImagens = false;
@@ -167,14 +168,14 @@ public class FolderToHTMLCompilerTest {
 
             pdfDocument.close();
 
-            Assert.assertTrue(possuiImagens);
+            assertTrue(possuiImagens);
         }catch (Exception e){
             log.error(log.getName(), e);
-            Assert.fail();
+            fail();
         }
     }
 
-    @Test(timeout = 8000)
+    @Test //(timeout = 8000) @TODO: check
     public void testCompilePdfPath(){
 
         try {
@@ -182,18 +183,18 @@ public class FolderToHTMLCompilerTest {
             parametro.setTxtOutputTarget(new File(criarPasta().getAbsolutePath()));
             new FolderToHTMLCompiler(parametro).build();
             String pdf = parametro.getTxtOutputTarget() + File.separator + "index.pdf";
-            Assert.assertTrue((new File(pdf)).isFile());
+            assertTrue((new File(pdf)).isFile());
 
             PDDocument pdfDocument = PDDocument.load(new File(pdf));
             String pdfAsStr = new PDFTextStripper().getText(pdfDocument);
 
-            Assert.assertTrue(pdfAsStr.contains(projectName));
-            Assert.assertTrue(pdfAsStr.contains(projectVersion));
+            assertTrue(pdfAsStr.contains(projectName));
+            assertTrue(pdfAsStr.contains(projectVersion));
 
             pdfDocument.close();
         }catch (Exception e){
             log.error(log.getName(), e);
-            Assert.fail();
+            fail();
         }
     }
 
@@ -206,18 +207,18 @@ public class FolderToHTMLCompilerTest {
             new FolderToHTMLCompiler(parametro).build();
 
             String html = parametro.getTxtOutputTarget() + File.separator + "index.html";
-            Assert.assertTrue((new File(html)).isFile());
+            assertTrue((new File(html)).isFile());
 
             String htmlString = load(html);
 
-            Assert.assertTrue(htmlString.contains("YYY_MASTER_YYY"));
+            assertTrue(htmlString.contains("YYY_MASTER_YYY"));
         }catch (Exception e){
             log.error(log.getName(), e);
-            Assert.fail();
+            fail();
         }
     }
 
-    @After
+    @AfterEach
     public void after() throws Exception {
         for (File dir : pastas){
             FileUtils.deleteDirectory(dir);

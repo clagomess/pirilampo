@@ -2,8 +2,8 @@ package br.com.pirilampo.core.compilers;
 
 import br.com.pirilampo.core.dto.ParametroDto;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -14,7 +14,7 @@ public class ParseMenuTest {
     private List<String> itens = new ArrayList<>();
     private ParametroDto parametro = new ParametroDto();
 
-    @Before
+    @BeforeEach
     public void before(){
         parametro.setTxtSrcFonte(new File(""));
 
