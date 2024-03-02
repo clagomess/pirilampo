@@ -55,8 +55,8 @@ public class GeneratorTest {
     }
 
     @Test
-    public void downloadImage() {
-        generator.downloadImage(path);
+    public void genImage() {
+        generator.genImage(path);
     }
 
     @Test

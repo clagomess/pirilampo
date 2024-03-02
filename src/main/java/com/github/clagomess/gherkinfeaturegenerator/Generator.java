@@ -1,13 +1,18 @@
 package com.github.clagomess.gherkinfeaturegenerator;
 
 import lombok.extern.slf4j.Slf4j;
+import net.coobird.thumbnailator.Thumbnails;
+import net.coobird.thumbnailator.geometry.Positions;
 import org.apache.commons.lang3.RandomStringUtils;
 
-import java.io.*;
-import java.net.URL;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 
 @Slf4j
@@ -15,10 +20,13 @@ public class Generator {
     public File root = new File("target/features");
     public List<File> paths = new LinkedList<>();
     public List<File> features = new LinkedList<>();
-    public int qtdFeatures = 100;
+    public int qtdFeatures = 500;
 
     public void build(){
-        IntStream.rangeClosed(0, 5).parallel().forEach(i -> {
+        AtomicInteger progress = new AtomicInteger(1);
+
+        IntStream.rangeClosed(1, qtdFeatures).parallel().forEach(i -> {
+            int pos = progress.getAndIncrement();
             File featurePath = getPath();
             File feature = new File(featurePath, String.format("%s.feature", RandomStringUtils.randomAlphabetic(10)));
 
@@ -26,8 +34,10 @@ public class Generator {
                     FileOutputStream fos = new FileOutputStream(feature);
                     PrintWriter out = new PrintWriter(fos);
             ) {
-                log.info("GEN {}", feature);
+                log.info("GEN {} - {}", pos, feature);
                 genFeature(out, featurePath);
+                features.add(feature);
+                log.info("GEN OK {} - {}", pos, feature);
             }catch (Throwable e){
                 log.error(e.getMessage());
             }
@@ -85,7 +95,7 @@ public class Generator {
         out.println("    Dado " + genWords((int) Math.ceil(Math.random() * 45)));
         out.println("");
 
-        int qtdCenario = (int) Math.ceil(Math.random() * 15);
+        int qtdCenario = (int) Math.ceil(Math.random() * 4);
         IntStream.rangeClosed(1, qtdCenario).forEach(i -> genCenario(out, path));
     }
 
@@ -102,7 +112,7 @@ public class Generator {
         out.println("    E " + genWords((int) Math.ceil(Math.random() * 45)));
 
         if(randomBoolean()){
-            String filename = downloadImage(path);
+            String filename = genImage(path);
             if(filename != null) {
                 int template = (int) Math.floor(Math.random() * 3);
 
@@ -181,21 +191,35 @@ public class Generator {
         );
     }
 
-    public String downloadImage(File path) {
-        try {
-            URL url = new URL(genImageURL());
+    public List<String> cages = Arrays.asList(
+            "cage_01.png",
+            "cage_02.jpg",
+            "cage_03.jpg",
+            "cage_04.jpg",
+            "cage_05.png",
+            "cage_06.jpg",
+            "cage_07.jpg "
+    );
 
+    public String genImage(File path) {
+        int selected = (int) Math.floor(Math.random() * 7);
+        int width = (int) Math.ceil(Math.random() * 10) * 100;
+        int height = (int) Math.ceil(Math.random() * 10) * 100;
+
+        try {
             String filename = RandomStringUtils.randomAlphabetic(10) + ".jpg";
             File file = new File(path, filename);
 
             try (
-                    InputStream in = new BufferedInputStream(url.openStream());
+                    InputStream in = getClass().getResourceAsStream(cages.get(selected));
                     FileOutputStream fos = new FileOutputStream(file);
             ) {
-                int value;
-                while ((value = in.read()) != -1) {
-                    fos.write(value);
-                }
+                Thumbnails.of(in)
+                        .size(width, height)
+                        .crop(Positions.CENTER)
+                        .keepAspectRatio(true)
+                        .outputFormat("jpg")
+                        .toOutputStream(fos);
             }
 
             return filename;
