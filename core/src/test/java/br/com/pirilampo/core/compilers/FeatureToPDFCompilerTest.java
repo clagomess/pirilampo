@@ -16,9 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class FeatureToPDFCompilerTest {
     @Test //(timeout = 8000) @TODO: check
     public void build() throws Exception {
-        File sourceFile = new File(Thread.currentThread()
-                .getContextClassLoader()
-                .getResource("feature/xxx.Feature").getFile());
+        File sourceFile = new File("C:\\Users\\claudio\\OneDrive\\_DEMANDAS\\PIRILAMPO\\exemplos-epe\\performance\\features\\aAdpjEtAzX\\JTAymWBSNh\\UbEfhSBFPC.feature");
 
         File targetFile = new File("target/FeatureToPDFCompilerTest");
         if(!targetFile.isDirectory()) assertTrue(targetFile.mkdir());
