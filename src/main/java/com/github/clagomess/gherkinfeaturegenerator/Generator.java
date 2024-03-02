@@ -20,7 +20,7 @@ public class Generator {
     public File root = new File("target/features");
     public List<File> paths = new LinkedList<>();
     public List<File> features = new LinkedList<>();
-    public int qtdFeatures = 500;
+    public int qtdFeatures = 1000;
 
     public void build(){
         AtomicInteger progress = new AtomicInteger(1);
@@ -95,7 +95,7 @@ public class Generator {
         out.println("    Dado " + genWords((int) Math.ceil(Math.random() * 45)));
         out.println("");
 
-        int qtdCenario = (int) Math.ceil(Math.random() * 4);
+        int qtdCenario = (int) Math.ceil(Math.random() * 15);
         IntStream.rangeClosed(1, qtdCenario).forEach(i -> genCenario(out, path));
     }
 
