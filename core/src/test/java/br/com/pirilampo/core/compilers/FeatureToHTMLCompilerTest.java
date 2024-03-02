@@ -15,18 +15,17 @@ public class FeatureToHTMLCompilerTest {
                 .getContextClassLoader()
                 .getResource("feature/xxx.Feature").getFile());
 
-        File targeFile = new File("target/FeatureToHTMLCompilerTest");
-        if(!targeFile.isDirectory()) assertTrue(targeFile.mkdir());
+        File targetFile = new File("target/FeatureToHTMLCompilerTest");
+        if(!targetFile.isDirectory()) assertTrue(targetFile.mkdir());
 
         ParametroDto parametro = new ParametroDto();
         parametro.setTxtSrcFonte(sourceFile);
-        parametro.setTxtOutputTarget(targeFile);
+        parametro.setTxtOutputTarget(targetFile);
 
         new FeatureToHTMLCompiler(parametro).build();
+        File htmlFile = new File(targetFile, "xxx.html");
+        assertTrue(htmlFile.isFile());
 
-        assertTrue(sourceFile.isFile());
-
-        File htmlFile = new File(targeFile, "xxx.html");
         String html = FileUtils.readFileToString(htmlFile);
 
         assertNotEquals(html, "");

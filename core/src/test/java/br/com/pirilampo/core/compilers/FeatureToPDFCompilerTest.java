@@ -1,6 +1,6 @@
 package br.com.pirilampo.core.compilers;
 
-import org.apache.pdfbox.cos.COSName;
+import br.com.pirilampo.core.dto.ParametroDto;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.graphics.PDXObject;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
@@ -8,47 +8,55 @@ import org.apache.pdfbox.text.PDFTextStripper;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.stream.StreamSupport;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class FeatureToPDFCompilerTest {
     @Test //(timeout = 8000) @TODO: check
-    public void build(){
+    public void build() throws Exception {
+        File sourceFile = new File(Thread.currentThread()
+                .getContextClassLoader()
+                .getResource("feature/xxx.Feature").getFile());
 
-            /*
-            parametro.setTxtSrcFonte(new File(resourcePath + File.separator + "feature/xxx.Feature"));
-            parametro.setTxtOutputTarget(new File(criarPasta().getAbsolutePath()));
-            new FolderToHTMLCompiler(parametro).build();
+        File targetFile = new File("target/FeatureToPDFCompilerTest");
+        if(!targetFile.isDirectory()) assertTrue(targetFile.mkdir());
 
-            String pdf = parametro.getTxtOutputTarget() + File.separator + featureName.replace(featureExt, ".pdf");
-            assertTrue((new File(pdf)).isFile());
+        ParametroDto parametro = new ParametroDto();
+        parametro.setTxtNome("_AA_");
+        parametro.setTxtVersao("_BB_");
+        parametro.setTxtSrcFonte(sourceFile);
+        parametro.setTxtOutputTarget(targetFile);
 
-            PDDocument pdfDocument = PDDocument.load(new File(pdf));
+        new FeatureToPDFCompiler(parametro).build();
+        File pdfFile = new File(targetFile, "xxx.pdf");
+        assertTrue(pdfFile.isFile());
+
+        try(PDDocument pdfDocument = PDDocument.load(pdfFile)){
             String pdfAsStr = new PDFTextStripper().getText(pdfDocument);
 
-            assertTrue(pdfAsStr.contains(projectName));
-            assertTrue(pdfAsStr.contains(projectVersion));
+            assertTrue(pdfAsStr.contains(parametro.getTxtNome()));
+            assertTrue(pdfAsStr.contains(parametro.getTxtVersao()));
 
-            // Verifica se tem as imagens
-            boolean possuiImagens = false;
-            for (COSName cosName : pdfDocument.getPage(0).getResources().getXObjectNames()){
-                PDXObject xobject = pdfDocument.getPage(0).getResources().getXObject(cosName);
-
-                if (xobject instanceof PDImageXObject) {
-                    possuiImagens  = true;
-                    break;
+            boolean possuiImagens = StreamSupport.stream(
+                pdfDocument.getPage(0)
+                        .getResources()
+                        .getXObjectNames()
+                        .spliterator()
+            ,false).anyMatch(cosName -> {
+                try {
+                    PDXObject xobject = pdfDocument.getPage(0).getResources().getXObject(cosName);
+                    return (xobject instanceof PDImageXObject);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
                 }
-            }
-
-            pdfDocument.close();
+            });
 
             assertTrue(possuiImagens);
-        }catch (Exception e){
-            log.error(log.getName(), e);
-            fail();
         }
-        */
+
+        // @TODO: also, validate html
     }
 
     // @TODO: impl unit for test remove buffer on error

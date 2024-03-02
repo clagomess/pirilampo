@@ -62,7 +62,7 @@ public class FolderToPDFCompiler extends Compiler {
             log.info("GERANDO PDF");
             // ProgressBind.setProgress(-1); @TODO: check
 
-            pp.buildHtml(outDir + File.separator + "index.pdf", html.toString(), css, parametro.getTipLayoutPdf().getValue(), parametro.getTipPainel().getValue());
+            // pp.buildHtml(outDir + File.separator + "index.pdf", html.toString(), css, parametro.getTipLayoutPdf().getValue(), parametro.getTipPainel().getValue()); //@TODO: fix
         }
     }
 }

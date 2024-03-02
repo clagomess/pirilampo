@@ -1,41 +1,68 @@
 package br.com.pirilampo.core.compilers;
 
+import br.com.pirilampo.core.dto.FeatureMetadataDto;
 import br.com.pirilampo.core.dto.ParametroDto;
+import br.com.pirilampo.core.enums.LayoutPdfEnum;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
-import java.io.File;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.util.Objects;
 
+@Slf4j
 @RequiredArgsConstructor
-public class FeatureToPDFCompiler {
+public class FeatureToPDFCompiler extends Compiler {
     private final ParametroDto parametro;
+    private final File feature;
+    private final FeatureMetadataDto featureMetadataDto;
 
-    public static final String HTML_FEATURE_PDF = "<h1 class=\"page-header\">%s <small>%s <em>%s</em></small></h1>\n" +
-            "%s\n<span style=\"page-break-after: always\"></span>";
+    public FeatureToPDFCompiler(ParametroDto parametro) {
+        this.parametro = parametro;
+        this.feature = parametro.getTxtSrcFonte();
+        this.featureMetadataDto = getFeatureMetadata(parametro, feature);
+    }
 
     public void build() throws Exception {
-        // Abre feature
-        File feature = parametro.getTxtSrcFonte();
+        File bufferHtml = File.createTempFile("pirilampo-buffer-", ".html");
+        log.info("Created buffer file: {}", bufferHtml);
 
-        //------------------ BUILD -----------------
-        String htmlTemplate = Resource.loadResource("htmlTemplate/html/template_feature_pdf.html");
-        String css = Resource.loadResource("htmlTemplate/dist/feature-pdf.min.css");
-        String html = null; //@TODO ParseDocument.getFeatureHtml(parametro, feature);
+        try (
+                FileOutputStream fos = new FileOutputStream(bufferHtml);
+                BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos, StandardCharsets.UTF_8));
+                PrintWriter out = new PrintWriter(bw);
+        ){
+            out.print("<!DOCTYPE html><html lang=\"en\"><body>");
+            out.print("<h1 class=\"page-header\">");
+            out.print(String.format(
+                    "%s <small>%s <em>%s</em></small>",
+                    parametro.getTxtNome(),
+                    featureMetadataDto.getName(),
+                    parametro.getTxtVersao()
+            ));
+            out.print("</h1>");
 
-        html = String.format(
-                HTML_FEATURE_PDF,
-                parametro.getTxtNome(),
-                feature.getName().replace(Resource.getExtension(feature), ""),
-                parametro.getTxtVersao(),
-                html
+            new ParseDocument(parametro, feature).build(out);
+
+            out.print("</body></html>");
+        }
+
+        File outFile = new File(
+                (parametro.getTxtOutputTarget() != null ? parametro.getTxtOutputTarget() : new File(feature.getParent())),
+                featureMetadataDto.getName() + ".pdf"
         );
 
-        html = htmlTemplate.replace("#HTML_TEMPLATE#", html);
+        try (
+                FileOutputStream fos = new FileOutputStream(outFile);
+                InputStream html = Files.newInputStream(bufferHtml.toPath());
+                InputStream css = Objects.requireNonNull(Thread.currentThread().getContextClassLoader()
+                                .getResource("htmlTemplate/dist/feature-pdf.min.css"))
+                                .openStream();
+        ){
+            new ParsePdf().build(fos, html, css, LayoutPdfEnum.PAISAGEM);
+        }
 
-        ParsePdf pp = new ParsePdf();
-
-        String path = (parametro.getTxtOutputTarget() != null ? parametro.getTxtOutputTarget().getAbsolutePath() : feature.getParent());
-        path += File.separator + feature.getName().replace(Resource.getExtension(feature), "") + ".pdf";
-
-        pp.buildHtml(path, html, css, parametro.getTipLayoutPdf().getValue(), parametro.getTipPainel().getValue());
+        // @TODO: remove buffer file
     }
 }
