@@ -132,4 +132,6 @@ public class FolderToHTMLCompilerTest {
             FileUtils.deleteDirectory(dir);
         }
     }
+
+    // @TODO: impl unit for test remove buffer on error
 }

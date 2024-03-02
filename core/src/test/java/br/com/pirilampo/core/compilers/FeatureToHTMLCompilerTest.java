@@ -43,4 +43,6 @@ public class FeatureToHTMLCompilerTest {
                 htmlFile
         ));
     }
+
+    // @TODO: impl unit for test remove buffer on error
 }

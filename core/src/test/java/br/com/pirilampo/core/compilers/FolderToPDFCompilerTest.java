@@ -32,4 +32,6 @@ public class FolderToPDFCompilerTest {
             fail();
         } */
     }
+
+    // @TODO: impl unit for test remove buffer on error
 }

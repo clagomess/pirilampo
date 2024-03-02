@@ -50,4 +50,6 @@ public class FeatureToPDFCompilerTest {
         }
         */
     }
+
+    // @TODO: impl unit for test remove buffer on error
 }
