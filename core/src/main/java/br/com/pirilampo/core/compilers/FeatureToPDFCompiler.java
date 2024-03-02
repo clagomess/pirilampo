@@ -53,6 +53,8 @@ public class FeatureToPDFCompiler extends Compiler {
                 featureMetadataDto.getName() + ".pdf"
         );
 
+        // @TODO: maibe a pipe with these streams?
+
         try (
                 FileOutputStream fos = new FileOutputStream(outFile);
                 InputStream html = Files.newInputStream(bufferHtml.toPath());
@@ -60,7 +62,7 @@ public class FeatureToPDFCompiler extends Compiler {
                                 .getResource("htmlTemplate/dist/feature-pdf.min.css"))
                                 .openStream();
         ){
-            new ParsePdf().build(fos, html, css, LayoutPdfEnum.PAISAGEM);
+            new ParsePdf().build(fos, html, css, parametro.getTipLayoutPdf());
         }
 
         // @TODO: remove buffer file

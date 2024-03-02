@@ -3,66 +3,70 @@ package br.com.pirilampo.core.compilers;
 import br.com.pirilampo.core.dto.ParametroDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
 
-import java.io.File;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @RequiredArgsConstructor
 public class FolderToPDFCompiler extends Compiler {
     private final ParametroDto parametro;
-    
-    public static final String HTML_FEATURE_PDF = "<h1 class=\"page-header\">%s <small>%s <em>%s</em></small></h1>\n" +
-            "%s\n<span style=\"page-break-after: always\"></span>";
 
-    public void build(ParametroDto parametro) throws Exception {
-        StringBuilder html = new StringBuilder();
+    protected File getOutFile(){ //@TODO: make global
+        File outDir = (parametro.getTxtOutputTarget() != null ? parametro.getTxtOutputTarget() : parametro.getTxtSrcFonte());
+        File outDirF = new File(outDir, "html");
+        if(!outDirF.exists()) outDirF.mkdir();
+        return new File(outDirF, "index.pdf");
+    }
 
-        // Abre pasta root
-        File curDir = parametro.getTxtSrcFonte();
+    public void build() throws Exception {
+        List<File> arquivos = listFolder(parametro.getTxtSrcFonte());
+        if(arquivos.isEmpty()) return;
 
-        // Popula com arquivos feature
-        List<File> arquivos = listFolder(curDir);
+        File bufferHtml = File.createTempFile("pirilampo-buffer-", ".html");
+        log.info("Created buffer file: {}", bufferHtml);
 
-        if(!arquivos.isEmpty()) {
-            int progressNum = 1;
-            for (File f : arquivos) {
-                // progress
-                // ProgressBind.setProgress(progressNum / (double) arquivos.size()); @TODO: check
-                progressNum++;
+        try (
+                FileOutputStream fos = new FileOutputStream(bufferHtml);
+                BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos, StandardCharsets.UTF_8));
+                PrintWriter out = new PrintWriter(bw);
+        ){
+            out.print("<!DOCTYPE html><html lang=\"en\"><body>");
 
-                // compila
-                String rawHtml = null; //@TODO ParseDocument.getFeatureHtml(parametro, f);
-
-                html.append(String.format(
-                        HTML_FEATURE_PDF,
+            for (File feature : arquivos) {
+                out.print("<h1 class=\"page-header\">");
+                out.print(String.format(
+                        "%s <small>%s <em>%s</em></small>",
                         parametro.getTxtNome(),
-                        f.getName().replace(Resource.getExtension(f), ""),
-                        parametro.getTxtVersao(),
-                        rawHtml
+                        getFeatureMetadata(parametro, feature).getName(),
+                        parametro.getTxtVersao()
                 ));
+                out.print("</h1>");
+
+                new ParseDocument(parametro, feature).build(out);
+
+                out.print("<span style=\"page-break-after: always\"></span>");
             }
 
-            //------------------ BUILD -----------------
-            String htmlTemplate = Resource.loadResource("htmlTemplate/html/template_feature_pdf.html");
-            String css = Resource.loadResource("htmlTemplate/dist/feature-pdf.min.css");
-
-            html = new StringBuilder(htmlTemplate.replace("#HTML_TEMPLATE#", html));
-
-            ParsePdf pp = new ParsePdf();
-
-            String outDir = (parametro.getTxtOutputTarget() != null ? parametro.getTxtOutputTarget().getAbsolutePath() : curDir.getParent() + File.separator + "html");
-            File outDirF = new File(outDir);
-
-            if(!outDirF.exists()){
-                outDirF.mkdir();
-            }
-
-            log.info("GERANDO PDF");
-            // ProgressBind.setProgress(-1); @TODO: check
-
-            // pp.buildHtml(outDir + File.separator + "index.pdf", html.toString(), css, parametro.getTipLayoutPdf().getValue(), parametro.getTipPainel().getValue()); //@TODO: fix
+            out.print("</body></html>");
         }
+
+        // @TODO: maibe a pipe with these streams?
+
+        try (
+                FileOutputStream fos = new FileOutputStream(getOutFile());
+                InputStream html = Files.newInputStream(bufferHtml.toPath());
+                InputStream css = Objects.requireNonNull(Thread.currentThread().getContextClassLoader()
+                                .getResource("htmlTemplate/dist/feature-pdf.min.css"))
+                        .openStream();
+        ){
+            new ParsePdf().build(fos, html, css, parametro.getTipLayoutPdf());
+        }
+
+        // @TODO: remove buffer file
+        // @TODO: impl. PDF Index
     }
 }
