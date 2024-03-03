@@ -1,9 +1,9 @@
-package com.github.clagomess.gherkinfeaturegenerator;
+package br.com.pirilampo.core.generator;
 
 import lombok.extern.slf4j.Slf4j;
 import net.coobird.thumbnailator.Thumbnails;
 import net.coobird.thumbnailator.geometry.Positions;
-import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang.RandomStringUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;

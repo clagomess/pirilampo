@@ -16,4 +16,13 @@
 
     </properties>
 
+    <dependencies>
+        <!-- ######## SCOPE TEST ######## -->
+        <dependency>
+            <groupId>net.coobird</groupId>
+            <artifactId>thumbnailator</artifactId>
+            <version>0.4.14</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
 </project>
