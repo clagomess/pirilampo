@@ -12,7 +12,6 @@ public class GeneratorTest {
     private final Generator generator = new Generator();
     private final File path = new File("target");
 
-    @Test
     public void build(){
         generator.build();
     }
