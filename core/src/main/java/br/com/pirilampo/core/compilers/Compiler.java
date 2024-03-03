@@ -11,8 +11,17 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public abstract class Compiler {
+    public String getFeatureExtension(File f){
+        Matcher matcher = Pattern.compile("\\.feature$", Pattern.CASE_INSENSITIVE)
+                .matcher(f.getName());
+
+        return matcher.find() ? matcher.group(0) : null;
+    }
+
     protected List<File> listFolder(File curDir) throws Exception {
         List<File> buffer = new LinkedList<>();
 
@@ -28,7 +37,7 @@ public abstract class Compiler {
         for (File f : filesList) {
             if (f.isDirectory()) listFolder(buffer, f);
 
-            if (f.isFile() && ".feature".equalsIgnoreCase(Resource.getExtension(f))) {
+            if (f.isFile() && ".feature".equalsIgnoreCase(getFeatureExtension(f))) {
                 buffer.add(f);
             }
         }
@@ -42,7 +51,7 @@ public abstract class Compiler {
                 .trim();
 
         FeatureMetadataDto result = new FeatureMetadataDto();
-        result.setName(feature.getName().replace(Resource.getExtension(feature), ""));
+        result.setName(feature.getName().replace(getFeatureExtension(feature), ""));
         result.setId(htmlFeatureRoot + "_" + result.getName());
         result.setIdHtml(result.getId() + ".html");
         result.setIdFeature(result.getId() + ".feature");

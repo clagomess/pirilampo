@@ -149,4 +149,16 @@ public class CompilerTest {
         log.info("{}", result.getAbsolutePath());
         assertEquals(new File(expected).getAbsolutePath(), result.getAbsolutePath());
     }
+
+    @ParameterizedTest
+    @CsvSource({
+            "target/foo/AbC.feature,.feature",
+            "target/foo/AbC.FEATURE,.FEATURE",
+            "target/foo/AbC.Feature,.Feature",
+            "target/foo/AbC.txt,",
+            "target/foo/AbC.feature.jpg,",
+    })
+    public void getFeatureExtension(String source, String expected){
+        assertEquals(expected, compiler.getFeatureExtension(new File(source)));
+    }
 }
