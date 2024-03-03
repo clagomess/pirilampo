@@ -9,16 +9,6 @@ import java.util.List;
 
 @Slf4j
 public class Resource {
-    public static String absoluteNameFeature(String path, String absolutePath){
-        path = path.replaceAll("\\\\", "");
-        absolutePath = absolutePath.replaceAll("\\\\", "");
-
-        path = path.replaceAll("\\/", "");
-        absolutePath = absolutePath.replaceAll("\\/", "");
-
-        return absolutePath.replace(path, "");
-    }
-
     public static File absolute(ParametroDto parametro, File feature, String fileName){
         File toReturn = null;
         List<String> paths = new ArrayList<>();

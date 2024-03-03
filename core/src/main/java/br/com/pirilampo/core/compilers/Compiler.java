@@ -117,4 +117,9 @@ public abstract class Compiler {
             }
         }
     }
+
+    public String getFeaturePathWithoutAbsolute(File base, File feature){
+        String resultDiff = feature.getAbsolutePath().replace(base.getAbsolutePath() + File.separator, "");
+        return resultDiff.replace(File.separator, "/");
+    }
 }

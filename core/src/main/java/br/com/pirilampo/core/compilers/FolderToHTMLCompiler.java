@@ -36,17 +36,17 @@ public class FolderToHTMLCompiler extends Compiler {
 
         for (File featureMaster : arquivosMaster) {
             // @TODO: reduce comparing
-            String absoluteFeatureMaster = Resource.absoluteNameFeature(
-                    parametro.getTxtSrcFonteMaster().getAbsolutePath(),
-                    featureMaster.getAbsolutePath()
+            String pathFeatureMaster = getFeaturePathWithoutAbsolute(
+                    parametro.getTxtSrcFonteMaster(),
+                    featureMaster
             );
 
-            String absoluteFeatureBranch = Resource.absoluteNameFeature(
-                    parametro.getTxtSrcFonte().getAbsolutePath(),
-                    featureBranch.getAbsolutePath()
+            String pathFeatureBranch = getFeaturePathWithoutAbsolute(
+                    parametro.getTxtSrcFonte(),
+                    featureBranch
             );
 
-            if (absoluteFeatureMaster.equals(absoluteFeatureBranch)) {
+            if (pathFeatureMaster.equals(pathFeatureBranch)) {
                 if(FileUtils.contentEquals(featureBranch, featureMaster)){
                     diff = DiffEnum.IGUAL;
                 }else{
