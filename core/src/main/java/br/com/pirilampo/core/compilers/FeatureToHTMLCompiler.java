@@ -20,17 +20,8 @@ public class FeatureToHTMLCompiler extends Compiler {
     public void build() throws Exception {
         ParseDocument parseDocument = new ParseDocument(parametro, feature);
 
-        String outFile = String.format(
-                "%s%s%s.html",
-                parametro.getTxtOutputTarget() != null ?
-                        parametro.getTxtOutputTarget() :
-                        feature.getParent(),
-                File.separator,
-                feature.getName().replace(Resource.getExtension(feature), "")
-        );
-
         try (
-                FileOutputStream fos = new FileOutputStream(outFile);
+                FileOutputStream fos = new FileOutputStream(getOutArtifact(parametro));
                 BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos, StandardCharsets.UTF_8));
                 PrintWriter out = new PrintWriter(bw);
         ){

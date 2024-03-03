@@ -1,6 +1,8 @@
 package br.com.pirilampo.core.compilers;
 
 import br.com.pirilampo.core.dto.ParametroDto;
+import br.com.pirilampo.core.enums.ArtefatoEnum;
+import br.com.pirilampo.core.enums.CompilacaoEnum;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -12,8 +14,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 import java.io.*;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrowsExactly;
+import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
 public class CompilerTest {
@@ -112,5 +113,40 @@ public class CompilerTest {
             compiler.writeFileToOut(resourceFile, out);
             assertEquals("<strong>html_embed_txt</strong>", sw.toString());
         }
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "PASTA,HTML,target/feature,,target/html/index.html",
+            "PASTA,HTML,target/feature,target,target/html/index.html",
+            "FEATURE,HTML,target/feature/xxx.Feature,,target/feature/xxx.html",
+            "FEATURE,HTML,target/feature/xxx.Feature,target,target/xxx.html",
+            "PASTA,PDF,target/feature,,target/html/index.pdf",
+            "PASTA,PDF,target/feature,target,target/html/index.pdf",
+            "FEATURE,PDF,target/feature/xxx.Feature,,target/feature/xxx.pdf",
+            "FEATURE,PDF,target/feature/xxx.Feature,target,target/xxx.pdf",
+    })
+    public void getOutArtifact(
+            CompilacaoEnum tipCompilacao,
+            ArtefatoEnum artefato,
+            String source,
+            String target,
+            String expected
+    ) throws IOException {
+        File targetDir = new File("target/feature");
+        if(!targetDir.exists()) assertTrue(targetDir.mkdir());
+        File targetFile = new File(targetDir, "xxx.Feature");
+        if(!targetFile.exists()) FileUtils.writeStringToFile(targetFile, "");
+
+        // init test
+        ParametroDto parametroDto = new ParametroDto();
+        parametroDto.setTipCompilacao(tipCompilacao);
+        parametroDto.setArtefato(artefato);
+        parametroDto.setTxtSrcFonte(StringUtils.isNotBlank(source) ? new File(source) : null);
+        parametroDto.setTxtOutputTarget(StringUtils.isNotBlank(target) ? new File(target) : null);
+
+        File result = compiler.getOutArtifact(parametroDto);
+        log.info("{}", result.getAbsolutePath());
+        assertEquals(new File(expected).getAbsolutePath(), result.getAbsolutePath());
     }
 }

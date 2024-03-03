@@ -2,6 +2,8 @@ package br.com.pirilampo.core.compilers;
 
 import br.com.pirilampo.core.dto.FeatureMetadataDto;
 import br.com.pirilampo.core.dto.ParametroDto;
+import br.com.pirilampo.core.enums.ArtefatoEnum;
+import br.com.pirilampo.core.enums.CompilacaoEnum;
 import org.apache.commons.io.input.BOMInputStream;
 
 import java.io.*;
@@ -46,6 +48,32 @@ public abstract class Compiler {
         result.setIdFeature(result.getId() + ".feature");
 
         return result;
+    }
+
+    protected File getOutArtifact(ParametroDto parametro){
+        if(parametro.getTipCompilacao() == CompilacaoEnum.PASTA){
+            File targetDir = parametro.getTxtOutputTarget() != null ?
+                    new File(parametro.getTxtOutputTarget(), "html") :
+                    new File(parametro.getTxtSrcFonte().getParent(), "html");
+
+            if(!targetDir.exists() && !targetDir.mkdir()){
+                throw new RuntimeException(String.format("Failed to create dir: %s", targetDir.getAbsolutePath()));
+            }
+
+            return new File(targetDir, parametro.getArtefato() == ArtefatoEnum.HTML ? "index.html" : "index.pdf");
+        }else{
+            String filename = String.format(
+                    "%s.%s",
+                    getFeatureMetadata(parametro, parametro.getTxtSrcFonte()).getName(),
+                    parametro.getArtefato() == ArtefatoEnum.HTML ? "html" : "pdf"
+            );
+
+            File targetDir = parametro.getTxtOutputTarget() != null ?
+                    parametro.getTxtOutputTarget() :
+                    new File(parametro.getTxtSrcFonte().getParent());
+
+            return new File(targetDir, filename);
+        }
     }
 
     protected void writeResourceToOut(String resource, PrintWriter out) throws IOException {

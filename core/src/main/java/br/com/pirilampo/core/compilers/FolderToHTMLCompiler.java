@@ -9,7 +9,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -26,13 +25,6 @@ public class FolderToHTMLCompiler extends Compiler {
 
     public static final String HTML_OPEN_TEMPLATE = "<script type=\"text/ng-template\" id=\"%s\">";
     public static final String HTML_CLOSE_TEMPLATE = "</script>\n";
-
-    protected File getOutFile(){
-        File outDir = (parametro.getTxtOutputTarget() != null ? parametro.getTxtOutputTarget() : parametro.getTxtSrcFonte());
-        File outDirF = new File(outDir, "html");
-        if(!outDirF.exists()) outDirF.mkdir();
-        return new File(outDirF, "index.html");
-    }
 
     protected DiffEnum diffMaster(FeatureMetadataDto featureMetadataDto, File featureBranch, PrintWriter out) throws Exception {
         if(parametro.getTxtSrcFonteMaster() == null) return DiffEnum.NAO_COMPARADO;
@@ -132,7 +124,7 @@ public class FolderToHTMLCompiler extends Compiler {
         if(arquivos.isEmpty()) return;
 
         try (
-                FileOutputStream fos = new FileOutputStream(getOutFile());
+                FileOutputStream fos = new FileOutputStream(getOutArtifact(parametro));
                 BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos, StandardCharsets.UTF_8));
                 PrintWriter out = new PrintWriter(bw);
         ){

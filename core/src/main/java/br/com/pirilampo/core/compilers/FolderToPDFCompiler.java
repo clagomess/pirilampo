@@ -15,13 +15,6 @@ import java.util.Objects;
 public class FolderToPDFCompiler extends Compiler {
     private final ParametroDto parametro;
 
-    protected File getOutFile(){ //@TODO: make global
-        File outDir = (parametro.getTxtOutputTarget() != null ? parametro.getTxtOutputTarget() : parametro.getTxtSrcFonte());
-        File outDirF = new File(outDir, "html");
-        if(!outDirF.exists()) outDirF.mkdir();
-        return new File(outDirF, "index.pdf");
-    }
-
     public void build() throws Exception {
         List<File> arquivos = listFolder(parametro.getTxtSrcFonte());
         if(arquivos.isEmpty()) return;
@@ -57,7 +50,7 @@ public class FolderToPDFCompiler extends Compiler {
         // @TODO: maibe a pipe with these streams?
 
         try (
-                FileOutputStream fos = new FileOutputStream(getOutFile());
+                FileOutputStream fos = new FileOutputStream(getOutArtifact(parametro));
                 InputStream html = Files.newInputStream(bufferHtml.toPath());
                 InputStream css = Objects.requireNonNull(Thread.currentThread().getContextClassLoader()
                                 .getResource("htmlTemplate/dist/feature-pdf.min.css"))

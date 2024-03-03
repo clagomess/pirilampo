@@ -2,7 +2,6 @@ package br.com.pirilampo.core.compilers;
 
 import br.com.pirilampo.core.dto.FeatureMetadataDto;
 import br.com.pirilampo.core.dto.ParametroDto;
-import br.com.pirilampo.core.enums.LayoutPdfEnum;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -48,15 +47,10 @@ public class FeatureToPDFCompiler extends Compiler {
             out.print("</body></html>");
         }
 
-        File outFile = new File(
-                (parametro.getTxtOutputTarget() != null ? parametro.getTxtOutputTarget() : new File(feature.getParent())),
-                featureMetadataDto.getName() + ".pdf"
-        );
-
         // @TODO: maibe a pipe with these streams?
 
         try (
-                FileOutputStream fos = new FileOutputStream(outFile);
+                FileOutputStream fos = new FileOutputStream(getOutArtifact(parametro));
                 InputStream html = Files.newInputStream(bufferHtml.toPath());
                 InputStream css = Objects.requireNonNull(Thread.currentThread().getContextClassLoader()
                                 .getResource("htmlTemplate/dist/feature-pdf.min.css"))
