@@ -3,134 +3,73 @@ package br.com.pirilampo.core.compilers;
 import br.com.pirilampo.core.dto.ParametroDto;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.input.BOMInputStream;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
 public class FolderToHTMLCompilerTest {
-    private final String projectName = "XXX_PROJECT_NAME_XXX";
-    private final String projectVersion = "1.2.3";
-    private final String featureName = "xxx.Feature";
-    private final String featureExt = ".Feature";
-
-    private String resourcePath = null;
-    private final ParametroDto parametro = new ParametroDto();
-    private List<File> pastas = new ArrayList<>();
-
-    @BeforeEach
-    public void before() {
-        resourcePath = Thread.currentThread().getContextClassLoader().getResource("").getPath();
-        parametro.setTxtNome(projectName);
-        parametro.setTxtVersao(projectVersion);
-    }
-
-    private File criarPasta(){
-        String dir = System.getProperty("java.io.tmpdir");
-        dir += File.separator;
-        dir += "pirilampo_test";
-
-        File f = new File(dir);
-
-        if (f.isDirectory() || f.mkdir()) {
-            dir += File.separator;
-            dir += (new Long(Calendar.getInstance().getTime().getTime())).toString();
-
-            f = new File(dir);
-            if(f.mkdir()){
-                pastas.add(f);
-            }
-
-            log.info("Pasta de teste: {}", f.getAbsolutePath());
-        }
-
-        return f;
-    }
-
-    private String load(String path) {
-        StringBuilder buffer = new StringBuilder();
-        String linha;
-        BufferedReader br;
-
-        try (FileInputStream fis = new FileInputStream(path)){
-            BOMInputStream bis = new BOMInputStream(fis);
-
-            br = new BufferedReader(new InputStreamReader(bis, "UTF-8"));
-
-            while ((linha = br.readLine()) != null) {
-                buffer.append(linha).append("\n");
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-            buffer = new StringBuilder();
-        }
-
-        return buffer.toString();
-    }
-
     @Test
-    public void build(){
+    public void build() throws Exception {
+        File logoFile = new File(Thread.currentThread()
+                .getContextClassLoader()
+                .getResource("logo_xxx.png").getFile());
+
+        File sourceFile = new File(Thread.currentThread()
+                .getContextClassLoader()
+                .getResource("feature").getFile());
+
+        File targetFile = new File("target/FolderToHTMLCompilerTest");
+        if(!targetFile.isDirectory()) assertTrue(targetFile.mkdir());
+
+        ParametroDto parametro = new ParametroDto();
         parametro.setClrMenu("#666");
-        parametro.setTxtLogoSrc(new File(resourcePath + File.separator + "logo_xxx.png"));
-        parametro.setTxtSrcFonte(new File(resourcePath + File.separator + "feature"));
-        parametro.setTxtOutputTarget(new File(criarPasta().getAbsolutePath()));
+        parametro.setTxtLogoSrc(logoFile);
+        parametro.setTxtSrcFonte(sourceFile);
+        parametro.setTxtOutputTarget(targetFile);
 
-        try {
-            new FolderToHTMLCompiler(parametro).build();
+        new FolderToHTMLCompiler(parametro).build();
 
-            String html = parametro.getTxtOutputTarget() + File.separator + "index.html";
-            assertTrue((new File(html)).isFile());
+        File htmlFile = new File(targetFile,"html/index.html");
+        assertTrue(htmlFile.isFile());
 
-            String htmlString = load(html);
-            assertNotEquals(htmlString, "");
+        String htmlString = FileUtils.readFileToString(htmlFile);
+        assertNotEquals(htmlString, "");
 
-            assertTrue(htmlString.contains(parametro.getClrMenu()));
-            assertFalse(htmlString.contains((new File(String.valueOf(parametro.getTxtLogoSrc()))).getName()));
-            assertFalse(htmlString.contains("logo_xxx.png"));
-            assertTrue(htmlString.contains("#/html/html_embed.html"));
-            assertTrue(htmlString.contains("html_embed_txt"));
-        }catch (Exception e){
-            log.error(log.getName(), e);
-            fail();
-        }
+        assertTrue(htmlString.contains(parametro.getClrMenu()));
+        assertFalse(htmlString.contains((new File(String.valueOf(parametro.getTxtLogoSrc()))).getName()));
+        assertFalse(htmlString.contains("logo_xxx.png"));
+        assertTrue(htmlString.contains("#/html/html_embed.html"));
+        assertTrue(htmlString.contains("html_embed_txt"));
     }
 
     @Test
-    public void build_master() {
-        try {
-            parametro.setTxtSrcFonte(new File(resourcePath + File.separator + "feature"));
-            parametro.setTxtSrcFonteMaster(new File(resourcePath + File.separator + "master"));
-            parametro.setTxtOutputTarget(new File(criarPasta().getAbsolutePath()));
-            new FolderToHTMLCompiler(parametro).build();
+    public void build_master() throws Exception {
+        File sourceFile = new File(Thread.currentThread()
+                .getContextClassLoader()
+                .getResource("feature").getFile());
 
-            String html = parametro.getTxtOutputTarget() + File.separator + "index.html";
-            assertTrue((new File(html)).isFile());
+        File masterFile = new File(Thread.currentThread()
+                .getContextClassLoader()
+                .getResource("master").getFile());
 
-            String htmlString = load(html);
+        File targetFile = new File("target/FolderToHTMLCompilerTest");
+        if(!targetFile.isDirectory()) assertTrue(targetFile.mkdir());
 
-            assertTrue(htmlString.contains("YYY_MASTER_YYY"));
-        }catch (Exception e){
-            log.error(log.getName(), e);
-            fail();
-        }
-    }
+        ParametroDto parametro = new ParametroDto();
+        parametro.setTxtSrcFonte(sourceFile);
+        parametro.setTxtSrcFonteMaster(masterFile);
+        parametro.setTxtOutputTarget(targetFile);
+        new FolderToHTMLCompiler(parametro).build();
 
-    @AfterEach
-    public void after() throws Exception {
-        for (File dir : pastas){
-            FileUtils.deleteDirectory(dir);
-        }
+        File htmlFile = new File(targetFile,"html/index.html");
+        assertTrue(htmlFile.isFile());
+
+        String htmlString = FileUtils.readFileToString(htmlFile);
+
+        assertTrue(htmlString.contains("YYY_MASTER_YYY"));
     }
 
     // @TODO: impl unit for test remove buffer on error

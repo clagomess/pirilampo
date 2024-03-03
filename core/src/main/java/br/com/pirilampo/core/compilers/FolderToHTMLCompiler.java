@@ -201,7 +201,7 @@ public class FolderToHTMLCompiler extends Compiler {
             }
 
             buildTemplateIndex(out);
-            writeResourceToOut("htmlTemplate/dist/template-feature-pasta-footer.html", out);
+            writeResourceToOut("htmlTemplate/html/template-feature-pasta-footer.html", out);
 
             out.print("<script type=\"text/javascript\">\n");
             buildIndex(out);
