@@ -12,10 +12,10 @@ import java.net.URLConnection;
 import java.util.Base64;
 
 @Slf4j
-class ParseImage {
-    static String parse(ParametroDto parametro, File feature, String fileName){
+class ParseImage extends Compiler {
+    public String parse(ParametroDto parametro, File feature, String fileName){
         String toReturn = fileName;
-        File file = Resource.absolute(parametro, feature, fileName);
+        File file = getAbsolutePathFeatureAsset(parametro, feature, fileName);
 
         if(file != null){
             toReturn = parse(parametro, file);
@@ -24,7 +24,7 @@ class ParseImage {
         return toReturn;
     }
 
-    static String parse(ParametroDto parametro, File image){
+    public String parse(ParametroDto parametro, File image){
         String toReturn = image.getName();
 
         if(parametro.getSitEmbedarImagens() || image.getAbsolutePath().equals(parametro.getTxtLogoSrc()) || parametro.getArtefato() == ArtefatoEnum.PDF) {

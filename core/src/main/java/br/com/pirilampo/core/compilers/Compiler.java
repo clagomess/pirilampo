@@ -9,8 +9,10 @@ import org.apache.commons.io.input.BOMInputStream;
 import java.io.*;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -121,5 +123,20 @@ public abstract class Compiler {
     public String getFeaturePathWithoutAbsolute(File base, File feature){
         String resultDiff = feature.getAbsolutePath().replace(base.getAbsolutePath() + File.separator, "");
         return resultDiff.replace(File.separator, "/");
+    }
+
+    public File getAbsolutePathFeatureAsset(ParametroDto parametro, File feature, String fileName){
+        Set<File> basePaths = new LinkedHashSet<File>() {{
+            add(feature.getParentFile());
+            add(parametro.getTxtSrcFonte());
+            if(parametro.getTxtSrcFonteMaster() != null) add(parametro.getTxtSrcFonteMaster());
+        }};
+
+        for (File basePath : basePaths) {
+            File asset = new File(basePath, fileName);
+            if(asset.isFile()) return asset;
+        }
+
+        return null;
     }
 }

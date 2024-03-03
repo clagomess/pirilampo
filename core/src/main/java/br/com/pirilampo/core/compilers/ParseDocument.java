@@ -26,6 +26,7 @@ import java.util.regex.Pattern;
 
 @Slf4j
 class ParseDocument extends Compiler {
+    private final ParseImage parseImage = new ParseImage();
     private final ParametroDto parametro;
     private final File feature;
 
@@ -274,7 +275,7 @@ class ParseDocument extends Compiler {
         Matcher m = p.matcher(txt);
 
         while (m.find()) {
-            String imgSrc = ParseImage.parse(parametro, feature, m.group(1));
+            String imgSrc = parseImage.parse(parametro, feature, m.group(1));
             txt = txt.replace("src=\"" + m.group(1) + "\"", "src=\"" + imgSrc + "\"");
         }
 
@@ -283,7 +284,7 @@ class ParseDocument extends Compiler {
         m = p.matcher(txt);
 
         while(m.find()) {
-            File htmlEmbed = Resource.absolute(parametro, feature, m.group(1) + ".html");
+            File htmlEmbed = getAbsolutePathFeatureAsset(parametro, feature, m.group(1) + ".html");
 
             if (htmlEmbed.isFile()) {
                 paginaHtmlAnexo.add(htmlEmbed);

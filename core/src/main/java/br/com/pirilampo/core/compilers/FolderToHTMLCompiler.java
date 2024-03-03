@@ -19,6 +19,7 @@ import java.util.Map;
 @Slf4j
 @RequiredArgsConstructor
 public class FolderToHTMLCompiler extends Compiler {
+    private final ParseImage parseImage = new ParseImage();
     private final ParametroDto parametro;
     private final Map<String, Indice> indice = new HashMap<>();
     private List<File> arquivosMaster = null;
@@ -85,7 +86,7 @@ public class FolderToHTMLCompiler extends Compiler {
         out.print("<li class=\"sidebar-brand\">");
 
         if(parametro.getTxtLogoSrc() != null){
-            String logoString = ParseImage.parse(parametro, parametro.getTxtLogoSrc()); //@TODO: transformar em buffer
+            String logoString = parseImage.parse(parametro, parametro.getTxtLogoSrc()); //@TODO: transformar em buffer
             out.print(String.format("<a href=\"#/\"><img class=\"logo\" src=\"%s\"></a>", logoString));
         }else{
             out.print(String.format(

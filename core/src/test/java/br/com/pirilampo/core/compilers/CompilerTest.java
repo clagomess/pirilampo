@@ -172,4 +172,27 @@ public class CompilerTest {
     public void getFeaturePathWithoutAbsolute(File base, File feature, String expected){
         assertEquals(expected, compiler.getFeaturePathWithoutAbsolute(base, feature));
     }
+
+    @Test
+    public void getAbsolutePathFeatureAsset(){
+        File sourceFile = new File(Thread.currentThread()
+                .getContextClassLoader()
+                .getResource("feature").getFile());
+
+        File sourceMasterFile = new File(Thread.currentThread()
+                        .getContextClassLoader()
+                        .getResource("master").getFile());
+
+        File featureFile = new File(sourceFile, "xxx.Feature");
+
+        ParametroDto parametro = new ParametroDto();
+        parametro.setTxtSrcFonte(sourceFile);
+        parametro.setTxtSrcFonteMaster(sourceMasterFile);
+
+        assertNotNull(compiler.getAbsolutePathFeatureAsset(
+                parametro,
+                featureFile,
+                "xxx.png"
+        ));
+    }
 }
