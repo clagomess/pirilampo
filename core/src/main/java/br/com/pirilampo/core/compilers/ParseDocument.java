@@ -103,7 +103,7 @@ class ParseDocument extends Compiler {
             GherkinDocument gd = new Parser<>(new AstBuilder()).parse(in, new TokenMatcher());
             if (gd != null){
                 featureTitulo = gd.getFeature().getName();
-                setIndiceName(gd.getFeature().getName());
+                setIndiceName(featureTitulo);
                 build(gd, out);
             }
 

@@ -177,12 +177,12 @@ public class FolderToHTMLCompiler extends Compiler {
 
                 // Gera a feture
                 ParseDocument pd = new ParseDocument(parametro, f);
-                indice.putAll(pd.getIndice());
-                parseMenu.addMenuItem(f, diff, pd.getFeatureTitulo());
-
                 out.print(String.format(HTML_OPEN_TEMPLATE, featureMetadataDto.getIdHtml()));
                 pd.build(out);
                 out.print(HTML_CLOSE_TEMPLATE);
+
+                indice.putAll(pd.getIndice());
+                parseMenu.addMenuItem(f, diff, pd.getFeatureTitulo());
 
                 // adiciona html embed
                 for (File htmlEmbed : pd.getPaginaHtmlAnexo()){
