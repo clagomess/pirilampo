@@ -13,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.input.BOMInputStream;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
-import org.commonmark.renderer.html.HtmlRenderer;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -27,6 +26,7 @@ import java.util.regex.Pattern;
 @Slf4j
 class ParseDocument extends Compiler {
     private final ParseImage parseImage = new ParseImage();
+    private final ParseToMarkdown parseToMarkdown = new ParseToMarkdown();
     private final ParametroDto parametro;
     private final File feature;
 
@@ -231,65 +231,39 @@ class ParseDocument extends Compiler {
         }
     }
 
-    /**
-     * @param txtRaw raw texto
-     * @param md ativar markedow?
-     * @return html
-     */
-    protected String format(String txtRaw, boolean md){
-        String txt = txtRaw;
-        txt = txt.trim();
+    protected String format(String txtRaw, boolean makdown){
+        String txt = txtRaw.trim()
+                .replace("<", "&lt;")
+                .replace(">", "&gt;");
 
-        txt = txt.replaceAll("<", "&lt;");
-        txt = txt.replaceAll(">", "&gt;");
+        if(txt.length() < 3) return txt;
 
-        if(md && txt.length() >= 3) {
-            try {
-                txt = txt.replaceAll("( *)(\\n)( *)", "\n");
-
-                org.commonmark.parser.Parser parser = org.commonmark.parser.Parser.builder().build();
-                org.commonmark.node.Node document = parser.parse(txt);
-                HtmlRenderer renderer = HtmlRenderer.builder().build();
-                txt = renderer.render(document);
-
-                txt = txt.replaceFirst("^<p>(.+)<\\/p>", "$1");
-                txt = txt.trim();
-            } catch (Exception e) {
-                log.warn(log.getName(), e);
-            }
-        }
+        if(makdown) txt = parseToMarkdown.build(txt);
 
         final String img = "<br/><p><img src=\"$1\" $2/></p>";
 
         txt = txt.replaceAll("<img src=\"(.+?)\"(.*?)>", img);
         txt = txt.replaceAll("&lt;img src=&quot;(.+?)&quot;(.*?)&gt;", img);
         txt = txt.replaceAll("&lt;strike&gt;(.+?)&lt;/strike&gt;", "<strike>$1</strike>");
-        txt = txt.replaceAll("&lt;br&gt;", "<br/>");
-
-        if(txt.contains("<img")){
-            txt = txt.replaceAll("&quot;", "\"");
-        }
+        txt = txt.replace("&quot;", "\"");
+        txt = txt.replace("&lt;br&gt;", "<br/>");
 
         // pega endereço ou base64 da imagem
-        Pattern p = Pattern.compile("src=\"(.+?)\"");
-        Matcher m = p.matcher(txt);
-
-        while (m.find()) {
-            String imgSrc = parseImage.parse(parametro, feature, m.group(1));
-            txt = txt.replace("src=\"" + m.group(1) + "\"", "src=\"" + imgSrc + "\"");
+        Matcher mImgSrc = Pattern.compile("src=\"(.+?)\"").matcher(txt);
+        while (mImgSrc.find()) {
+            String imgSrc = parseImage.parse(parametro, feature, mImgSrc.group(1));
+            txt = txt.replace(mImgSrc.group(), "src=\"" + imgSrc + "\"");
         }
 
         // verifica html embeded
-        p = Pattern.compile("href=\"(.+)\\.html\"");
-        m = p.matcher(txt);
+        Matcher mHtmlHref = Pattern.compile("href=\"(.+?\\.html)\"").matcher(txt);
+        while(mHtmlHref.find()) {
+            String filename = mHtmlHref.group(1);
+            File htmlEmbed = getAbsolutePathFeatureAsset(parametro, feature, filename);
 
-        while(m.find()) {
-            File htmlEmbed = getAbsolutePathFeatureAsset(parametro, feature, m.group(1) + ".html");
-
-            if (htmlEmbed.isFile()) {
+            if (htmlEmbed != null && htmlEmbed.isFile()) {
                 paginaHtmlAnexo.add(htmlEmbed);
-                String urlHtmlEmbed = "#/html/" + m.group(1) + ".html";
-                txt = txt.replace("href=\""+ m.group(1) +".html\"", "href=\"" + urlHtmlEmbed + "\"");
+                txt = txt.replace(mHtmlHref.group(), "href=\"#/html/" + filename + "\"");
             }
         }
 
