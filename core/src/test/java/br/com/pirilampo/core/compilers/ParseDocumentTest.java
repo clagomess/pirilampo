@@ -58,8 +58,8 @@ public class ParseDocumentTest {
             "a: <img src=\"xx_a.png\"> b: <img src=\"xx_b.png\">$a: <br/><p><img src=\"xx_a.png\" /></p> b: <br/><p><img src=\"xx_b.png\" /></p>",
             "a: ![ImageA](xx_a.png) b: ![ImageB](xx_b.png)$a: <br/><p><img src=\"xx_a.png\"  alt=\"ImageA\" //></p> b: <br/><p><img src=\"xx_b.png\"  alt=\"ImageB\" //></p>",
             "a: [xx_a](https://xx_a.com) b: [xx_b](https://xx_b.com)$a: <a href=\"https://xx_a.com\">xx_a</a> b: <a href=\"https://xx_b.com\">xx_b</a>",
-            "a: [xx_a](xx_a.html) b: [xx_b](xx_b.html): <a href=\"xx_a.html\">xx_a</a> b: <a href=\"xx_b.html\">xx_b</a>",
-            //@TODO: add more than one href, and src
+            "a: [xx_a](xx_a.html) b: [xx_b](xx_b.html)$a: <a href=\"xx_a.html\">xx_a</a> b: <a href=\"xx_b.html\">xx_b</a>",
+            "'aaa \n bbb ![ImageA](xx_a.png)'$'<p>aaa\nbbb <br/><p><img src=\"xx_a.png\"  alt=\"ImageA\" //></p></p>'",
     }, delimiter = '$', ignoreLeadingAndTrailingWhitespace = false)
     public void format(String raw, String expected){
         val parametro = new ParametroDto();
