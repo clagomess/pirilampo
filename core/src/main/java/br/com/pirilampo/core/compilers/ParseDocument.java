@@ -236,7 +236,7 @@ class ParseDocument extends Compiler {
      * @param md ativar markedow?
      * @return html
      */
-    private String format(String txtRaw, boolean md){
+    protected String format(String txtRaw, boolean md){
         String txt = txtRaw;
         txt = txt.trim();
 
