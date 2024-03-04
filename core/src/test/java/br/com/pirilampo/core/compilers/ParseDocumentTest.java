@@ -41,6 +41,38 @@ public class ParseDocumentTest {
 
     @ParameterizedTest
     @CsvSource(value = {
+        "<br/><p><img src=\"https://picsum.photos/800/200\"  alt=\"Image\" //></p>$",
+        "<br/><p><img src=\"data:image/png;base64,iVBORw0KGg...\" /></p>$",
+        "<br/><p><img src=\"NMdSnfAaxO.png\" /></p>$",
+        "Link Google: <a href=\"https://www.google.com.br\">Google</a>$Link Google: Google",
+        "Link Html Embeded: <a href=\"KEqOGcTrgn.html\">Link Embeded</a>$Link Html Embeded: Link Embeded",
+        "zztjynblb<a href=\"#/scenario/VVlUTIBDZa/1\">DEF003</a>$zztjynblbDEF003",
+        "jZErZDIoaI Rlewk$jZErZDIoaI Rlewk",
+        "<br/><p><img src=\"data:image/png;base64,iVBORw0KGg...\"  width=\"50\"/></p>$",
+        "<br/><p><img src=\"NMdSnfAaxO.png\"  width=\"50\"/></p>$",
+        "<strike>strike<br/>strike</strike>$strikestrike",
+        "'<ul>\n<li>YYY_MASTER_YYY</li>\n</ul>'$YYY_MASTER_YYY",
+        "&lt;user&gt; and &lt;password&gt;$user and password",
+    }, delimiter = '$')
+    public void setIndiceValue(String raw, String expected){
+        val parametro = new ParametroDto();
+        parametro.setTxtSrcFonte(new File(Thread.currentThread()
+                .getContextClassLoader()
+                .getResource("feature").getFile()));
+        File feature = new File(Thread.currentThread()
+                .getContextClassLoader()
+                .getResource("feature/xxx.Feature").getFile());
+
+        ParseDocument parseDocument = new ParseDocument(
+                parametro,
+                feature
+        );
+
+        assertEquals(expected, parseDocument.setIndiceValue(raw));
+    }
+
+    @ParameterizedTest
+    @CsvSource(value = {
             "![Image](https://picsum.photos/800/200)$<br/><p><img src=\"https://picsum.photos/800/200\"  alt=\"Image\" //></p>",
             "<img src=\"smallest.png\">$<br/><p><img src=\"data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAQAAAAA3bvkkAAAACklEQVR4AWNgAAAAAgABc3UBGAAAAABJRU5ErkJggg==\" /></p>",
             "<img src=\"NMdSnfAaxO.png\">$<br/><p><img src=\"NMdSnfAaxO.png\" /></p>",

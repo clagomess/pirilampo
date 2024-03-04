@@ -70,7 +70,7 @@ class ParseDocument extends Compiler {
         this.featureId = getFeatureMetadata(parametro, feature).getId();
     }
 
-    private void setIndiceValue(String value){
+    protected String setIndiceValue(String value){
         if(!indice.containsKey(featureId)){
             indice.put(featureId, new Indice());
         }
@@ -84,6 +84,8 @@ class ParseDocument extends Compiler {
         if(StringUtils.isNotEmpty(value) && value.length() > 3) {
             indice.get(featureId).getValues().add(value);
         }
+
+        return value;
     }
 
     private void setIndiceName(final String name){
