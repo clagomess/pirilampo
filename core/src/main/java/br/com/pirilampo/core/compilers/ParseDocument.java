@@ -1,6 +1,5 @@
 package br.com.pirilampo.core.compilers;
 
-import br.com.pirilampo.core.bean.Indice;
 import br.com.pirilampo.core.dto.ParametroDto;
 import br.com.pirilampo.core.enums.PainelEnum;
 import br.com.pirilampo.core.exception.FeatureException;
@@ -17,9 +16,9 @@ import org.apache.commons.lang.StringUtils;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -34,8 +33,7 @@ class ParseDocument extends Compiler {
     private final List<File> paginaHtmlAnexo;
 
     @Getter
-    private final Map<String, Indice> indice;
-    private final String featureId;
+    private final Set<String> featureIndexValues = new LinkedHashSet<>();
 
     @Getter
     private String featureTitulo = null;
@@ -66,13 +64,10 @@ class ParseDocument extends Compiler {
         this.parametro = parametro;
         this.feature = feature;
         this.paginaHtmlAnexo = new ArrayList<>();
-        this.indice = new HashMap<>();
-        this.featureId = getFeatureMetadata(parametro, feature).getId();
     }
 
-    protected String setIndiceValue(String value){
+    protected String putIndexValue(String value){
         if(StringUtils.isBlank(value) || value.length() < 3) return null;
-        indice.putIfAbsent(featureId, new Indice());
 
         value = value.replaceAll("<.+?>", "");
         value = value.replace("&lt;", "");
@@ -80,16 +75,11 @@ class ParseDocument extends Compiler {
         value = StringUtils.trimToNull(value);
 
         if(StringUtils.isNotBlank(value) && value.length() > 3) {
-            indice.get(featureId).getValues().add(value);
+            featureIndexValues.add(value);
             return value;
         }else{
             return null;
         }
-    }
-
-    private void setIndiceName(final String name){
-        indice.putIfAbsent(featureId, new Indice());
-        indice.get(featureId).setName(name);
     }
 
     public void build(PrintWriter out) throws Exception {
@@ -98,10 +88,12 @@ class ParseDocument extends Compiler {
                 BOMInputStream bis = new BOMInputStream(fis);
                 Reader in = new InputStreamReader(bis, StandardCharsets.UTF_8);
         ) {
+            log.info("COMPILING: {}", feature.getAbsolutePath());
+
             GherkinDocument gd = new Parser<>(new AstBuilder()).parse(in, new TokenMatcher());
             if (gd != null){
                 featureTitulo = gd.getFeature().getName();
-                setIndiceName(featureTitulo);
+                if(featureTitulo == null) throw new FeatureException("Feature without title", feature);
                 build(gd, out);
             }
 
@@ -265,7 +257,7 @@ class ParseDocument extends Compiler {
             }
         }
 
-        setIndiceValue(txt);
+        putIndexValue(txt);
 
         return txt;
     }

@@ -1,6 +1,6 @@
 package br.com.pirilampo.core.compilers;
 
-import br.com.pirilampo.core.bean.Indice;
+import br.com.pirilampo.core.dto.FeatureIndexDto;
 import br.com.pirilampo.core.dto.FeatureMetadataDto;
 import br.com.pirilampo.core.dto.ParametroDto;
 import br.com.pirilampo.core.enums.DiffEnum;
@@ -21,7 +21,7 @@ import java.util.Map;
 public class FolderToHTMLCompiler extends Compiler {
     private final ParseImage parseImage = new ParseImage();
     private final ParametroDto parametro;
-    private final Map<String, Indice> indice = new HashMap<>();
+    private final Map<String, FeatureIndexDto> indice = new HashMap<>();
     private List<File> arquivosMaster = null;
 
     public static final String HTML_OPEN_TEMPLATE = "<script type=\"text/ng-template\" id=\"%s\">";
@@ -181,7 +181,11 @@ public class FolderToHTMLCompiler extends Compiler {
                 pd.build(out);
                 out.print(HTML_CLOSE_TEMPLATE);
 
-                indice.putAll(pd.getIndice());
+                indice.put(featureMetadataDto.getIdFeature(), new FeatureIndexDto(
+                        pd.getFeatureTitulo(),
+                        pd.getFeatureIndexValues()
+                ));
+
                 parseMenu.addMenuItem(f, diff, pd.getFeatureTitulo());
 
                 // adiciona html embed
