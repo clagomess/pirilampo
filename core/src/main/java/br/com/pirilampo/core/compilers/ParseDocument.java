@@ -238,6 +238,8 @@ class ParseDocument extends Compiler {
         txt = txt.replace("&quot;", "\"");
         txt = txt.replace("&lt;br&gt;", "<br/>");
 
+        putIndexValue(txt);
+
         // pega endereço ou base64 da imagem
         Matcher mImgSrc = Pattern.compile("src=\"(.+?)\"").matcher(txt);
         while (mImgSrc.find()) {
@@ -256,8 +258,6 @@ class ParseDocument extends Compiler {
                 txt = txt.replace(mHtmlHref.group(), "href=\"#/html/" + filename + "\"");
             }
         }
-
-        putIndexValue(txt);
 
         return txt;
     }
