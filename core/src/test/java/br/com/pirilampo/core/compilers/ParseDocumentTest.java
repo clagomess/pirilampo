@@ -1,5 +1,6 @@
 package br.com.pirilampo.core.compilers;
 
+import br.com.pirilampo.core.Common;
 import br.com.pirilampo.core.dto.ParametroDto;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
@@ -13,19 +14,12 @@ import java.nio.charset.StandardCharsets;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Slf4j
-public class ParseDocumentTest {
+public class ParseDocumentTest extends Common {
     @Test
-    public void foo() throws Exception {
-        // @TODO: rewrite
+    public void build() throws Exception {
         val parametro = new ParametroDto();
-        val file = new File("C:\\Users\\claudio\\DESENV_JAVA\\pirilampo\\core\\src\\test\\resources\\feature\\xxx.Feature");
-
-        parametro.setTxtSrcFonte(file);
-
-        ParseDocument parseDocument = new ParseDocument(
-                parametro,
-                file
-        );
+        parametro.setTxtSrcFonte(featureFile);
+        ParseDocument parseDocument = new ParseDocument(parametro, featureFile);
 
         File tmpFile = File.createTempFile("result-", ".html");
         log.info("Created: {}", tmpFile);
@@ -56,17 +50,8 @@ public class ParseDocumentTest {
     }, delimiter = '$')
     public void setIndiceValue(String raw, String expected){
         val parametro = new ParametroDto();
-        parametro.setTxtSrcFonte(new File(Thread.currentThread()
-                .getContextClassLoader()
-                .getResource("feature").getFile()));
-        File feature = new File(Thread.currentThread()
-                .getContextClassLoader()
-                .getResource("feature/xxx.Feature").getFile());
-
-        ParseDocument parseDocument = new ParseDocument(
-                parametro,
-                feature
-        );
+        parametro.setTxtSrcFonte(featureFolder);
+        ParseDocument parseDocument = new ParseDocument(parametro, featureFile);
 
         assertEquals(expected, parseDocument.putIndexValue(raw));
     }
@@ -95,18 +80,9 @@ public class ParseDocumentTest {
     }, delimiter = '$', ignoreLeadingAndTrailingWhitespace = false)
     public void format(String raw, String expected){
         val parametro = new ParametroDto();
-        parametro.setTxtSrcFonte(new File(Thread.currentThread()
-                .getContextClassLoader()
-                .getResource("feature").getFile()));
+        parametro.setTxtSrcFonte(featureFolder);
 
-        File feature = new File(Thread.currentThread()
-                .getContextClassLoader()
-                .getResource("feature/xxx.Feature").getFile());
-
-        ParseDocument parseDocument = new ParseDocument(
-                parametro,
-                feature
-        );
+        ParseDocument parseDocument = new ParseDocument(parametro, featureFile);
 
         assertEquals(expected, parseDocument.format(raw, true));
     }

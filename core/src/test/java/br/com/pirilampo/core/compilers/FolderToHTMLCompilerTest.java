@@ -1,5 +1,6 @@
 package br.com.pirilampo.core.compilers;
 
+import br.com.pirilampo.core.Common;
 import br.com.pirilampo.core.dto.ParametroDto;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -10,16 +11,12 @@ import java.io.File;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
-public class FolderToHTMLCompilerTest {
+public class FolderToHTMLCompilerTest extends Common {
     @Test
     public void build() throws Exception {
         File logoFile = new File(Thread.currentThread()
                 .getContextClassLoader()
                 .getResource("logo_xxx.png").getFile());
-
-        File sourceFile = new File(Thread.currentThread()
-                .getContextClassLoader()
-                .getResource("feature").getFile());
 
         File targetFile = new File("target/FolderToHTMLCompilerTest");
         if(!targetFile.isDirectory()) assertTrue(targetFile.mkdir());
@@ -27,7 +24,7 @@ public class FolderToHTMLCompilerTest {
         ParametroDto parametro = new ParametroDto();
         parametro.setClrMenu("#666");
         parametro.setTxtLogoSrc(logoFile);
-        parametro.setTxtSrcFonte(sourceFile);
+        parametro.setTxtSrcFonte(featureFolder);
         parametro.setTxtOutputTarget(targetFile);
 
         new FolderToHTMLCompiler(parametro).build();
@@ -47,20 +44,12 @@ public class FolderToHTMLCompilerTest {
 
     @Test
     public void build_master() throws Exception {
-        File sourceFile = new File(Thread.currentThread()
-                .getContextClassLoader()
-                .getResource("feature").getFile());
-
-        File masterFile = new File(Thread.currentThread()
-                .getContextClassLoader()
-                .getResource("master").getFile());
-
         File targetFile = new File("target/FolderToHTMLCompilerTest");
         if(!targetFile.isDirectory()) assertTrue(targetFile.mkdir());
 
         ParametroDto parametro = new ParametroDto();
-        parametro.setTxtSrcFonte(sourceFile);
-        parametro.setTxtSrcFonteMaster(masterFile);
+        parametro.setTxtSrcFonte(featureFolder);
+        parametro.setTxtSrcFonteMaster(featureMasterFolder);
         parametro.setTxtOutputTarget(targetFile);
         new FolderToHTMLCompiler(parametro).build();
 

@@ -1,17 +1,16 @@
 package br.com.pirilampo.core.compilers;
 
+import br.com.pirilampo.core.Common;
 import br.com.pirilampo.core.dto.ParametroDto;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
-import java.io.File;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Slf4j
-public class ParseImageTest {
+public class ParseImageTest extends Common {
     private final ParseImage parseImage = new ParseImage();
 
     @ParameterizedTest
@@ -26,14 +25,8 @@ public class ParseImageTest {
     public void parse(Boolean embedded, String filename, String expected){
         val parametro = new ParametroDto();
         parametro.setSitEmbedarImagens(embedded);
-        parametro.setTxtSrcFonte(new File(Thread.currentThread()
-                .getContextClassLoader()
-                .getResource("feature").getFile()));
+        parametro.setTxtSrcFonte(featureFolder);
 
-        File feature = new File(Thread.currentThread()
-                .getContextClassLoader()
-                .getResource("feature/xxx.Feature").getFile());
-
-        assertEquals(expected, parseImage.parse(parametro, feature, filename));
+        assertEquals(expected, parseImage.parse(parametro, featureFile, filename));
     }
 }

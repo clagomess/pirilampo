@@ -1,5 +1,6 @@
 package br.com.pirilampo.core.compilers;
 
+import br.com.pirilampo.core.Common;
 import br.com.pirilampo.core.dto.ParametroDto;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.graphics.PDXObject;
@@ -13,20 +14,16 @@ import java.util.stream.StreamSupport;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class FeatureToPDFCompilerTest {
+public class FeatureToPDFCompilerTest extends Common {
     @Test //(timeout = 8000) @TODO: check
     public void build() throws Exception {
-        File sourceFile = new File(Thread.currentThread()
-                .getContextClassLoader()
-                .getResource("feature/xxx.Feature").getFile());
-
         File targetFile = new File("target/FeatureToPDFCompilerTest");
         if(!targetFile.isDirectory()) assertTrue(targetFile.mkdir());
 
         ParametroDto parametro = new ParametroDto();
         parametro.setTxtNome("_AA_");
         parametro.setTxtVersao("_BB_");
-        parametro.setTxtSrcFonte(sourceFile);
+        parametro.setTxtSrcFonte(featureFile);
         parametro.setTxtOutputTarget(targetFile);
 
         new FeatureToPDFCompiler(parametro).build();

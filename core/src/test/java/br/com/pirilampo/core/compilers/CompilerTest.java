@@ -1,5 +1,6 @@
 package br.com.pirilampo.core.compilers;
 
+import br.com.pirilampo.core.Common;
 import br.com.pirilampo.core.dto.ParametroDto;
 import br.com.pirilampo.core.enums.ArtefatoEnum;
 import br.com.pirilampo.core.enums.CompilacaoEnum;
@@ -17,17 +18,13 @@ import java.io.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
-public class CompilerTest {
+public class CompilerTest extends Common {
     private static final class InheritorCompiler extends Compiler {}
     private final InheritorCompiler compiler = new InheritorCompiler();
 
     @Test
     public void listFolder() throws Exception {
-        val okPath = Thread.currentThread()
-                .getContextClassLoader()
-                .getResource("feature").getFile();
-
-        val result = compiler.listFolder(new File(okPath));
+        val result = compiler.listFolder(featureFolder);
         Assertions.assertThat(result.size()).isGreaterThanOrEqualTo(0);
     }
 
@@ -175,19 +172,9 @@ public class CompilerTest {
 
     @Test
     public void getAbsolutePathFeatureAsset(){
-        File sourceFile = new File(Thread.currentThread()
-                .getContextClassLoader()
-                .getResource("feature").getFile());
-
-        File sourceMasterFile = new File(Thread.currentThread()
-                        .getContextClassLoader()
-                        .getResource("master").getFile());
-
-        File featureFile = new File(sourceFile, "xxx.Feature");
-
         ParametroDto parametro = new ParametroDto();
-        parametro.setTxtSrcFonte(sourceFile);
-        parametro.setTxtSrcFonteMaster(sourceMasterFile);
+        parametro.setTxtSrcFonte(featureFolder);
+        parametro.setTxtSrcFonteMaster(featureMasterFolder);
 
         assertNotNull(compiler.getAbsolutePathFeatureAsset(
                 parametro,
