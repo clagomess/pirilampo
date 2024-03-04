@@ -5,6 +5,7 @@ import br.com.pirilampo.core.dto.ParametroDto;
 import br.com.pirilampo.core.enums.ArtefatoEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -14,39 +15,35 @@ import java.util.Base64;
 @Slf4j
 class ParseImage extends Compiler {
     public String parse(ParametroDto parametro, File feature, String fileName){
-        String toReturn = fileName;
         File file = getAbsolutePathFeatureAsset(parametro, feature, fileName);
 
         if(file != null){
-            toReturn = parse(parametro, file);
+            return parse(parametro, file);
+        }else{
+            return fileName;
         }
-
-        return toReturn;
     }
 
     public String parse(ParametroDto parametro, File image){
-        String toReturn = image.getName();
-
-        if(parametro.getSitEmbedarImagens() || image.getAbsolutePath().equals(parametro.getTxtLogoSrc()) || parametro.getArtefato() == ArtefatoEnum.PDF) {
+        if(
+                parametro.getSitEmbedarImagens() ||
+                image.equals(parametro.getTxtLogoSrc()) ||
+                parametro.getArtefato() == ArtefatoEnum.PDF
+        ) {
             try {
-                byte[] base64 = Base64.getEncoder().encode(FileUtils.readFileToByteArray(image));
+                String base64 = Base64.getEncoder().encodeToString(FileUtils.readFileToByteArray(image));
 
-                if (base64.length > 0) {
+                if (StringUtils.isNotEmpty(base64)) {
                     String mimeType = URLConnection.guessContentTypeFromName(image.getName());
-
-                    toReturn = "data:" + mimeType + ";base64," + new String(base64);
+                    return "data:" + mimeType + ";base64," + base64;
                 }
             } catch (IOException e) {
                 log.info(e.getMessage() + " - " + image.getAbsolutePath());
-                log.warn(log.getName(), e);
             }
         } else {
-            toReturn = image.getAbsolutePath().replace(parametro.getTxtSrcFonte().getParent(), "");
-            toReturn = toReturn.replaceFirst("^[\\/|\\\\]", "");
-            toReturn = toReturn.replaceAll("\\\\", "/");
-            toReturn = "../" + toReturn;
+            return "../" + getFeaturePathWithoutAbsolute(parametro.getTxtSrcFonte().getParentFile(), image);
         }
 
-        return toReturn;
+        return image.getName();
     }
 }
