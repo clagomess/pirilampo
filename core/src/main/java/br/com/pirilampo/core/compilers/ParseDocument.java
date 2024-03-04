@@ -71,28 +71,24 @@ class ParseDocument extends Compiler {
     }
 
     protected String setIndiceValue(String value){
-        if(!indice.containsKey(featureId)){
-            indice.put(featureId, new Indice());
-        }
+        if(StringUtils.isBlank(value) || value.length() < 3) return null;
+        indice.putIfAbsent(featureId, new Indice());
 
-        if(StringUtils.isNotEmpty(value) && value.length() > 3) {
-            value = value.replaceAll("<(|\\/)(.+?)>", "");
-            value = value.replaceAll("&lt;", "");
-            value = value.replaceAll("&gt;", "");
-        }
+        value = value.replaceAll("<.+?>", "");
+        value = value.replace("&lt;", "");
+        value = value.replace("&gt;", "");
+        value = StringUtils.trimToNull(value);
 
-        if(StringUtils.isNotEmpty(value) && value.length() > 3) {
+        if(StringUtils.isNotBlank(value) && value.length() > 3) {
             indice.get(featureId).getValues().add(value);
+            return value;
+        }else{
+            return null;
         }
-
-        return value;
     }
 
     private void setIndiceName(final String name){
-        if(!indice.containsKey(featureId)){
-            indice.put(featureId, new Indice());
-        }
-
+        indice.putIfAbsent(featureId, new Indice());
         indice.get(featureId).setName(name);
     }
 
