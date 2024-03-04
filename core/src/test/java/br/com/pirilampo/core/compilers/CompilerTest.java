@@ -38,7 +38,7 @@ public class CompilerTest extends Common {
     @ParameterizedTest
     @CsvSource({
             "feature,,feature/xxx.Feature,_xxx,_xxx.html,_xxx.feature,xxx",
-            "feature,master,master/xxx.Feature,master_xxx,master_xxx.html,master_xxx.feature,xxx",
+            "feature,master,master/xxx.Feature,_xxx,_xxx.html,_xxx.feature,xxx",
     })
     public void getFeatureMetadata(
             String source,

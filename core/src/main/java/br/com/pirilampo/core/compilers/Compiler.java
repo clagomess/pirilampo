@@ -9,10 +9,7 @@ import org.apache.commons.io.input.BOMInputStream;
 import java.io.*;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -47,8 +44,13 @@ public abstract class Compiler {
 
     protected FeatureMetadataDto getFeatureMetadata(ParametroDto parametro, File feature){
         String htmlFeatureRoot = feature.getAbsolutePath()
-                .replace(parametro.getTxtSrcFonte().getAbsolutePath(), "")
-                .replace(feature.getName(), "")
+                .replace(parametro.getTxtSrcFonte().getAbsolutePath(), "");
+
+        if(parametro.getTxtSrcFonteMaster() != null){
+            htmlFeatureRoot = htmlFeatureRoot.replace(parametro.getTxtSrcFonteMaster().getAbsolutePath(), "");
+        }
+
+        htmlFeatureRoot = htmlFeatureRoot.replace(feature.getName(), "")
                 .replace(File.separator, " ")
                 .trim();
 
