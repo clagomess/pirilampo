@@ -181,7 +181,7 @@ public class FolderToHTMLCompiler extends Compiler {
                 pd.build(out);
                 out.print(HTML_CLOSE_TEMPLATE);
 
-                indice.put(featureMetadataDto.getIdFeature(), new FeatureIndexDto(
+                indice.put(featureMetadataDto.getId(), new FeatureIndexDto(
                         pd.getFeatureTitulo(),
                         pd.getFeatureIndexValues()
                 ));
