@@ -1,6 +1,6 @@
 package br.com.pirilampo.core.compilers;
 
-import br.com.pirilampo.core.bean.Menu;
+import br.com.pirilampo.core.bean.MenuDto;
 import br.com.pirilampo.core.dto.ParametroDto;
 import br.com.pirilampo.core.enums.DiffEnum;
 import lombok.Getter;
@@ -13,7 +13,7 @@ import java.util.stream.IntStream;
 
 public class ParseMenu extends Compiler {
     @Getter
-    private Menu menu;
+    private MenuDto menu;
     private ParametroDto parametro;
     private int level;
     private String[] nodes;
@@ -32,7 +32,7 @@ public class ParseMenu extends Compiler {
     public static final String HTML_MENU_ICON_DIFF_DIFERENTE = "<span class=\"icon-diff-diferente\"></span> ";
 
     public ParseMenu(ParametroDto parametro){
-        this.menu = new Menu("ROOT");
+        this.menu = new MenuDto("ROOT");
         this.parametro = parametro;
     }
 
@@ -47,7 +47,7 @@ public class ParseMenu extends Compiler {
         nodes = item.split("(\\\\|/)");
         level = 0;
 
-        walker(menu.getFilho());
+        walker(menu.getChildren());
     }
 
     public String getHtml(){
@@ -56,25 +56,25 @@ public class ParseMenu extends Compiler {
         return getHtml(menu).toString();
     }
 
-    private StringBuilder getHtml(Menu node){
+    private StringBuilder getHtml(MenuDto node){
         StringBuilder buffer = new StringBuilder();
 
-        if(node.getFilho().isEmpty()){
+        if(node.getChildren().isEmpty()){
             buffer.append(String.format(
                     HTML_MENU_FILHO,
                     node.getUrl(),
                     diffIcon(node.getDiff()),
-                    node.getTitulo()
+                    node.getTitle()
             ));
         }else {
-            for (Menu item : node.getFilho()) {
+            for (MenuDto item : node.getChildren()) {
                 htmlNodeNum++;
 
-                if(!item.getFilho().isEmpty()) {
+                if(!item.getChildren().isEmpty()) {
                     buffer.append(String.format(
                             HTML_MENU_PAI,
                             htmlNodeNum,
-                            item.getTitulo(),
+                            item.getTitle(),
                             htmlNodeNum,
                             getHtml(item)
                     ));
@@ -87,23 +87,23 @@ public class ParseMenu extends Compiler {
         return buffer;
     }
 
-    private void walker(List<Menu> node){
+    private void walker(List<MenuDto> node){
         OptionalInt oi = IntStream
                 .range(0, node.size())
-                .filter(i -> Objects.equals(node.get(i).getTitulo(), nodes[level]))
+                .filter(i -> Objects.equals(node.get(i).getTitle(), nodes[level]))
                 .findFirst();
 
         if(oi.isPresent()){
             if(level == nodes.length - 1){
                 node.get(oi.getAsInt()).setUrl(this.featureId);
-                node.get(oi.getAsInt()).setTitulo(this.featureName);
+                node.get(oi.getAsInt()).setTitle(this.featureName);
                 node.get(oi.getAsInt()).setDiff(this.diff);
             }else{
                 level++;
-                walker(node.get(oi.getAsInt()).getFilho());
+                walker(node.get(oi.getAsInt()).getChildren());
             }
         }else{
-            node.add(new Menu(nodes[level]));
+            node.add(new MenuDto(nodes[level]));
             walker(node);
         }
     }
