@@ -1,6 +1,7 @@
 package br.com.pirilampo.core.compilers;
 
 import br.com.pirilampo.core.dto.FeatureIndexDto;
+import br.com.pirilampo.core.dto.FeatureMasterDto;
 import br.com.pirilampo.core.dto.FeatureMetadataDto;
 import br.com.pirilampo.core.dto.ParametroDto;
 import br.com.pirilampo.core.enums.DiffEnum;
@@ -15,6 +16,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -22,39 +25,36 @@ public class FolderToHTMLCompiler extends Compiler {
     private final ParseImage parseImage = new ParseImage();
     private final ParametroDto parametro;
     private final Map<String, FeatureIndexDto> indice = new HashMap<>();
-    private List<File> arquivosMaster = null;
+    private List<FeatureMasterDto> masterFiles = null;
 
     public static final String HTML_OPEN_TEMPLATE = "<script type=\"text/ng-template\" id=\"%s\">";
     public static final String HTML_CLOSE_TEMPLATE = "</script>\n";
 
     protected DiffEnum diffMaster(FeatureMetadataDto featureMetadataDto, File featureBranch, PrintWriter out) throws Exception {
         if(parametro.getTxtSrcFonteMaster() == null) return DiffEnum.NAO_COMPARADO;
-        if(arquivosMaster == null) this.arquivosMaster = listFolder(parametro.getTxtSrcFonteMaster());
-        if(arquivosMaster.isEmpty()) return DiffEnum.NAO_COMPARADO;
+
+        if(masterFiles == null){
+            masterFiles = listFolder(parametro.getTxtSrcFonteMaster()).stream()
+                    .map(item -> new FeatureMasterDto(
+                            getFeaturePathWithoutAbsolute(parametro.getTxtSrcFonteMaster(), item),
+                            item
+                    )).collect(Collectors.toList());
+        }
+
+        if(masterFiles.isEmpty()) return DiffEnum.NAO_COMPARADO;
+
+        String pathFeatureBranch = getFeaturePathWithoutAbsolute(parametro.getTxtSrcFonte(), featureBranch);
+
+        Optional<FeatureMasterDto> optFeatureMaster = masterFiles.stream()
+                .filter(item -> item.getPath().equals(pathFeatureBranch))
+                .findFirst();
 
         DiffEnum diff = DiffEnum.NOVO;
-        File featureMasterCompared = null;
-
-        for (File featureMaster : arquivosMaster) {
-            // @TODO: reduce comparing
-            String pathFeatureMaster = getFeaturePathWithoutAbsolute(
-                    parametro.getTxtSrcFonteMaster(),
-                    featureMaster
-            );
-
-            String pathFeatureBranch = getFeaturePathWithoutAbsolute(
-                    parametro.getTxtSrcFonte(),
-                    featureBranch
-            );
-
-            if (pathFeatureMaster.equals(pathFeatureBranch)) {
-                if(FileUtils.contentEquals(featureBranch, featureMaster)){
-                    diff = DiffEnum.IGUAL;
-                }else{
-                    diff = DiffEnum.DIFERENTE;
-                    featureMasterCompared = featureMaster;
-                }
-                break;
+        if(optFeatureMaster.isPresent()) {
+            if (FileUtils.contentEquals(featureBranch, optFeatureMaster.get().getFeature())) {
+                diff = DiffEnum.IGUAL;
+            } else {
+                diff = DiffEnum.DIFERENTE;
             }
         }
 
@@ -63,13 +63,13 @@ public class FolderToHTMLCompiler extends Compiler {
         // pula para o proximo
         if(diff.equals(DiffEnum.IGUAL)) return diff;
 
-        if(featureMasterCompared != null) {
+        if(optFeatureMaster.isPresent()) {
             out.print(String.format(HTML_OPEN_TEMPLATE, "master_" + featureMetadataDto.getIdHtml()));
-            new ParseDocument(parametro, featureMasterCompared).build(out);
+            new ParseDocument(parametro, optFeatureMaster.get().getFeature()).build(out);
             out.print(HTML_CLOSE_TEMPLATE);
 
             out.print(String.format(HTML_OPEN_TEMPLATE, "master_" + featureMetadataDto.getIdFeature()));
-            writeFileToOut(featureMasterCompared, out);
+            writeFileToOut(optFeatureMaster.get().getFeature(), out);
             out.print(HTML_CLOSE_TEMPLATE);
 
             out.print(String.format(HTML_OPEN_TEMPLATE, featureMetadataDto.getIdFeature()));
