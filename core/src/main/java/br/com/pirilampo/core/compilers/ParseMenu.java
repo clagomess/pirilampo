@@ -1,6 +1,6 @@
 package br.com.pirilampo.core.compilers;
 
-import br.com.pirilampo.core.bean.MenuDto;
+import br.com.pirilampo.core.dto.MenuDto;
 import br.com.pirilampo.core.dto.ParametroDto;
 import br.com.pirilampo.core.enums.DiffEnum;
 import lombok.Getter;
@@ -13,7 +13,7 @@ import java.util.stream.IntStream;
 
 public class ParseMenu extends Compiler {
     @Getter
-    private MenuDto menu;
+    private final MenuDto menu;
     private ParametroDto parametro;
     private int level;
     private String[] nodes;
