@@ -10,10 +10,19 @@
     </parent>
 
     <artifactId>pirilampo-gui</artifactId>
+    <version>1.2.0</version>
 
     <properties>
 
     </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.github.clagomess.pirilampo</groupId>
+            <artifactId>pirilampo-core</artifactId>
+            <version>1.2.0</version>
+        </dependency>
+    </dependencies>
 
     <build>
         <finalName>${project.artifactId}</finalName>

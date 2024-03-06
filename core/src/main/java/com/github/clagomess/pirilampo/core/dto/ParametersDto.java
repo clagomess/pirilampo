@@ -18,7 +18,7 @@ public class ParametersDto {
     private String projectVersion = "1.0";
     private File projectLogo;
     private LayoutPdfEnum layoutPdf = LayoutPdfEnum.PORTRAIT;
-    private HtmlPanelToggleEnum htmlPanelToggle = HtmlPanelToggleEnum.OPEN;
+    private HtmlPanelToggleEnum htmlPanelToggle = HtmlPanelToggleEnum.OPENED;
     private String menuColor = "#14171A";
     private String menuTextColor = "#DDDDDD";
     private Boolean embedImages = true;

@@ -1,13 +1,10 @@
 package com.github.clagomess.pirilampo.cli;
 
-import br.com.pirilampo.bean.Parametro;
-import br.com.pirilampo.core.Compilador;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.cli.*;
 
 @Slf4j
 public class Main {
-
+    /*
     public static void main(String[] args) throws Exception {
         Main main = new Main();
         log.info("Pirilampo - Ver.: {}", main.getVersion());
@@ -71,4 +68,5 @@ public class Main {
     private synchronized String getVersion(){
         return getClass().getPackage().getImplementationVersion();
     }
+    */
 }
