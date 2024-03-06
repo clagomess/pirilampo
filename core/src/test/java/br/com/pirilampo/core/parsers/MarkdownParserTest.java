@@ -1,4 +1,4 @@
-package br.com.pirilampo.core.compilers;
+package br.com.pirilampo.core.parsers;
 
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
@@ -6,14 +6,14 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Slf4j
-public class ParseToMarkdownTest {
-    private final ParseToMarkdown parseToMarkdown = new ParseToMarkdown();
+public class MarkdownParserTest {
+    private final MarkdownParser markdownParser = new MarkdownParser();
 
     @Test
     public void build(){
         assertEquals(
                 "a: <a href=\"xx_a.html\">xx_a</a>",
-                parseToMarkdown.build("a: [xx_a](xx_a.html)")
+                markdownParser.build("a: [xx_a](xx_a.html)")
         );
     }
 }

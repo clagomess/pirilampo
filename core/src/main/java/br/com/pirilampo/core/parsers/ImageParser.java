@@ -1,6 +1,7 @@
-package br.com.pirilampo.core.compilers;
+package br.com.pirilampo.core.parsers;
 
 
+import br.com.pirilampo.core.compilers.Compiler;
 import br.com.pirilampo.core.dto.ParametersDto;
 import br.com.pirilampo.core.enums.CompilationArctifactEnum;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +14,7 @@ import java.net.URLConnection;
 import java.util.Base64;
 
 @Slf4j
-class ParseImage extends Compiler {
+public class ImageParser extends Compiler {
     public String parse(ParametersDto parameters, File feature, String fileName){
         File file = getAbsolutePathFeatureAsset(parameters, feature, fileName);
 

@@ -114,12 +114,12 @@ public class CompilerTest extends Common {
 
     @ParameterizedTest
     @CsvSource({
-            "PASTA,HTML,target/feature,,target/html/index.html",
-            "PASTA,HTML,target/feature,target,target/html/index.html",
+            "FOLDER,HTML,target/feature,,target/html/index.html",
+            "FOLDER,HTML,target/feature,target,target/html/index.html",
             "FEATURE,HTML,target/feature/xxx.Feature,,target/feature/xxx.html",
             "FEATURE,HTML,target/feature/xxx.Feature,target,target/xxx.html",
-            "PASTA,PDF,target/feature,,target/html/index.pdf",
-            "PASTA,PDF,target/feature,target,target/html/index.pdf",
+            "FOLDER,PDF,target/feature,,target/html/index.pdf",
+            "FOLDER,PDF,target/feature,target,target/html/index.pdf",
             "FEATURE,PDF,target/feature/xxx.Feature,,target/feature/xxx.pdf",
             "FEATURE,PDF,target/feature/xxx.Feature,target,target/xxx.pdf",
     })

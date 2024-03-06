@@ -1,12 +1,11 @@
-package br.com.pirilampo.core.bean;
+package br.com.pirilampo.core.dto;
 
-import br.com.pirilampo.core.dto.ParametersDto;
 import javafx.scene.paint.Color;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ParametroTest {
+public class ParametersDtoTest {
     @Test
     public void colorHex(){
         ParametersDto parameters = new ParametersDto();

@@ -1,4 +1,4 @@
-package br.com.pirilampo.core.compilers;
+package br.com.pirilampo.core.parsers;
 
 import br.com.pirilampo.core.Common;
 import br.com.pirilampo.core.dto.MenuDto;
@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
-public class ParseMenuTest extends Common {
+public class MenuParserTest extends Common {
     private final List<File> itens = Arrays.asList(
             new File("feature/01 - Módulo I - Portal Público/Login/00_Login/MDIC_US00_02 - Logout.feature"),
             new File("feature/01 - Módulo I - Portal Público/Login/00_Login/MDIC_US00_01 - Login.feature"),
@@ -45,7 +45,7 @@ public class ParseMenuTest extends Common {
         setProjectSource(new File("feature"));
     }};
 
-    private final ParseMenu parseMenu = new ParseMenu(parameters){{
+    private final MenuParser menuParser = new MenuParser(parameters){{
         for(File item : itens){
             addMenuItem(item, DiffEnum.NOT_COMPARED, item.getName().replace(".feature", "_x"));
         }
@@ -53,15 +53,15 @@ public class ParseMenuTest extends Common {
 
     @Test
     public void walker_root(){
-        Assertions.assertThat(parseMenu.getMenu().getChildren().size()).isGreaterThan(0);
-        assertEquals("ROOT", parseMenu.getMenu().getTitle());
-        assertNull(parseMenu.getMenu().getUrl());
+        Assertions.assertThat(menuParser.getMenu().getChildren().size()).isGreaterThan(0);
+        assertEquals("ROOT", menuParser.getMenu().getTitle());
+        assertNull(menuParser.getMenu().getUrl());
     }
 
     @Test
     public void walker_level_0(){
         Assertions.assertThat(
-                parseMenu.getMenu().getChildren().stream()
+                menuParser.getMenu().getChildren().stream()
                         .map(MenuDto::getTitle)
                         .collect(Collectors.toList())
         ).containsExactly(
@@ -74,7 +74,7 @@ public class ParseMenuTest extends Common {
 
     @Test
     public void walker_level_1_end(){
-        Optional<MenuDto> level = parseMenu.getMenu().getChildren().stream()
+        Optional<MenuDto> level = menuParser.getMenu().getChildren().stream()
                 .filter(item -> item.getTitle().equals("Mensagem"))
                 .findFirst();
         assertTrue(level.isPresent());
@@ -97,7 +97,7 @@ public class ParseMenuTest extends Common {
 
     @Test
     public void walker_level_1(){
-        Optional<MenuDto> level = parseMenu.getMenu().getChildren().stream()
+        Optional<MenuDto> level = menuParser.getMenu().getChildren().stream()
                 .filter(item -> item.getTitle().equals("01 - Módulo I - Portal Público"))
                 .findFirst();
         assertTrue(level.isPresent());

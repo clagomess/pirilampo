@@ -1,4 +1,4 @@
-package br.com.pirilampo.core.compilers;
+package br.com.pirilampo.core.parsers;
 
 import br.com.pirilampo.core.enums.LayoutPdfEnum;
 import lombok.extern.slf4j.Slf4j;
@@ -11,7 +11,7 @@ import java.io.InputStream;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Slf4j
-public class ParsePdfTest {
+public class PdfParserTest {
     @Test
     public void build() throws Exception {
         File target = new File("target/ParsePdfTest");
@@ -26,7 +26,7 @@ public class ParsePdfTest {
                         .getResource("htmlTemplate/dist/feature-pdf.min.css")
                         .openStream();
         ){
-            new ParsePdf().build(fos, html, css, LayoutPdfEnum.LANDSCAPE);
+            new PdfParser().build(fos, html, css, LayoutPdfEnum.LANDSCAPE);
             assertTrue(targetFile.isFile());
         }
     }

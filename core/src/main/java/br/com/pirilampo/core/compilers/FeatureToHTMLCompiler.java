@@ -2,6 +2,7 @@ package br.com.pirilampo.core.compilers;
 
 import br.com.pirilampo.core.dto.FeatureMetadataDto;
 import br.com.pirilampo.core.dto.ParametersDto;
+import br.com.pirilampo.core.parsers.GherkinDocumentParser;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -18,7 +19,7 @@ public class FeatureToHTMLCompiler extends Compiler {
     }
 
     public void build() throws Exception {
-        ParseDocument parseDocument = new ParseDocument(parameters, feature);
+        GherkinDocumentParser gherkinDocumentParser = new GherkinDocumentParser(parameters, feature);
 
         try (
                 FileOutputStream fos = new FileOutputStream(getOutArtifact(parameters));
@@ -42,7 +43,7 @@ public class FeatureToHTMLCompiler extends Compiler {
                     parameters.getProjectVersion()
             ));
 
-            parseDocument.build(out);
+            gherkinDocumentParser.build(out);
 
             out.print("</div></div></div></body></html>");
         }

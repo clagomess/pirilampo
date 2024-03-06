@@ -1,4 +1,4 @@
-package br.com.pirilampo.core.compilers;
+package br.com.pirilampo.core.parsers;
 
 import br.com.pirilampo.core.Common;
 import br.com.pirilampo.core.dto.ParametersDto;
@@ -10,8 +10,8 @@ import org.junit.jupiter.params.provider.CsvSource;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Slf4j
-public class ParseImageTest extends Common {
-    private final ParseImage parseImage = new ParseImage();
+public class ImageParserTest extends Common {
+    private final ImageParser imageParser = new ImageParser();
 
     @ParameterizedTest
     @CsvSource(value = {
@@ -27,6 +27,6 @@ public class ParseImageTest extends Common {
         parameters.setEmbedImages(embedded);
         parameters.setProjectSource(featureFolder);
 
-        assertEquals(expected, parseImage.parse(parameters, featureFile, filename));
+        assertEquals(expected, imageParser.parse(parameters, featureFile, filename));
     }
 }

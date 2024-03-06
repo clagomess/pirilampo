@@ -1,4 +1,4 @@
-package br.com.pirilampo.core.compilers;
+package br.com.pirilampo.core.parsers;
 
 import br.com.pirilampo.core.Common;
 import br.com.pirilampo.core.dto.ParametersDto;
@@ -14,12 +14,11 @@ import java.nio.charset.StandardCharsets;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Slf4j
-public class ParseDocumentTest extends Common {
+public class GherkinDocumentParserTest extends Common {
     @Test
     public void build() throws Exception {
         val parameters = new ParametersDto();
         parameters.setProjectSource(featureFile);
-        ParseDocument parseDocument = new ParseDocument(parameters, featureFile);
 
         File tmpFile = File.createTempFile("result-", ".html");
         log.info("Created: {}", tmpFile);
@@ -29,7 +28,7 @@ public class ParseDocumentTest extends Common {
                 BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos, StandardCharsets.UTF_8));
                 PrintWriter out = new PrintWriter(bw);
         ){
-            parseDocument.build(out);
+            new GherkinDocumentParser(parameters, featureFile).build(out);
         }
     }
 
@@ -51,9 +50,9 @@ public class ParseDocumentTest extends Common {
     public void setIndiceValue(String raw, String expected){
         val parameters = new ParametersDto();
         parameters.setProjectSource(featureFolder);
-        ParseDocument parseDocument = new ParseDocument(parameters, featureFile);
+        GherkinDocumentParser gherkinDocumentParser = new GherkinDocumentParser(parameters, featureFile);
 
-        assertEquals(expected, parseDocument.putIndexValue(raw));
+        assertEquals(expected, gherkinDocumentParser.putIndexValue(raw));
     }
 
     @ParameterizedTest
@@ -82,8 +81,8 @@ public class ParseDocumentTest extends Common {
         val parameters = new ParametersDto();
         parameters.setProjectSource(featureFolder);
 
-        ParseDocument parseDocument = new ParseDocument(parameters, featureFile);
+        GherkinDocumentParser gherkinDocumentParser = new GherkinDocumentParser(parameters, featureFile);
 
-        assertEquals(expected, parseDocument.format(raw, true));
+        assertEquals(expected, gherkinDocumentParser.format(raw, true));
     }
 }

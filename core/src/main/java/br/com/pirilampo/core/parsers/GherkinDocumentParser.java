@@ -1,5 +1,6 @@
-package br.com.pirilampo.core.compilers;
+package br.com.pirilampo.core.parsers;
 
+import br.com.pirilampo.core.compilers.Compiler;
 import br.com.pirilampo.core.dto.ParametersDto;
 import br.com.pirilampo.core.enums.HtmlPanelToggleEnum;
 import br.com.pirilampo.core.exception.FeatureException;
@@ -23,9 +24,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Slf4j
-class ParseDocument extends Compiler {
-    private final ParseImage parseImage = new ParseImage();
-    private final ParseToMarkdown parseToMarkdown = new ParseToMarkdown();
+public class GherkinDocumentParser extends Compiler {
+    private final ImageParser imageParser = new ImageParser();
+    private final MarkdownParser markdownParser = new MarkdownParser();
     private final ParametersDto parameters;
     private final File feature;
 
@@ -60,7 +61,7 @@ class ParseDocument extends Compiler {
     private static final String HTML_CHILDREN_TABLE_TH = "<th>%s</th>\n";
     private static final String HTML_CHILDREN_TABLE_TD = "<td>%s</td>\n";
 
-    public ParseDocument(ParametersDto parameters, File feature){
+    public GherkinDocumentParser(ParametersDto parameters, File feature){
         this.parameters = parameters;
         this.feature = feature;
         this.paginaHtmlAnexo = new ArrayList<>();
@@ -228,7 +229,7 @@ class ParseDocument extends Compiler {
 
         if(txt.length() < 3) return txt;
 
-        if(makdown) txt = parseToMarkdown.build(txt);
+        if(makdown) txt = markdownParser.build(txt);
 
         final String img = "<br/><p><img src=\"$1\" $2/></p>";
 
@@ -243,7 +244,7 @@ class ParseDocument extends Compiler {
         // pega endereço ou base64 da imagem
         Matcher mImgSrc = Pattern.compile("src=\"(.+?)\"").matcher(txt);
         while (mImgSrc.find()) {
-            String imgSrc = parseImage.parse(parameters, feature, mImgSrc.group(1));
+            String imgSrc = imageParser.parse(parameters, feature, mImgSrc.group(1));
             txt = txt.replace(mImgSrc.group(), "src=\"" + imgSrc + "\"");
         }
 

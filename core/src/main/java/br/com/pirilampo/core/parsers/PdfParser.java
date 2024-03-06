@@ -1,4 +1,4 @@
-package br.com.pirilampo.core.compilers;
+package br.com.pirilampo.core.parsers;
 
 import br.com.pirilampo.core.enums.LayoutPdfEnum;
 import com.itextpdf.text.*;
@@ -25,7 +25,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 @Slf4j
-public class ParsePdf {
+public class PdfParser {
     private static class Base64ImageProvider extends AbstractImageProvider {
         @Override
         public Image retrieve(String src) {

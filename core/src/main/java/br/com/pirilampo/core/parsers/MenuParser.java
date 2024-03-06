@@ -1,5 +1,6 @@
-package br.com.pirilampo.core.compilers;
+package br.com.pirilampo.core.parsers;
 
+import br.com.pirilampo.core.compilers.Compiler;
 import br.com.pirilampo.core.dto.MenuDto;
 import br.com.pirilampo.core.dto.ParametersDto;
 import br.com.pirilampo.core.enums.DiffEnum;
@@ -9,12 +10,12 @@ import java.io.File;
 import java.util.Optional;
 import java.util.Set;
 
-public class ParseMenu extends Compiler {
+public class MenuParser extends Compiler {
     @Getter
     private final MenuDto menu;
     private final ParametersDto parameters;
 
-    public ParseMenu(ParametersDto parameters){
+    public MenuParser(ParametersDto parameters){
         this.menu = new MenuDto("ROOT");
         this.parameters = parameters;
     }

@@ -1,6 +1,8 @@
 package br.com.pirilampo.core.compilers;
 
 import br.com.pirilampo.core.dto.ParametersDto;
+import br.com.pirilampo.core.parsers.GherkinDocumentParser;
+import br.com.pirilampo.core.parsers.PdfParser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -39,7 +41,7 @@ public class FolderToPDFCompiler extends Compiler {
                 ));
                 out.print("</h1>");
 
-                new ParseDocument(parameters, feature).build(out);
+                new GherkinDocumentParser(parameters, feature).build(out);
 
                 out.print("<span style=\"page-break-after: always\"></span>");
             }
@@ -56,7 +58,7 @@ public class FolderToPDFCompiler extends Compiler {
                                 .getResource("htmlTemplate/dist/feature-pdf.min.css"))
                         .openStream();
         ){
-            new ParsePdf().build(fos, html, css, parameters.getLayoutPdf());
+            new PdfParser().build(fos, html, css, parameters.getLayoutPdf());
         }
 
         // @TODO: remove buffer file

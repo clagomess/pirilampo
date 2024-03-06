@@ -1,4 +1,4 @@
-package br.com.pirilampo.core.compilers;
+package br.com.pirilampo.core.parsers;
 
 import lombok.extern.slf4j.Slf4j;
 import org.commonmark.node.Document;
@@ -13,11 +13,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Slf4j
-public class ParseToMarkdown {
+public class MarkdownParser {
     private final Parser parser = Parser.builder().build();
     private final HtmlRenderer renderer;
 
-    public ParseToMarkdown() {
+    public MarkdownParser() {
         this.renderer = HtmlRenderer.builder()
                 .nodeRendererFactory(SkipParentWrapperParagraphsRenderer::new)
                 .build();

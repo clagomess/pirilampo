@@ -5,6 +5,9 @@ import br.com.pirilampo.core.dto.FeatureMasterDto;
 import br.com.pirilampo.core.dto.FeatureMetadataDto;
 import br.com.pirilampo.core.dto.ParametersDto;
 import br.com.pirilampo.core.enums.DiffEnum;
+import br.com.pirilampo.core.parsers.GherkinDocumentParser;
+import br.com.pirilampo.core.parsers.ImageParser;
+import br.com.pirilampo.core.parsers.MenuParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +25,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @RequiredArgsConstructor
 public class FolderToHTMLCompiler extends Compiler {
-    private final ParseImage parseImage = new ParseImage();
+    private final ImageParser imageParser = new ImageParser();
     private final ParametersDto parameters;
     private final Map<String, FeatureIndexDto> indice = new HashMap<>();
     private List<FeatureMasterDto> masterFiles = null;
@@ -65,7 +68,7 @@ public class FolderToHTMLCompiler extends Compiler {
 
         if(optFeatureMaster.isPresent()) {
             out.print(String.format(HTML_OPEN_TEMPLATE, "master_" + featureMetadataDto.getIdHtml()));
-            new ParseDocument(parameters, optFeatureMaster.get().getFeature()).build(out);
+            new GherkinDocumentParser(parameters, optFeatureMaster.get().getFeature()).build(out);
             out.print(HTML_CLOSE_TEMPLATE);
 
             out.print(String.format(HTML_OPEN_TEMPLATE, "master_" + featureMetadataDto.getIdFeature()));
@@ -86,7 +89,7 @@ public class FolderToHTMLCompiler extends Compiler {
         out.print("<li class=\"sidebar-brand\">");
 
         if(parameters.getProjectLogo() != null){
-            String logoString = parseImage.parse(parameters, parameters.getProjectLogo()); //@TODO: transformar em buffer
+            String logoString = imageParser.parse(parameters, parameters.getProjectLogo()); //@TODO: transformar em buffer
             out.print(String.format("<a href=\"#/\"><img class=\"logo\" src=\"%s\"></a>", logoString));
         }else{
             out.print(String.format(
@@ -118,7 +121,7 @@ public class FolderToHTMLCompiler extends Compiler {
     }
 
     public void build() throws Exception {
-        ParseMenu parseMenu = new ParseMenu(parameters);
+        MenuParser menuParser = new MenuParser(parameters);
 
         final List<File> arquivos = listFolder(parameters.getProjectSource());
         if(arquivos.isEmpty()) return;
@@ -175,20 +178,20 @@ public class FolderToHTMLCompiler extends Compiler {
                 if(diff == DiffEnum.EQUAL) continue;
 
                 // Gera a feture
-                ParseDocument pd = new ParseDocument(parameters, f);
+                GherkinDocumentParser gherkinDocumentParser = new GherkinDocumentParser(parameters, f);
                 out.print(String.format(HTML_OPEN_TEMPLATE, featureMetadataDto.getIdHtml()));
-                pd.build(out);
+                gherkinDocumentParser.build(out);
                 out.print(HTML_CLOSE_TEMPLATE);
 
                 indice.put(featureMetadataDto.getId(), new FeatureIndexDto(
-                        pd.getFeatureTitulo(),
-                        pd.getFeatureIndexValues()
+                        gherkinDocumentParser.getFeatureTitulo(),
+                        gherkinDocumentParser.getFeatureIndexValues()
                 ));
 
-                parseMenu.addMenuItem(f, diff, pd.getFeatureTitulo());
+                menuParser.addMenuItem(f, diff, gherkinDocumentParser.getFeatureTitulo());
 
                 // adiciona html embed
-                for (File htmlEmbed : pd.getPaginaHtmlAnexo()){
+                for (File htmlEmbed : gherkinDocumentParser.getPaginaHtmlAnexo()){
                     out.print(String.format(HTML_OPEN_TEMPLATE, htmlEmbed.getName()));
                     writeFileToOut(htmlEmbed, out);
                     out.print(HTML_CLOSE_TEMPLATE);
