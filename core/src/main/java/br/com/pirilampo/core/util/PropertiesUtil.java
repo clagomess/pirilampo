@@ -1,7 +1,7 @@
 package br.com.pirilampo.core.util;
 
 
-import br.com.pirilampo.core.dto.ParametroDto;
+import br.com.pirilampo.core.dto.ParametersDto;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.*;
@@ -11,7 +11,7 @@ import java.util.Properties;
 public class PropertiesUtil {
     private static final String FILENAME = "/../html/config.properties";
 
-    public static ParametroDto getData(String sourcePath){
+    public static ParametersDto getData(String sourcePath){
         Properties prop = new Properties();
         InputStream input = null;
 
@@ -33,11 +33,11 @@ public class PropertiesUtil {
             }
         }
 
-        return new ParametroDto(prop);
+        return new ParametersDto(prop);
     }
 
-    public static void setData(ParametroDto parametro){
-        File file = new File(parametro.getTxtSrcFonte() + FILENAME);
+    public static void setData(ParametersDto parameters){
+        File file = new File(parameters.getProjectSource() + FILENAME);
 
         if(!file.isFile()){
             try {
@@ -49,24 +49,24 @@ public class PropertiesUtil {
             }
         }
 
-        try (OutputStream output = new FileOutputStream(parametro.getTxtSrcFonte() + FILENAME)){
-            Properties prop = parametroToProperties(parametro);
+        try (OutputStream output = new FileOutputStream(parameters.getProjectSource() + FILENAME)){
+            Properties prop = parametroToProperties(parameters);
             prop.store(output, null);
         } catch (IOException ex) {
             log.error(log.getName(), ex);
         }
     }
 
-    public static Properties parametroToProperties(ParametroDto parametro){
+    public static Properties parametroToProperties(ParametersDto parameters){
         Properties prop = new Properties();
         /* @TODO: check
-        prop.setProperty("txtNome", parametro.getTxtNome());
-        prop.setProperty("txtVersao", parametro.getTxtVersao());
-        prop.setProperty("txtLogoSrc", parametro.getTxtLogoSrc() != null ? parametro.getTxtLogoSrc() : "");
-        prop.setProperty("clrMenu", parametro.getClrMenu());
-        prop.setProperty("clrTextoMenu", parametro.getClrTextoMenu());
-        prop.setProperty("sitEmbedarImagens", parametro.getSitEmbedarImagens().toString());
-        prop.setProperty("tipPainelFechado", parametro.getTipPainel().toString());
+        prop.setProperty("txtNome", parameters.getTxtNome());
+        prop.setProperty("txtVersao", parameters.getTxtVersao());
+        prop.setProperty("txtLogoSrc", parameters.getTxtLogoSrc() != null ? parameters.getTxtLogoSrc() : "");
+        prop.setProperty("clrMenu", parameters.getClrMenu());
+        prop.setProperty("clrTextoMenu", parameters.getClrTextoMenu());
+        prop.setProperty("sitEmbedarImagens", parameters.getSitEmbedarImagens().toString());
+        prop.setProperty("tipPainelFechado", parameters.getTipPainel().toString());
         */
         return prop;
     }

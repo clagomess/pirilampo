@@ -1,9 +1,9 @@
 package br.com.pirilampo.core.compilers;
 
 import br.com.pirilampo.core.Common;
-import br.com.pirilampo.core.dto.ParametroDto;
-import br.com.pirilampo.core.enums.ArtefatoEnum;
-import br.com.pirilampo.core.enums.CompilacaoEnum;
+import br.com.pirilampo.core.dto.ParametersDto;
+import br.com.pirilampo.core.enums.CompilationArctifactEnum;
+import br.com.pirilampo.core.enums.CompilationTypeEnum;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -62,11 +62,11 @@ public class CompilerTest extends Common {
                 .getContextClassLoader()
                 .getResource(feature).getFile());
 
-        ParametroDto parametro = new ParametroDto();
-        parametro.setTxtSrcFonte(sourceFile);
-        parametro.setTxtSrcFonteMaster(sourceMasterFile);
+        ParametersDto parameters = new ParametersDto();
+        parameters.setProjectSource(sourceFile);
+        parameters.setProjectMasterSource(sourceMasterFile);
 
-        val result = compiler.getFeatureMetadata(parametro, featureFile);
+        val result = compiler.getFeatureMetadata(parameters, featureFile);
 
         assertEquals(expectedId, result.getId());
         assertEquals(expectedIdHtml, result.getIdHtml());
@@ -124,8 +124,8 @@ public class CompilerTest extends Common {
             "FEATURE,PDF,target/feature/xxx.Feature,target,target/xxx.pdf",
     })
     public void getOutArtifact(
-            CompilacaoEnum tipCompilacao,
-            ArtefatoEnum artefato,
+            CompilationTypeEnum tipCompilacao,
+            CompilationArctifactEnum artefato,
             String source,
             String target,
             String expected
@@ -136,13 +136,13 @@ public class CompilerTest extends Common {
         if(!targetFile.exists()) FileUtils.writeStringToFile(targetFile, "");
 
         // init test
-        ParametroDto parametroDto = new ParametroDto();
-        parametroDto.setTipCompilacao(tipCompilacao);
-        parametroDto.setArtefato(artefato);
-        parametroDto.setTxtSrcFonte(StringUtils.isNotBlank(source) ? new File(source) : null);
-        parametroDto.setTxtOutputTarget(StringUtils.isNotBlank(target) ? new File(target) : null);
+        ParametersDto parametersDto = new ParametersDto();
+        parametersDto.setCompilationType(tipCompilacao);
+        parametersDto.setCompilationArctifact(artefato);
+        parametersDto.setProjectSource(StringUtils.isNotBlank(source) ? new File(source) : null);
+        parametersDto.setProjectTarget(StringUtils.isNotBlank(target) ? new File(target) : null);
 
-        File result = compiler.getOutArtifact(parametroDto);
+        File result = compiler.getOutArtifact(parametersDto);
         log.info("{}", result.getAbsolutePath());
         assertEquals(new File(expected).getAbsolutePath(), result.getAbsolutePath());
     }
@@ -172,12 +172,12 @@ public class CompilerTest extends Common {
 
     @Test
     public void getAbsolutePathFeatureAsset(){
-        ParametroDto parametro = new ParametroDto();
-        parametro.setTxtSrcFonte(featureFolder);
-        parametro.setTxtSrcFonteMaster(featureMasterFolder);
+        ParametersDto parameters = new ParametersDto();
+        parameters.setProjectSource(featureFolder);
+        parameters.setProjectMasterSource(featureMasterFolder);
 
         assertNotNull(compiler.getAbsolutePathFeatureAsset(
-                parametro,
+                parameters,
                 featureFile,
                 "xxx.png"
         ));

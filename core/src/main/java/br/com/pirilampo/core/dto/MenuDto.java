@@ -16,7 +16,7 @@ public class MenuDto implements Comparable<MenuDto> {
     public MenuDto(String title){
         this.title = title;
         this.url = null;
-        this.diff = DiffEnum.NAO_COMPARADO;
+        this.diff = DiffEnum.NOT_COMPARED;
     }
 
     public MenuDto(String title, String url, DiffEnum diff) {

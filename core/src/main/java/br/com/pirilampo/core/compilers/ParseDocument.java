@@ -1,7 +1,7 @@
 package br.com.pirilampo.core.compilers;
 
-import br.com.pirilampo.core.dto.ParametroDto;
-import br.com.pirilampo.core.enums.PainelEnum;
+import br.com.pirilampo.core.dto.ParametersDto;
+import br.com.pirilampo.core.enums.HtmlPanelToggleEnum;
 import br.com.pirilampo.core.exception.FeatureException;
 import gherkin.AstBuilder;
 import gherkin.Parser;
@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
 class ParseDocument extends Compiler {
     private final ParseImage parseImage = new ParseImage();
     private final ParseToMarkdown parseToMarkdown = new ParseToMarkdown();
-    private final ParametroDto parametro;
+    private final ParametersDto parameters;
     private final File feature;
 
     @Getter
@@ -60,8 +60,8 @@ class ParseDocument extends Compiler {
     private static final String HTML_CHILDREN_TABLE_TH = "<th>%s</th>\n";
     private static final String HTML_CHILDREN_TABLE_TD = "<td>%s</td>\n";
 
-    public ParseDocument(ParametroDto parametro, File feature){
-        this.parametro = parametro;
+    public ParseDocument(ParametersDto parameters, File feature){
+        this.parameters = parameters;
         this.feature = feature;
         this.paginaHtmlAnexo = new ArrayList<>();
     }
@@ -185,7 +185,7 @@ class ParseDocument extends Compiler {
                     StringEscapeUtils.escapeHtml(StringUtils.isBlank(sd.getName()) ? sd.getKeyword() : sd.getName())
             ));
 
-            if (parametro.getTipPainel() == PainelEnum.FECHADO) {
+            if (parameters.getHtmlPanelToggle() == HtmlPanelToggleEnum.CLOSED) {
                 out.print(String.format(HTML_OPEN_CHILDREN_BODY_CLOSED, scenarioIdx));
             }else{
                 out.print(String.format(HTML_OPEN_CHILDREN_BODY, scenarioIdx));
@@ -243,7 +243,7 @@ class ParseDocument extends Compiler {
         // pega endereço ou base64 da imagem
         Matcher mImgSrc = Pattern.compile("src=\"(.+?)\"").matcher(txt);
         while (mImgSrc.find()) {
-            String imgSrc = parseImage.parse(parametro, feature, mImgSrc.group(1));
+            String imgSrc = parseImage.parse(parameters, feature, mImgSrc.group(1));
             txt = txt.replace(mImgSrc.group(), "src=\"" + imgSrc + "\"");
         }
 
@@ -251,7 +251,7 @@ class ParseDocument extends Compiler {
         Matcher mHtmlHref = Pattern.compile("href=\"(.+?\\.html)\"").matcher(txt);
         while(mHtmlHref.find()) {
             String filename = mHtmlHref.group(1);
-            File htmlEmbed = getAbsolutePathFeatureAsset(parametro, feature, filename);
+            File htmlEmbed = getAbsolutePathFeatureAsset(parameters, feature, filename);
 
             if (htmlEmbed != null && htmlEmbed.isFile()) {
                 paginaHtmlAnexo.add(htmlEmbed);

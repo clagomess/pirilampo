@@ -56,7 +56,7 @@ public class ParsePdf {
             InputStream css,
             LayoutPdfEnum layout
     ) throws Exception {
-        Document document = new Document(layout == LayoutPdfEnum.RETRATO ?
+        Document document = new Document(layout == LayoutPdfEnum.PORTRAIT ?
                 PageSize.A4 :
                 PageSize.A4.rotate()
         );
@@ -105,7 +105,7 @@ public class ParsePdf {
             ColumnText.showTextAligned(
                     writer.getDirectContentUnder(),
                     Element.ALIGN_CENTER,
-                    new Phrase("Página " + writer.getPageNumber()),
+                    new Phrase("Page " + writer.getPageNumber()),
                     writer.getPageSize().getWidth() - 70, 20, 0
             );
         }

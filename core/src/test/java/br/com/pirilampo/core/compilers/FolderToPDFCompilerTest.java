@@ -1,7 +1,7 @@
 package br.com.pirilampo.core.compilers;
 
 import br.com.pirilampo.core.Common;
-import br.com.pirilampo.core.dto.ParametroDto;
+import br.com.pirilampo.core.dto.ParametersDto;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.junit.jupiter.api.Test;
@@ -16,21 +16,21 @@ public class FolderToPDFCompilerTest extends Common {
         File targetFile = new File("target/FolderToPDFCompilerTest");
         if(!targetFile.isDirectory()) assertTrue(targetFile.mkdir());
 
-        ParametroDto parametro = new ParametroDto();
-        parametro.setTxtNome("_AA_");
-        parametro.setTxtVersao("_BB_");
-        parametro.setTxtSrcFonte(featureFolder);
-        parametro.setTxtOutputTarget(targetFile);
+        ParametersDto parameters = new ParametersDto();
+        parameters.setProjectName("_AA_");
+        parameters.setProjectVersion("_BB_");
+        parameters.setProjectSource(featureFolder);
+        parameters.setProjectTarget(targetFile);
 
-        new FolderToPDFCompiler(parametro).build();
+        new FolderToPDFCompiler(parameters).build();
         File pdf = new File(targetFile, "html/index.pdf");
         assertTrue(pdf.isFile());
 
         PDDocument pdfDocument = PDDocument.load(pdf);
         String pdfAsStr = new PDFTextStripper().getText(pdfDocument);
 
-        assertTrue(pdfAsStr.contains(parametro.getTxtNome()));
-        assertTrue(pdfAsStr.contains(parametro.getTxtVersao()));
+        assertTrue(pdfAsStr.contains(parameters.getProjectName()));
+        assertTrue(pdfAsStr.contains(parameters.getProjectVersion()));
 
         pdfDocument.close();
     }

@@ -1,8 +1,8 @@
 package br.com.pirilampo.core.compilers;
 
 
-import br.com.pirilampo.core.dto.ParametroDto;
-import br.com.pirilampo.core.enums.ArtefatoEnum;
+import br.com.pirilampo.core.dto.ParametersDto;
+import br.com.pirilampo.core.enums.CompilationArctifactEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
@@ -14,21 +14,21 @@ import java.util.Base64;
 
 @Slf4j
 class ParseImage extends Compiler {
-    public String parse(ParametroDto parametro, File feature, String fileName){
-        File file = getAbsolutePathFeatureAsset(parametro, feature, fileName);
+    public String parse(ParametersDto parameters, File feature, String fileName){
+        File file = getAbsolutePathFeatureAsset(parameters, feature, fileName);
 
         if(file != null){
-            return parse(parametro, file);
+            return parse(parameters, file);
         }else{
             return fileName;
         }
     }
 
-    public String parse(ParametroDto parametro, File image){
+    public String parse(ParametersDto parameters, File image){
         if(
-                parametro.getSitEmbedarImagens() ||
-                image.equals(parametro.getTxtLogoSrc()) ||
-                parametro.getArtefato() == ArtefatoEnum.PDF
+                parameters.getEmbedImages() ||
+                image.equals(parameters.getProjectLogo()) ||
+                parameters.getCompilationArctifact() == CompilationArctifactEnum.PDF
         ) {
             try {
                 String base64 = Base64.getEncoder().encodeToString(FileUtils.readFileToByteArray(image));
@@ -41,7 +41,7 @@ class ParseImage extends Compiler {
                 log.info(e.getMessage() + " - " + image.getAbsolutePath());
             }
         } else {
-            return "../" + getFeaturePathWithoutAbsolute(parametro.getTxtSrcFonte().getParentFile(), image);
+            return "../" + getFeaturePathWithoutAbsolute(parameters.getProjectSource().getParentFile(), image);
         }
 
         return image.getName();

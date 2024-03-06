@@ -5,8 +5,8 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum ArtefatoEnum {
-    HTML("HTML"), PDF("PDF");
-
-    private final String value;
+public enum CompilationTypeEnum {
+    FOLDER,
+    FOLDER_DIFF,
+    FEATURE,
 }

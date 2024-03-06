@@ -5,8 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum CompilacaoEnum {
-    PASTA("PASTA"), FEATURE("FEATURE"), DIFF("DIFF");
-
-    private final String value;
+public enum CompilationArctifactEnum {
+    HTML,
+    PDF
 }

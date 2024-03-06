@@ -1,7 +1,7 @@
 package br.com.pirilampo.core.compilers;
 
 import br.com.pirilampo.core.Common;
-import br.com.pirilampo.core.dto.ParametroDto;
+import br.com.pirilampo.core.dto.ParametersDto;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
@@ -21,13 +21,13 @@ public class FolderToHTMLCompilerTest extends Common {
         File targetFile = new File("target/FolderToHTMLCompilerTest");
         if(!targetFile.isDirectory()) assertTrue(targetFile.mkdir());
 
-        ParametroDto parametro = new ParametroDto();
-        parametro.setClrMenu("#666");
-        parametro.setTxtLogoSrc(logoFile);
-        parametro.setTxtSrcFonte(featureFolder);
-        parametro.setTxtOutputTarget(targetFile);
+        ParametersDto parameters = new ParametersDto();
+        parameters.setMenuColor("#666");
+        parameters.setProjectLogo(logoFile);
+        parameters.setProjectSource(featureFolder);
+        parameters.setProjectTarget(targetFile);
 
-        new FolderToHTMLCompiler(parametro).build();
+        new FolderToHTMLCompiler(parameters).build();
 
         File htmlFile = new File(targetFile,"html/index.html");
         assertTrue(htmlFile.isFile());
@@ -35,8 +35,8 @@ public class FolderToHTMLCompilerTest extends Common {
         String htmlString = FileUtils.readFileToString(htmlFile);
         assertNotEquals(htmlString, "");
 
-        assertTrue(htmlString.contains(parametro.getClrMenu()));
-        assertFalse(htmlString.contains((new File(String.valueOf(parametro.getTxtLogoSrc()))).getName()));
+        assertTrue(htmlString.contains(parameters.getMenuColor()));
+        assertFalse(htmlString.contains((new File(String.valueOf(parameters.getProjectLogo()))).getName()));
         assertFalse(htmlString.contains("logo_xxx.png"));
         assertTrue(htmlString.contains("#/html/html_embed.html"));
         assertTrue(htmlString.contains("html_embed_txt"));
@@ -47,11 +47,11 @@ public class FolderToHTMLCompilerTest extends Common {
         File targetFile = new File("target/FolderToHTMLCompilerTest");
         if(!targetFile.isDirectory()) assertTrue(targetFile.mkdir());
 
-        ParametroDto parametro = new ParametroDto();
-        parametro.setTxtSrcFonte(featureFolder);
-        parametro.setTxtSrcFonteMaster(featureMasterFolder);
-        parametro.setTxtOutputTarget(targetFile);
-        new FolderToHTMLCompiler(parametro).build();
+        ParametersDto parameters = new ParametersDto();
+        parameters.setProjectSource(featureFolder);
+        parameters.setProjectMasterSource(featureMasterFolder);
+        parameters.setProjectTarget(targetFile);
+        new FolderToHTMLCompiler(parameters).build();
 
         File htmlFile = new File(targetFile,"html/index.html");
         assertTrue(htmlFile.isFile());

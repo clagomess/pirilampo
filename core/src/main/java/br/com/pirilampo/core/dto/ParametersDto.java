@@ -1,9 +1,9 @@
 package br.com.pirilampo.core.dto;
 
-import br.com.pirilampo.core.enums.ArtefatoEnum;
-import br.com.pirilampo.core.enums.CompilacaoEnum;
+import br.com.pirilampo.core.enums.CompilationArctifactEnum;
+import br.com.pirilampo.core.enums.CompilationTypeEnum;
+import br.com.pirilampo.core.enums.HtmlPanelToggleEnum;
 import br.com.pirilampo.core.enums.LayoutPdfEnum;
-import br.com.pirilampo.core.enums.PainelEnum;
 import javafx.scene.paint.Color;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,22 +12,22 @@ import org.apache.commons.cli.CommandLine;
 import java.io.File;
 import java.util.Properties;
 
-@NoArgsConstructor
 @Data
-public class ParametroDto {
-    private String txtNome = "Pirilampo";
-    private String txtVersao = "1.0";
-    private File txtLogoSrc;
-    private LayoutPdfEnum tipLayoutPdf = LayoutPdfEnum.RETRATO;
-    private PainelEnum tipPainel = PainelEnum.ABERTO;
-    private String clrMenu = "#14171A";
-    private String clrTextoMenu = "#DDDDDD";
-    private Boolean sitEmbedarImagens = true;
-    private CompilacaoEnum tipCompilacao = CompilacaoEnum.PASTA;
-    private ArtefatoEnum artefato = ArtefatoEnum.HTML;
-    private File txtSrcFonte;
-    private File txtSrcFonteMaster;
-    private File txtOutputTarget;
+@NoArgsConstructor
+public class ParametersDto {
+    private String projectName = "Pirilampo";
+    private String projectVersion = "1.0";
+    private File projectLogo;
+    private LayoutPdfEnum layoutPdf = LayoutPdfEnum.PORTRAIT;
+    private HtmlPanelToggleEnum htmlPanelToggle = HtmlPanelToggleEnum.OPEN;
+    private String menuColor = "#14171A";
+    private String menuTextColor = "#DDDDDD";
+    private Boolean embedImages = true;
+    private CompilationTypeEnum compilationType = CompilationTypeEnum.FOLDER;
+    private CompilationArctifactEnum compilationArctifact = CompilationArctifactEnum.HTML;
+    private File projectSource;
+    private File projectMasterSource;
+    private File projectTarget;
 
     // public ParametroDto(MainForm form){
         /*
@@ -45,7 +45,7 @@ public class ParametroDto {
          */
     // }
 
-    public ParametroDto(CommandLine cmd){
+    public ParametersDto(CommandLine cmd){
         /*
         this.txtNome = cmd.getOptionValue("name");
         this.txtVersao = cmd.getOptionValue("version");
@@ -56,7 +56,7 @@ public class ParametroDto {
         */
     }
 
-    public ParametroDto(Properties properties){
+    public ParametersDto(Properties properties){
         /*
         this.txtNome = !StringUtils.isEmpty(properties.getProperty("txtNome")) ? properties.getProperty("txtNome") : this.txtNome;
         this.txtVersao = !StringUtils.isEmpty(properties.getProperty("txtVersao")) ? properties.getProperty("txtVersao") : this.txtVersao;

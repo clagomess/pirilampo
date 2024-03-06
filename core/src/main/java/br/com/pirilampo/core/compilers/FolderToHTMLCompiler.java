@@ -3,7 +3,7 @@ package br.com.pirilampo.core.compilers;
 import br.com.pirilampo.core.dto.FeatureIndexDto;
 import br.com.pirilampo.core.dto.FeatureMasterDto;
 import br.com.pirilampo.core.dto.FeatureMetadataDto;
-import br.com.pirilampo.core.dto.ParametroDto;
+import br.com.pirilampo.core.dto.ParametersDto;
 import br.com.pirilampo.core.enums.DiffEnum;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class FolderToHTMLCompiler extends Compiler {
     private final ParseImage parseImage = new ParseImage();
-    private final ParametroDto parametro;
+    private final ParametersDto parameters;
     private final Map<String, FeatureIndexDto> indice = new HashMap<>();
     private List<FeatureMasterDto> masterFiles = null;
 
@@ -31,41 +31,41 @@ public class FolderToHTMLCompiler extends Compiler {
     public static final String HTML_CLOSE_TEMPLATE = "</script>\n";
 
     protected DiffEnum diffMaster(FeatureMetadataDto featureMetadataDto, File featureBranch, PrintWriter out) throws Exception {
-        if(parametro.getTxtSrcFonteMaster() == null) return DiffEnum.NAO_COMPARADO;
+        if(parameters.getProjectMasterSource() == null) return DiffEnum.NOT_COMPARED;
 
         if(masterFiles == null){
-            masterFiles = listFolder(parametro.getTxtSrcFonteMaster()).stream()
+            masterFiles = listFolder(parameters.getProjectMasterSource()).stream()
                     .map(item -> new FeatureMasterDto(
-                            getFeaturePathWithoutAbsolute(parametro.getTxtSrcFonteMaster(), item),
+                            getFeaturePathWithoutAbsolute(parameters.getProjectMasterSource(), item),
                             item
                     )).collect(Collectors.toList());
         }
 
-        if(masterFiles.isEmpty()) return DiffEnum.NAO_COMPARADO;
+        if(masterFiles.isEmpty()) return DiffEnum.NOT_COMPARED;
 
-        String pathFeatureBranch = getFeaturePathWithoutAbsolute(parametro.getTxtSrcFonte(), featureBranch);
+        String pathFeatureBranch = getFeaturePathWithoutAbsolute(parameters.getProjectSource(), featureBranch);
 
         Optional<FeatureMasterDto> optFeatureMaster = masterFiles.stream()
                 .filter(item -> item.getPath().equals(pathFeatureBranch))
                 .findFirst();
 
-        DiffEnum diff = DiffEnum.NOVO;
+        DiffEnum diff = DiffEnum.NEW;
         if(optFeatureMaster.isPresent()) {
             if (FileUtils.contentEquals(featureBranch, optFeatureMaster.get().getFeature())) {
-                diff = DiffEnum.IGUAL;
+                diff = DiffEnum.EQUAL;
             } else {
-                diff = DiffEnum.DIFERENTE;
+                diff = DiffEnum.DIFFERENT;
             }
         }
 
         log.info("Diff Master/Branch: {} - {}", diff, featureBranch.getAbsolutePath());
 
         // pula para o proximo
-        if(diff.equals(DiffEnum.IGUAL)) return diff;
+        if(diff.equals(DiffEnum.EQUAL)) return diff;
 
         if(optFeatureMaster.isPresent()) {
             out.print(String.format(HTML_OPEN_TEMPLATE, "master_" + featureMetadataDto.getIdHtml()));
-            new ParseDocument(parametro, optFeatureMaster.get().getFeature()).build(out);
+            new ParseDocument(parameters, optFeatureMaster.get().getFeature()).build(out);
             out.print(HTML_CLOSE_TEMPLATE);
 
             out.print(String.format(HTML_OPEN_TEMPLATE, "master_" + featureMetadataDto.getIdFeature()));
@@ -85,14 +85,14 @@ public class FolderToHTMLCompiler extends Compiler {
         out.print("<ul class=\"sidebar-nav\">");
         out.print("<li class=\"sidebar-brand\">");
 
-        if(parametro.getTxtLogoSrc() != null){
-            String logoString = parseImage.parse(parametro, parametro.getTxtLogoSrc()); //@TODO: transformar em buffer
+        if(parameters.getProjectLogo() != null){
+            String logoString = parseImage.parse(parameters, parameters.getProjectLogo()); //@TODO: transformar em buffer
             out.print(String.format("<a href=\"#/\"><img class=\"logo\" src=\"%s\"></a>", logoString));
         }else{
             out.print(String.format(
                     "<a href=\"#/\">%s <small><em>%s</em></small></a>",
-                    parametro.getTxtNome(),
-                    parametro.getTxtVersao()
+                    parameters.getProjectName(),
+                    parameters.getProjectVersion()
             ));
         }
 
@@ -105,8 +105,8 @@ public class FolderToHTMLCompiler extends Compiler {
     protected void buildTemplateIndex(PrintWriter out){
         out.print(String.format(HTML_OPEN_TEMPLATE, "index.html"));
         out.print("<div style=\"text-align: center\">");
-        out.print(String.format("<h1>%s</h1>", parametro.getTxtNome()));
-        out.print(String.format("<small><em>%s</em></small>", parametro.getTxtVersao()));
+        out.print(String.format("<h1>%s</h1>", parameters.getProjectName()));
+        out.print(String.format("<small><em>%s</em></small>", parameters.getProjectVersion()));
         out.print("</div>");
         out.print(HTML_CLOSE_TEMPLATE);
     }
@@ -118,14 +118,13 @@ public class FolderToHTMLCompiler extends Compiler {
     }
 
     public void build() throws Exception {
-        ParseMenu parseMenu = new ParseMenu(parametro);
+        ParseMenu parseMenu = new ParseMenu(parameters);
 
-        // Popula com arquivos feature
-        final List<File> arquivos = listFolder(parametro.getTxtSrcFonte());
+        final List<File> arquivos = listFolder(parameters.getProjectSource());
         if(arquivos.isEmpty()) return;
 
         try (
-                FileOutputStream fos = new FileOutputStream(getOutArtifact(parametro));
+                FileOutputStream fos = new FileOutputStream(getOutArtifact(parameters));
                 BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos, StandardCharsets.UTF_8));
                 PrintWriter out = new PrintWriter(bw);
         ){
@@ -133,26 +132,26 @@ public class FolderToHTMLCompiler extends Compiler {
             out.print("<meta charset=\"utf-8\">");
             out.print("<meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\">");
             out.print("<meta name=\"viewport\" content=\"width=device-width, shrink-to-fit=no, initial-scale=1\">");
-            out.print(String.format("<title>%s</title>", parametro.getTxtNome()));
+            out.print(String.format("<title>%s</title>", parameters.getProjectName()));
             out.print("<style>");
             writeResourceToOut("htmlTemplate/dist/feature-pasta.min.css", out);
             out.print("\n\n");
             out.print(String.format(
                     "#sidebar-wrapper {background: %s;}",
-                    parametro.getClrMenu()
+                    parameters.getMenuColor()
             ));
             out.print(String.format(
                     "#menu-toggle {background: %s; color: %s;}",
-                    parametro.getClrMenu(),
-                    parametro.getClrTextoMenu()
+                    parameters.getMenuColor(),
+                    parameters.getMenuTextColor()
             ));
             out.print(String.format(
                     ".sidebar-nav li a:hover, .sidebar-nav li a { color: %s;}",
-                    parametro.getClrTextoMenu()
+                    parameters.getMenuTextColor()
             ));
             out.print(String.format(
                     ".sidebar-nav > li {border-bottom: 1px solid %s;}",
-                    parametro.getClrTextoMenu()
+                    parameters.getMenuTextColor()
             ));
             out.print("</style>");
             out.print("</head><body>\n");
@@ -169,14 +168,14 @@ public class FolderToHTMLCompiler extends Compiler {
                 progressNum++;
 
                 // monta nome menu
-                FeatureMetadataDto featureMetadataDto = getFeatureMetadata(parametro, f);
+                FeatureMetadataDto featureMetadataDto = getFeatureMetadata(parameters, f);
 
                 // Processa Diff Master
                 DiffEnum diff = diffMaster(featureMetadataDto, f, out);
-                if(diff == DiffEnum.IGUAL) continue;
+                if(diff == DiffEnum.EQUAL) continue;
 
                 // Gera a feture
-                ParseDocument pd = new ParseDocument(parametro, f);
+                ParseDocument pd = new ParseDocument(parameters, f);
                 out.print(String.format(HTML_OPEN_TEMPLATE, featureMetadataDto.getIdHtml()));
                 pd.build(out);
                 out.print(HTML_CLOSE_TEMPLATE);

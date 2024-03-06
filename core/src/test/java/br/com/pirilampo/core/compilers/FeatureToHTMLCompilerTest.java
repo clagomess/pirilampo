@@ -1,7 +1,7 @@
 package br.com.pirilampo.core.compilers;
 
 import br.com.pirilampo.core.Common;
-import br.com.pirilampo.core.dto.ParametroDto;
+import br.com.pirilampo.core.dto.ParametersDto;
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;
 
@@ -15,11 +15,11 @@ public class FeatureToHTMLCompilerTest extends Common {
         File targetFile = new File("target/FeatureToHTMLCompilerTest");
         if(!targetFile.isDirectory()) assertTrue(targetFile.mkdir());
 
-        ParametroDto parametro = new ParametroDto();
-        parametro.setTxtSrcFonte(featureFile);
-        parametro.setTxtOutputTarget(targetFile);
+        ParametersDto parameters = new ParametersDto();
+        parameters.setProjectSource(featureFile);
+        parameters.setProjectTarget(targetFile);
 
-        new FeatureToHTMLCompiler(parametro).build();
+        new FeatureToHTMLCompiler(parameters).build();
         File htmlFile = new File(targetFile, "xxx.html");
         assertTrue(htmlFile.isFile());
 

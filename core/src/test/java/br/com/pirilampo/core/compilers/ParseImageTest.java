@@ -1,7 +1,7 @@
 package br.com.pirilampo.core.compilers;
 
 import br.com.pirilampo.core.Common;
-import br.com.pirilampo.core.dto.ParametroDto;
+import br.com.pirilampo.core.dto.ParametersDto;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -23,10 +23,10 @@ public class ParseImageTest extends Common {
             "false$https://picsum.photos/800/200$https://picsum.photos/800/200",
     }, delimiter = '$')
     public void parse(Boolean embedded, String filename, String expected){
-        val parametro = new ParametroDto();
-        parametro.setSitEmbedarImagens(embedded);
-        parametro.setTxtSrcFonte(featureFolder);
+        val parameters = new ParametersDto();
+        parameters.setEmbedImages(embedded);
+        parameters.setProjectSource(featureFolder);
 
-        assertEquals(expected, parseImage.parse(parametro, featureFile, filename));
+        assertEquals(expected, parseImage.parse(parameters, featureFile, filename));
     }
 }

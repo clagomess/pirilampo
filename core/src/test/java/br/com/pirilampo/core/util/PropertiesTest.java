@@ -1,6 +1,6 @@
 package br.com.pirilampo.core.util;
 
-import br.com.pirilampo.core.dto.ParametroDto;
+import br.com.pirilampo.core.dto.ParametersDto;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 
@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class PropertiesTest {
     @Test
     public void parametroToProperties(){
-        Properties prop = PropertiesUtil.parametroToProperties(new ParametroDto());
+        Properties prop = PropertiesUtil.parametroToProperties(new ParametersDto());
 
         assertNotNull(prop.getProperty("txtNome"));
     }

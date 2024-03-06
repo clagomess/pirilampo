@@ -1,7 +1,7 @@
 package br.com.pirilampo.core.compilers;
 
 import br.com.pirilampo.core.dto.MenuDto;
-import br.com.pirilampo.core.dto.ParametroDto;
+import br.com.pirilampo.core.dto.ParametersDto;
 import br.com.pirilampo.core.enums.DiffEnum;
 import lombok.Getter;
 
@@ -12,21 +12,21 @@ import java.util.Set;
 public class ParseMenu extends Compiler {
     @Getter
     private final MenuDto menu;
-    private final ParametroDto parametro;
+    private final ParametersDto parameters;
 
-    public ParseMenu(ParametroDto parametro){
+    public ParseMenu(ParametersDto parameters){
         this.menu = new MenuDto("ROOT");
-        this.parametro = parametro;
+        this.parameters = parameters;
     }
 
     public void addMenuItem(File feature, DiffEnum diff, String featureTitulo){
         MenuDto item = new MenuDto(
                 featureTitulo,
-                getFeatureMetadata(parametro, feature).getId(),
+                getFeatureMetadata(parameters, feature).getId(),
                 diff
         );
 
-        String[] nodes = getFeaturePathWithoutAbsolute(parametro.getTxtSrcFonte(), feature).split("(\\\\|/)");
+        String[] nodes = getFeaturePathWithoutAbsolute(parameters.getProjectSource(), feature).split("(\\\\|/)");
 
         walker(menu.getChildren(), nodes, 0, item);
     }

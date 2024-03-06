@@ -1,6 +1,6 @@
 package br.com.pirilampo.core.compilers;
 
-import br.com.pirilampo.core.dto.ParametroDto;
+import br.com.pirilampo.core.dto.ParametersDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -13,10 +13,10 @@ import java.util.Objects;
 @Slf4j
 @RequiredArgsConstructor
 public class FolderToPDFCompiler extends Compiler {
-    private final ParametroDto parametro;
+    private final ParametersDto parameters;
 
     public void build() throws Exception {
-        List<File> arquivos = listFolder(parametro.getTxtSrcFonte());
+        List<File> arquivos = listFolder(parameters.getProjectSource());
         if(arquivos.isEmpty()) return;
 
         File bufferHtml = File.createTempFile("pirilampo-buffer-", ".html");
@@ -33,13 +33,13 @@ public class FolderToPDFCompiler extends Compiler {
                 out.print("<h1 class=\"page-header\">");
                 out.print(String.format(
                         "%s <small>%s <em>%s</em></small>",
-                        parametro.getTxtNome(),
-                        getFeatureMetadata(parametro, feature).getName(),
-                        parametro.getTxtVersao()
+                        parameters.getProjectName(),
+                        getFeatureMetadata(parameters, feature).getName(),
+                        parameters.getProjectVersion()
                 ));
                 out.print("</h1>");
 
-                new ParseDocument(parametro, feature).build(out);
+                new ParseDocument(parameters, feature).build(out);
 
                 out.print("<span style=\"page-break-after: always\"></span>");
             }
@@ -50,13 +50,13 @@ public class FolderToPDFCompiler extends Compiler {
         // @TODO: maibe a pipe with these streams?
 
         try (
-                FileOutputStream fos = new FileOutputStream(getOutArtifact(parametro));
+                FileOutputStream fos = new FileOutputStream(getOutArtifact(parameters));
                 InputStream html = Files.newInputStream(bufferHtml.toPath());
                 InputStream css = Objects.requireNonNull(Thread.currentThread().getContextClassLoader()
                                 .getResource("htmlTemplate/dist/feature-pdf.min.css"))
                         .openStream();
         ){
-            new ParsePdf().build(fos, html, css, parametro.getTipLayoutPdf());
+            new ParsePdf().build(fos, html, css, parameters.getLayoutPdf());
         }
 
         // @TODO: remove buffer file

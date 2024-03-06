@@ -5,8 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum PainelEnum {
-    FECHADO("F"), ABERTO("A");
-
-    private final String value;
+public enum HtmlPanelToggleEnum {
+    CLOSED,
+    OPEN,
 }

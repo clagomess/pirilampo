@@ -26,7 +26,7 @@ public class ParsePdfTest {
                         .getResource("htmlTemplate/dist/feature-pdf.min.css")
                         .openStream();
         ){
-            new ParsePdf().build(fos, html, css, LayoutPdfEnum.PAISAGEM);
+            new ParsePdf().build(fos, html, css, LayoutPdfEnum.LANDSCAPE);
             assertTrue(targetFile.isFile());
         }
     }

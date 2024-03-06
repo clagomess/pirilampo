@@ -1,9 +1,9 @@
 package br.com.pirilampo.core.compilers;
 
 import br.com.pirilampo.core.dto.FeatureMetadataDto;
-import br.com.pirilampo.core.dto.ParametroDto;
-import br.com.pirilampo.core.enums.ArtefatoEnum;
-import br.com.pirilampo.core.enums.CompilacaoEnum;
+import br.com.pirilampo.core.dto.ParametersDto;
+import br.com.pirilampo.core.enums.CompilationArctifactEnum;
+import br.com.pirilampo.core.enums.CompilationTypeEnum;
 import org.apache.commons.io.input.BOMInputStream;
 
 import java.io.*;
@@ -31,7 +31,7 @@ public abstract class Compiler {
 
     private void listFolder(List<File> buffer, File curDir) throws Exception {
         File[] filesList = curDir.listFiles();
-        if(filesList == null) throw new Exception("Pasta não localizada!");
+        if(filesList == null) throw new Exception("*.features not found");
 
         for (File f : filesList) {
             if (f.isDirectory()) listFolder(buffer, f);
@@ -42,12 +42,12 @@ public abstract class Compiler {
         }
     }
 
-    protected FeatureMetadataDto getFeatureMetadata(ParametroDto parametro, File feature){
+    protected FeatureMetadataDto getFeatureMetadata(ParametersDto parameters, File feature){
         String htmlFeatureRoot = feature.getAbsolutePath()
-                .replace(parametro.getTxtSrcFonte().getAbsolutePath(), "");
+                .replace(parameters.getProjectSource().getAbsolutePath(), "");
 
-        if(parametro.getTxtSrcFonteMaster() != null){
-            htmlFeatureRoot = htmlFeatureRoot.replace(parametro.getTxtSrcFonteMaster().getAbsolutePath(), "");
+        if(parameters.getProjectMasterSource() != null){
+            htmlFeatureRoot = htmlFeatureRoot.replace(parameters.getProjectMasterSource().getAbsolutePath(), "");
         }
 
         htmlFeatureRoot = htmlFeatureRoot.replace(feature.getName(), "")
@@ -63,27 +63,27 @@ public abstract class Compiler {
         return result;
     }
 
-    protected File getOutArtifact(ParametroDto parametro){
-        if(parametro.getTipCompilacao() == CompilacaoEnum.PASTA){
-            File targetDir = parametro.getTxtOutputTarget() != null ?
-                    new File(parametro.getTxtOutputTarget(), "html") :
-                    new File(parametro.getTxtSrcFonte().getParent(), "html");
+    protected File getOutArtifact(ParametersDto parameters){
+        if(parameters.getCompilationType() == CompilationTypeEnum.FOLDER){
+            File targetDir = parameters.getProjectTarget() != null ?
+                    new File(parameters.getProjectTarget(), "html") :
+                    new File(parameters.getProjectSource().getParent(), "html");
 
             if(!targetDir.exists() && !targetDir.mkdir()){
                 throw new RuntimeException(String.format("Failed to create dir: %s", targetDir.getAbsolutePath()));
             }
 
-            return new File(targetDir, parametro.getArtefato() == ArtefatoEnum.HTML ? "index.html" : "index.pdf");
+            return new File(targetDir, parameters.getCompilationArctifact() == CompilationArctifactEnum.HTML ? "index.html" : "index.pdf");
         }else{
             String filename = String.format(
                     "%s.%s",
-                    getFeatureMetadata(parametro, parametro.getTxtSrcFonte()).getName(),
-                    parametro.getArtefato() == ArtefatoEnum.HTML ? "html" : "pdf"
+                    getFeatureMetadata(parameters, parameters.getProjectSource()).getName(),
+                    parameters.getCompilationArctifact() == CompilationArctifactEnum.HTML ? "html" : "pdf"
             );
 
-            File targetDir = parametro.getTxtOutputTarget() != null ?
-                    parametro.getTxtOutputTarget() :
-                    new File(parametro.getTxtSrcFonte().getParent());
+            File targetDir = parameters.getProjectTarget() != null ?
+                    parameters.getProjectTarget() :
+                    new File(parameters.getProjectSource().getParent());
 
             return new File(targetDir, filename);
         }
@@ -127,11 +127,11 @@ public abstract class Compiler {
         return resultDiff.replace(File.separator, "/");
     }
 
-    public File getAbsolutePathFeatureAsset(ParametroDto parametro, File feature, String fileName){
+    public File getAbsolutePathFeatureAsset(ParametersDto parameters, File feature, String fileName){
         Set<File> basePaths = new LinkedHashSet<File>() {{
             add(feature.getParentFile());
-            add(parametro.getTxtSrcFonte());
-            if(parametro.getTxtSrcFonteMaster() != null) add(parametro.getTxtSrcFonteMaster());
+            add(parameters.getProjectSource());
+            if(parameters.getProjectMasterSource() != null) add(parameters.getProjectMasterSource());
         }};
 
         for (File basePath : basePaths) {

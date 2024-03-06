@@ -1,7 +1,7 @@
 package br.com.pirilampo.core.compilers;
 
 import br.com.pirilampo.core.Common;
-import br.com.pirilampo.core.dto.ParametroDto;
+import br.com.pirilampo.core.dto.ParametersDto;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.graphics.PDXObject;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
@@ -20,21 +20,21 @@ public class FeatureToPDFCompilerTest extends Common {
         File targetFile = new File("target/FeatureToPDFCompilerTest");
         if(!targetFile.isDirectory()) assertTrue(targetFile.mkdir());
 
-        ParametroDto parametro = new ParametroDto();
-        parametro.setTxtNome("_AA_");
-        parametro.setTxtVersao("_BB_");
-        parametro.setTxtSrcFonte(featureFile);
-        parametro.setTxtOutputTarget(targetFile);
+        ParametersDto parameters = new ParametersDto();
+        parameters.setProjectName("_AA_");
+        parameters.setProjectVersion("_BB_");
+        parameters.setProjectSource(featureFile);
+        parameters.setProjectTarget(targetFile);
 
-        new FeatureToPDFCompiler(parametro).build();
+        new FeatureToPDFCompiler(parameters).build();
         File pdfFile = new File(targetFile, "xxx.pdf");
         assertTrue(pdfFile.isFile());
 
         try(PDDocument pdfDocument = PDDocument.load(pdfFile)){
             String pdfAsStr = new PDFTextStripper().getText(pdfDocument);
 
-            assertTrue(pdfAsStr.contains(parametro.getTxtNome()));
-            assertTrue(pdfAsStr.contains(parametro.getTxtVersao()));
+            assertTrue(pdfAsStr.contains(parameters.getProjectName()));
+            assertTrue(pdfAsStr.contains(parameters.getProjectVersion()));
 
             boolean possuiImagens = StreamSupport.stream(
                 pdfDocument.getPage(0)

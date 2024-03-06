@@ -1,7 +1,7 @@
 package br.com.pirilampo.core.compilers;
 
 import br.com.pirilampo.core.dto.FeatureMetadataDto;
-import br.com.pirilampo.core.dto.ParametroDto;
+import br.com.pirilampo.core.dto.ParametersDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -13,14 +13,14 @@ import java.util.Objects;
 @Slf4j
 @RequiredArgsConstructor
 public class FeatureToPDFCompiler extends Compiler {
-    private final ParametroDto parametro;
+    private final ParametersDto parameters;
     private final File feature;
     private final FeatureMetadataDto featureMetadataDto;
 
-    public FeatureToPDFCompiler(ParametroDto parametro) {
-        this.parametro = parametro;
-        this.feature = parametro.getTxtSrcFonte();
-        this.featureMetadataDto = getFeatureMetadata(parametro, feature);
+    public FeatureToPDFCompiler(ParametersDto parameters) {
+        this.parameters = parameters;
+        this.feature = parameters.getProjectSource();
+        this.featureMetadataDto = getFeatureMetadata(parameters, feature);
     }
 
     public void build() throws Exception {
@@ -36,13 +36,13 @@ public class FeatureToPDFCompiler extends Compiler {
             out.print("<h1 class=\"page-header\">");
             out.print(String.format(
                     "%s <small>%s <em>%s</em></small>",
-                    parametro.getTxtNome(),
+                    parameters.getProjectName(),
                     featureMetadataDto.getName(),
-                    parametro.getTxtVersao()
+                    parameters.getProjectVersion()
             ));
             out.print("</h1>");
 
-            new ParseDocument(parametro, feature).build(out);
+            new ParseDocument(parameters, feature).build(out);
 
             out.print("</body></html>");
         }
@@ -50,13 +50,13 @@ public class FeatureToPDFCompiler extends Compiler {
         // @TODO: maibe a pipe with these streams?
 
         try (
-                FileOutputStream fos = new FileOutputStream(getOutArtifact(parametro));
+                FileOutputStream fos = new FileOutputStream(getOutArtifact(parameters));
                 InputStream html = Files.newInputStream(bufferHtml.toPath());
                 InputStream css = Objects.requireNonNull(Thread.currentThread().getContextClassLoader()
                                 .getResource("htmlTemplate/dist/feature-pdf.min.css"))
                                 .openStream();
         ){
-            new ParsePdf().build(fos, html, css, parametro.getTipLayoutPdf());
+            new ParsePdf().build(fos, html, css, parameters.getLayoutPdf());
         }
 
         // @TODO: remove buffer file

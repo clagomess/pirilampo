@@ -1,7 +1,7 @@
 package br.com.pirilampo.core.compilers;
 
 import br.com.pirilampo.core.Common;
-import br.com.pirilampo.core.dto.ParametroDto;
+import br.com.pirilampo.core.dto.ParametersDto;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.jupiter.api.Test;
@@ -17,9 +17,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class ParseDocumentTest extends Common {
     @Test
     public void build() throws Exception {
-        val parametro = new ParametroDto();
-        parametro.setTxtSrcFonte(featureFile);
-        ParseDocument parseDocument = new ParseDocument(parametro, featureFile);
+        val parameters = new ParametersDto();
+        parameters.setProjectSource(featureFile);
+        ParseDocument parseDocument = new ParseDocument(parameters, featureFile);
 
         File tmpFile = File.createTempFile("result-", ".html");
         log.info("Created: {}", tmpFile);
@@ -49,9 +49,9 @@ public class ParseDocumentTest extends Common {
         "&lt;user&gt; and &lt;password&gt;$user and password",
     }, delimiter = '$')
     public void setIndiceValue(String raw, String expected){
-        val parametro = new ParametroDto();
-        parametro.setTxtSrcFonte(featureFolder);
-        ParseDocument parseDocument = new ParseDocument(parametro, featureFile);
+        val parameters = new ParametersDto();
+        parameters.setProjectSource(featureFolder);
+        ParseDocument parseDocument = new ParseDocument(parameters, featureFile);
 
         assertEquals(expected, parseDocument.putIndexValue(raw));
     }
@@ -79,10 +79,10 @@ public class ParseDocumentTest extends Common {
             "'aaa \n bbb ![ImageA](xx_a.png)'$'aaa\nbbb <br/><p><img src=\"xx_a.png\"  alt=\"ImageA\" //></p>'",
     }, delimiter = '$', ignoreLeadingAndTrailingWhitespace = false)
     public void format(String raw, String expected){
-        val parametro = new ParametroDto();
-        parametro.setTxtSrcFonte(featureFolder);
+        val parameters = new ParametersDto();
+        parameters.setProjectSource(featureFolder);
 
-        ParseDocument parseDocument = new ParseDocument(parametro, featureFile);
+        ParseDocument parseDocument = new ParseDocument(parameters, featureFile);
 
         assertEquals(expected, parseDocument.format(raw, true));
     }

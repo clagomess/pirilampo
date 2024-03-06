@@ -2,7 +2,7 @@ package br.com.pirilampo.core.compilers;
 
 import br.com.pirilampo.core.Common;
 import br.com.pirilampo.core.dto.MenuDto;
-import br.com.pirilampo.core.dto.ParametroDto;
+import br.com.pirilampo.core.dto.ParametersDto;
 import br.com.pirilampo.core.enums.DiffEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.assertj.core.api.Assertions;
@@ -41,13 +41,13 @@ public class ParseMenuTest extends Common {
             new File("feature/A/A.feature")
     );
     
-    private final ParametroDto parametro = new ParametroDto(){{
-        setTxtSrcFonte(new File("feature"));
+    private final ParametersDto parameters = new ParametersDto(){{
+        setProjectSource(new File("feature"));
     }};
 
-    private final ParseMenu parseMenu = new ParseMenu(parametro){{
+    private final ParseMenu parseMenu = new ParseMenu(parameters){{
         for(File item : itens){
-            addMenuItem(item, DiffEnum.NAO_COMPARADO, item.getName().replace(".feature", "_x"));
+            addMenuItem(item, DiffEnum.NOT_COMPARED, item.getName().replace(".feature", "_x"));
         }
     }};
 
