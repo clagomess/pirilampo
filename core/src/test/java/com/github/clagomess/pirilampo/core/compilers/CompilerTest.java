@@ -2,9 +2,8 @@ package com.github.clagomess.pirilampo.core.compilers;
 
 import com.github.clagomess.pirilampo.core.Common;
 import com.github.clagomess.pirilampo.core.dto.ParametersDto;
-import com.github.clagomess.pirilampo.core.enums.CompilationArctifactEnum;
+import com.github.clagomess.pirilampo.core.enums.CompilationArtifactEnum;
 import com.github.clagomess.pirilampo.core.enums.CompilationTypeEnum;
-import com.github.clagomess.pirilampo.core.compilers.Compiler;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -126,7 +125,7 @@ public class CompilerTest extends Common {
     })
     public void getOutArtifact(
             CompilationTypeEnum tipCompilacao,
-            CompilationArctifactEnum artefato,
+            CompilationArtifactEnum artefato,
             String source,
             String target,
             String expected
@@ -139,7 +138,7 @@ public class CompilerTest extends Common {
         // init test
         ParametersDto parametersDto = new ParametersDto();
         parametersDto.setCompilationType(tipCompilacao);
-        parametersDto.setCompilationArctifact(artefato);
+        parametersDto.setCompilationArtifact(artefato);
         parametersDto.setProjectSource(StringUtils.isNotBlank(source) ? new File(source) : null);
         parametersDto.setProjectTarget(StringUtils.isNotBlank(target) ? new File(target) : null);
 

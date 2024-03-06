@@ -1,7 +1,7 @@
 package com.github.clagomess.pirilampo.cli;
 
 import com.github.clagomess.pirilampo.core.dto.ParametersDto;
-import com.github.clagomess.pirilampo.core.enums.CompilationArctifactEnum;
+import com.github.clagomess.pirilampo.core.enums.CompilationArtifactEnum;
 import com.github.clagomess.pirilampo.core.enums.CompilationTypeEnum;
 import com.github.clagomess.pirilampo.core.enums.HtmlPanelToggleEnum;
 import com.github.clagomess.pirilampo.core.enums.LayoutPdfEnum;
@@ -82,12 +82,12 @@ public class MainOptions {
             ))
             .hasArg().build();
 
-    private final Option compilationArctifact = Option.builder()
-            .option("compilationArctifact")
+    private final Option compilationArtifact = Option.builder()
+            .option("compilationArtifact")
             .desc(String.format(
-                    "Compilation Arctifact. Expected values: %s. Default: %s",
-                    Arrays.toString(CompilationArctifactEnum.values()),
-                    defaultParameters.getCompilationArctifact()
+                    "Compilation Artifact. Expected values: %s. Default: %s",
+                    Arrays.toString(CompilationArtifactEnum.values()),
+                    defaultParameters.getCompilationArtifact()
             ))
             .hasArg().build();
 
@@ -116,7 +116,7 @@ public class MainOptions {
         addOption(menuTextColor);
         addOption(disableEmbedImages);
         addOption(compilationType);
-        addOption(compilationArctifact);
+        addOption(compilationArtifact);
         addOption(projectSource);
         addOption(projectMasterSource);
         addOption(projectTarget);
@@ -163,8 +163,8 @@ public class MainOptions {
                 parameters.setCompilationType(CompilationTypeEnum.valueOf(cmd.getOptionValue(compilationType)));
             }
 
-            if(cmd.hasOption(compilationArctifact)) {
-                parameters.setCompilationArctifact(CompilationArctifactEnum.valueOf(cmd.getOptionValue(compilationArctifact)));
+            if(cmd.hasOption(compilationArtifact)) {
+                parameters.setCompilationArtifact(CompilationArtifactEnum.valueOf(cmd.getOptionValue(compilationArtifact)));
             }
 
             parameters.setProjectSource(new File(cmd.getOptionValue(projectSource)));

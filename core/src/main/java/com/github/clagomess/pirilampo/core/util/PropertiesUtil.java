@@ -33,7 +33,7 @@ public class PropertiesUtil {
             }
         }
 
-        return new ParametersDto(prop);
+        return null; //new ParametersDto(prop); @TODO: check this
     }
 
     public static void setData(ParametersDto parameters){

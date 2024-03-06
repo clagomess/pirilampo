@@ -2,7 +2,7 @@ package com.github.clagomess.pirilampo.core.compilers;
 
 import com.github.clagomess.pirilampo.core.dto.FeatureMetadataDto;
 import com.github.clagomess.pirilampo.core.dto.ParametersDto;
-import com.github.clagomess.pirilampo.core.enums.CompilationArctifactEnum;
+import com.github.clagomess.pirilampo.core.enums.CompilationArtifactEnum;
 import com.github.clagomess.pirilampo.core.enums.CompilationTypeEnum;
 import org.apache.commons.io.input.BOMInputStream;
 
@@ -73,12 +73,12 @@ public abstract class Compiler {
                 throw new RuntimeException(String.format("Failed to create dir: %s", targetDir.getAbsolutePath()));
             }
 
-            return new File(targetDir, parameters.getCompilationArctifact() == CompilationArctifactEnum.HTML ? "index.html" : "index.pdf");
+            return new File(targetDir, parameters.getCompilationArtifact() == CompilationArtifactEnum.HTML ? "index.html" : "index.pdf");
         }else{
             String filename = String.format(
                     "%s.%s",
                     getFeatureMetadata(parameters, parameters.getProjectSource()).getName(),
-                    parameters.getCompilationArctifact() == CompilationArctifactEnum.HTML ? "html" : "pdf"
+                    parameters.getCompilationArtifact() == CompilationArtifactEnum.HTML ? "html" : "pdf"
             );
 
             File targetDir = parameters.getProjectTarget() != null ?

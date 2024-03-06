@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum CompilationArctifactEnum {
+public enum CompilationArtifactEnum {
     HTML,
     PDF
 }

@@ -3,7 +3,7 @@ package com.github.clagomess.pirilampo.core.parsers;
 
 import com.github.clagomess.pirilampo.core.compilers.Compiler;
 import com.github.clagomess.pirilampo.core.dto.ParametersDto;
-import com.github.clagomess.pirilampo.core.enums.CompilationArctifactEnum;
+import com.github.clagomess.pirilampo.core.enums.CompilationArtifactEnum;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
@@ -27,9 +27,9 @@ public class ImageParser extends Compiler {
 
     public String parse(ParametersDto parameters, File image){
         if(
-                parameters.getEmbedImages() ||
+                parameters.isEmbedImages() ||
                 image.equals(parameters.getProjectLogo()) ||
-                parameters.getCompilationArctifact() == CompilationArctifactEnum.PDF
+                parameters.getCompilationArtifact() == CompilationArtifactEnum.PDF
         ) {
             try {
                 String base64 = Base64.getEncoder().encodeToString(FileUtils.readFileToByteArray(image));
