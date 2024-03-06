@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import org.apache.commons.lang.StringUtils;
 
 import java.io.File;
+import java.util.Arrays;
 
 @Data
 @NoArgsConstructor
@@ -45,8 +46,37 @@ public class ParametersDto {
         if(compilationType == null) throw ParametersException.required("Compilation Type");
         if(compilationArtifact == null) throw ParametersException.required("Compilation Artifact");
 
-        //@TODO: projectSource
-        //@TODO: projectMasterSource
-        //@TODO: projectTarget
+        if(projectSource == null || !projectSource.exists()){
+            throw new ParametersException("Option <Project Source> must be valid");
+        }
+
+        if(projectSource.isFile() &&
+                Arrays.asList(
+                        CompilationTypeEnum.FOLDER,
+                        CompilationTypeEnum.FOLDER_DIFF
+                ).contains(compilationType)
+        ){
+            throw new ParametersException("Option <Project Source> must be a folder");
+        }
+
+        if(projectSource.isDirectory() && compilationType == CompilationTypeEnum.FEATURE){
+            throw new ParametersException("Option <Project Source> must be a *.feature file");
+        }
+
+        if(projectMasterSource == null && compilationType == CompilationTypeEnum.FOLDER_DIFF){
+            throw ParametersException.required("Project Master Source");
+        }
+
+        if(projectMasterSource != null && compilationType != CompilationTypeEnum.FOLDER_DIFF){
+            throw new ParametersException("Option <Project Master Source> must be none");
+        }
+
+        if(projectMasterSource != null && !projectMasterSource.isDirectory()){
+            throw new ParametersException("Option <Project Master Source> must be a folder");
+        }
+
+        if(projectTarget != null && !projectTarget.isDirectory()){
+            throw new ParametersException("Option <Project Target> must be a folder");
+        }
     }
 }
