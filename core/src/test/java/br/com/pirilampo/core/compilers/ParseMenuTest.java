@@ -37,7 +37,8 @@ public class ParseMenuTest extends Common {
             new File("feature/Mensagem/PAB-Emails.feature"),
             new File("feature/Mensagem/PAB-Mensagens.feature"),
             new File("feature/Mensagem/PAB-Termos.feature"),
-            new File("feature/Regras_de_negocio/US01-PAB-Regras_de_negocio.feature")
+            new File("feature/Regras_de_negocio/US01-PAB-Regras_de_negocio.feature"),
+            new File("feature/A/A.feature")
     );
     
     private final ParametroDto parametro = new ParametroDto(){{
@@ -65,6 +66,7 @@ public class ParseMenuTest extends Common {
                         .collect(Collectors.toList())
         ).containsExactly(
                 "01 - Módulo I - Portal Público",
+                "A",
                 "Mensagem",
                 "Regras_de_negocio"
         );

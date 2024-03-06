@@ -3,26 +3,26 @@ package br.com.pirilampo.core.dto;
 import br.com.pirilampo.core.enums.DiffEnum;
 import lombok.Data;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 @Data
 public class MenuDto implements Comparable<MenuDto> {
-    private String title;
-    private String url = null;
-    private DiffEnum diff = DiffEnum.NAO_COMPARADO;
-    private List<MenuDto> children;
+    private final String title;
+    private final String url;
+    private final DiffEnum diff;
+    private final Set<MenuDto> children = new TreeSet<>();
 
     public MenuDto(String title){
         this.title = title;
-        this.children = new ArrayList<>();
+        this.url = null;
+        this.diff = DiffEnum.NAO_COMPARADO;
     }
 
-    public List<MenuDto> getChildren(){
-        Collections.sort(this.children);
-
-        return this.children;
+    public MenuDto(String title, String url, DiffEnum diff) {
+        this.title = title;
+        this.url = url;
+        this.diff = diff;
     }
 
     @Override
