@@ -2,6 +2,7 @@ package br.com.pirilampo.core.compilers;
 
 import br.com.pirilampo.core.Common;
 import br.com.pirilampo.core.dto.ParametersDto;
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.junit.jupiter.api.Test;
@@ -26,7 +27,7 @@ public class FolderToPDFCompilerTest extends Common {
         File pdf = new File(targetFile, "html/index.pdf");
         assertTrue(pdf.isFile());
 
-        PDDocument pdfDocument = PDDocument.load(pdf);
+        PDDocument pdfDocument = Loader.loadPDF(pdf);
         String pdfAsStr = new PDFTextStripper().getText(pdfDocument);
 
         assertTrue(pdfAsStr.contains(parameters.getProjectName()));

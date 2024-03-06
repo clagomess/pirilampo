@@ -7,7 +7,6 @@ import br.com.pirilampo.core.enums.LayoutPdfEnum;
 import javafx.scene.paint.Color;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.apache.commons.cli.CommandLine;
 
 import java.io.File;
 import java.util.Properties;
@@ -45,16 +44,16 @@ public class ParametersDto {
          */
     // }
 
+    /*
     public ParametersDto(CommandLine cmd){
-        /*
         this.txtNome = cmd.getOptionValue("name");
         this.txtVersao = cmd.getOptionValue("version");
         this.txtSrcFonte = !StringUtils.isEmpty(cmd.getOptionValue("feature")) ? cmd.getOptionValue("feature") : this.txtSrcFonte;
         this.txtSrcFonte = !StringUtils.isEmpty(cmd.getOptionValue("feature_path")) ? cmd.getOptionValue("feature_path") : this.txtSrcFonte;
         this.txtSrcFonteMaster = cmd.getOptionValue("feature_path_master");
         this.txtOutputTarget = cmd.getOptionValue("output");
-        */
     }
+    */
 
     public ParametersDto(Properties properties){
         /*

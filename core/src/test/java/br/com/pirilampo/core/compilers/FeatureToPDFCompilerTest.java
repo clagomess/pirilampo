@@ -2,6 +2,7 @@ package br.com.pirilampo.core.compilers;
 
 import br.com.pirilampo.core.Common;
 import br.com.pirilampo.core.dto.ParametersDto;
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.graphics.PDXObject;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
@@ -30,7 +31,7 @@ public class FeatureToPDFCompilerTest extends Common {
         File pdfFile = new File(targetFile, "xxx.pdf");
         assertTrue(pdfFile.isFile());
 
-        try(PDDocument pdfDocument = PDDocument.load(pdfFile)){
+        try(PDDocument pdfDocument = Loader.loadPDF(pdfFile)){
             String pdfAsStr = new PDFTextStripper().getText(pdfDocument);
 
             assertTrue(pdfAsStr.contains(parameters.getProjectName()));
