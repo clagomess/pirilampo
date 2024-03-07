@@ -1,5 +1,7 @@
 package com.github.clagomess.pirilampo.core.compilers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.clagomess.pirilampo.core.dto.FeatureIndexDto;
 import com.github.clagomess.pirilampo.core.dto.FeatureMasterDto;
 import com.github.clagomess.pirilampo.core.dto.FeatureMetadataDto;
@@ -8,18 +10,13 @@ import com.github.clagomess.pirilampo.core.enums.DiffEnum;
 import com.github.clagomess.pirilampo.core.parsers.GherkinDocumentParser;
 import com.github.clagomess.pirilampo.core.parsers.ImageParser;
 import com.github.clagomess.pirilampo.core.parsers.MenuParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -123,7 +120,7 @@ public class FolderToHTMLCompiler extends Compiler {
     public void build() throws Exception {
         MenuParser menuParser = new MenuParser(parameters);
 
-        final List<File> arquivos = listFolder(parameters.getProjectSource());
+        Set<File> arquivos = listFolder(parameters.getProjectSource());
         if(arquivos.isEmpty()) return;
 
         try (

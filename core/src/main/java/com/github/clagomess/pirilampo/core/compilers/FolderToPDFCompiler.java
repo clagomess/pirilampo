@@ -9,8 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -18,7 +18,7 @@ public class FolderToPDFCompiler extends Compiler {
     private final ParametersDto parameters;
 
     public void build() throws Exception {
-        List<File> arquivos = listFolder(parameters.getProjectSource());
+        Set<File> arquivos = listFolder(parameters.getProjectSource());
         if(arquivos.isEmpty()) return;
 
         File outArtifact = getOutArtifact(parameters);

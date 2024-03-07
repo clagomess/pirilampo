@@ -7,7 +7,10 @@ import org.apache.commons.io.input.BOMInputStream;
 import java.io.*;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -23,16 +26,15 @@ public abstract class Compiler {
         return matcher.find() ? matcher.group(0) : null;
     }
 
-    protected List<File> listFolder(File curDir) throws Exception {
-        // @TODO: maibe ordered?
-        List<File> buffer = new LinkedList<>();
+    protected Set<File> listFolder(File curDir) throws Exception {
+        Set<File> buffer = new TreeSet<>();
 
         listFolder(buffer, curDir);
 
         return buffer;
     }
 
-    private void listFolder(List<File> buffer, File curDir) throws Exception {
+    private void listFolder(Set<File> buffer, File curDir) throws Exception {
         File[] filesList = curDir.listFiles();
         if(filesList == null) throw new Exception("*.features not found");
 
