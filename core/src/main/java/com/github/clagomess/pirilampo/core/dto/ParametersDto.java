@@ -11,6 +11,7 @@ import org.apache.commons.lang.StringUtils;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.regex.Pattern;
 
 @Data
 @NoArgsConstructor
@@ -40,8 +41,15 @@ public class ParametersDto {
         if(layoutPdf == null) throw ParametersException.required("Layout PDF");
         if(htmlPanelToggle == null) throw ParametersException.required("HTML Panel Toggle");
 
-        //@TODO: menuColor
-        //@TODO: menuTextColor
+        if(menuColor == null) throw ParametersException.required("Menu Color");
+        if(!Pattern.compile("^#[A-Fa-f0-9]{6}$").matcher(menuColor).find()){
+            throw new ParametersException("Option <Menu Color> must be a valid hex color");
+        }
+
+        if(menuTextColor == null) throw ParametersException.required("Menu Text Color");
+        if(!Pattern.compile("^#[A-Fa-f0-9]{6}$").matcher(menuTextColor).find()){
+            throw new ParametersException("Option <Menu Text Color> must be a valid hex color");
+        }
 
         if(compilationType == null) throw ParametersException.required("Compilation Type");
         if(compilationArtifact == null) throw ParametersException.required("Compilation Artifact");
