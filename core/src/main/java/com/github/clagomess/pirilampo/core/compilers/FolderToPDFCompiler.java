@@ -54,9 +54,20 @@ public class FolderToPDFCompiler extends Compiler {
                     ));
                     out.print("</h1>");
 
-                    new GherkinDocumentParser(parameters, feature).build(out);
+                    GherkinDocumentParser parser = new GherkinDocumentParser(parameters, feature);
+                    parser.build(out);
 
                     out.print("<span style=\"page-break-after: always\"></span>");
+
+                    if(!parser.getPaginaHtmlAnexo().isEmpty()){
+                        for(File html : parser.getPaginaHtmlAnexo()){
+                            log.info("- appending: {}", html);
+                            out.print(String.format("<h1>%s</h1>", html.getName()));
+                            writeFileToOut(html, out);
+                            out.print("<span style=\"page-break-after: always\"></span>");
+                        }
+                    }
+
                     out.print("</body></html>");
                 } catch (Throwable e){
                     bufferHtml.delete();
