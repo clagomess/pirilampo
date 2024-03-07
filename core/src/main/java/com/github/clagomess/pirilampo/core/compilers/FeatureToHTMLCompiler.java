@@ -7,12 +7,19 @@ import com.github.clagomess.pirilampo.core.parsers.GherkinDocumentParser;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 
+import static com.github.clagomess.pirilampo.core.enums.CompilationArtifactEnum.HTML;
+import static com.github.clagomess.pirilampo.core.enums.CompilationTypeEnum.FEATURE;
+
 public class FeatureToHTMLCompiler extends Compiler {
     private final ParametersDto parameters;
     private final File feature;
     private final FeatureMetadataDto featureMetadataDto;
 
     public FeatureToHTMLCompiler(ParametersDto parameters) {
+        if(parameters.getCompilationType() != FEATURE || parameters.getCompilationArtifact() != HTML){
+            throw new RuntimeException("Wrong compilation parameters");
+        }
+
         this.parameters = parameters;
         this.feature = parameters.getProjectSource();
         this.featureMetadataDto = getFeatureMetadata(parameters, feature);

@@ -3,7 +3,6 @@ package com.github.clagomess.pirilampo.core.compilers;
 import com.github.clagomess.pirilampo.core.dto.ParametersDto;
 import com.github.clagomess.pirilampo.core.parsers.GherkinDocumentParser;
 import com.github.clagomess.pirilampo.core.parsers.PdfParser;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.*;
@@ -12,10 +11,20 @@ import java.nio.file.Files;
 import java.util.Objects;
 import java.util.Set;
 
+import static com.github.clagomess.pirilampo.core.enums.CompilationArtifactEnum.PDF;
+import static com.github.clagomess.pirilampo.core.enums.CompilationTypeEnum.FOLDER;
+
 @Slf4j
-@RequiredArgsConstructor
 public class FolderToPDFCompiler extends Compiler {
     private final ParametersDto parameters;
+
+    public FolderToPDFCompiler(ParametersDto parameters) {
+        if(parameters.getCompilationType() != FOLDER || parameters.getCompilationArtifact() != PDF){
+            throw new RuntimeException("Wrong compilation parameters");
+        }
+
+        this.parameters = parameters;
+    }
 
     public void build() throws Exception {
         Set<File> arquivos = listFolder(parameters.getProjectSource());
@@ -74,7 +83,7 @@ public class FolderToPDFCompiler extends Compiler {
                     throw e;
                 } finally {
                     if(bufferHtml.exists()){
-                        pdfParser.addFeatureHTML(feature, Files.newInputStream(bufferHtml.toPath()));
+                        pdfParser.addFeatureHTML(feature, Files.newInputStream(bufferHtml.toPath())); //@TODO: not closeable
                     }
 
                     bufferHtml.delete();

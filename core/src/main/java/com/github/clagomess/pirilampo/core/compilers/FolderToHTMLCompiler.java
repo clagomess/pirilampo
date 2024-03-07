@@ -10,7 +10,6 @@ import com.github.clagomess.pirilampo.core.enums.DiffEnum;
 import com.github.clagomess.pirilampo.core.parsers.GherkinDocumentParser;
 import com.github.clagomess.pirilampo.core.parsers.ImageParser;
 import com.github.clagomess.pirilampo.core.parsers.MenuParser;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 
@@ -19,8 +18,11 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.github.clagomess.pirilampo.core.enums.CompilationArtifactEnum.HTML;
+import static com.github.clagomess.pirilampo.core.enums.CompilationTypeEnum.FOLDER;
+import static com.github.clagomess.pirilampo.core.enums.CompilationTypeEnum.FOLDER_DIFF;
+
 @Slf4j
-@RequiredArgsConstructor
 public class FolderToHTMLCompiler extends Compiler {
     private final ImageParser imageParser = new ImageParser();
     private final ParametersDto parameters;
@@ -29,6 +31,16 @@ public class FolderToHTMLCompiler extends Compiler {
 
     public static final String HTML_OPEN_TEMPLATE = "<script type=\"text/ng-template\" id=\"%s\">";
     public static final String HTML_CLOSE_TEMPLATE = "</script>\n";
+
+    public FolderToHTMLCompiler(ParametersDto parameters) {
+        if(!Arrays.asList(FOLDER, FOLDER_DIFF).contains(parameters.getCompilationType()) ||
+                parameters.getCompilationArtifact() != HTML
+        ){
+            throw new RuntimeException("Wrong compilation parameters");
+        }
+
+        this.parameters = parameters;
+    }
 
     protected DiffEnum diffMaster(FeatureMetadataDto featureMetadataDto, File featureBranch, PrintWriter out) throws Exception {
         if(parameters.getProjectMasterSource() == null) return DiffEnum.NOT_COMPARED;

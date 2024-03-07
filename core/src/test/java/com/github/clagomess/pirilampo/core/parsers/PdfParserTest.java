@@ -1,13 +1,13 @@
 package com.github.clagomess.pirilampo.core.parsers;
 
-import com.github.clagomess.pirilampo.core.enums.LayoutPdfEnum;
-import com.github.clagomess.pirilampo.core.parsers.PdfParser;
+import com.github.clagomess.pirilampo.core.dto.ParametersDto;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.nio.file.Files;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -18,16 +18,21 @@ public class PdfParserTest {
         File target = new File("target/ParsePdfTest");
         if(!target.isDirectory()) assertTrue(target.mkdir());
 
+        File sourceFile = new File(getClass().getResource("FeatureToPDFCompilerTest/expected-build.html").getFile());
         File targetFile = new File(target, "result.pdf");
 
         try (
                 FileOutputStream fos = new FileOutputStream(targetFile);
-                InputStream html = getClass().getResourceAsStream("FeatureToPDFCompilerTest/expected-build.html");
+                InputStream html = Files.newInputStream(sourceFile.toPath());
                 InputStream css = Thread.currentThread().getContextClassLoader()
                         .getResource("htmlTemplate/dist/feature-pdf.min.css")
                         .openStream();
         ){
-            // new PdfParser().build(fos, html, css, LayoutPdfEnum.LANDSCAPE); @TODO: fix
+            PdfParser pdfParser = new PdfParser(new ParametersDto(), css);
+            pdfParser.initDocument(fos);
+            pdfParser.addFeatureHTML(sourceFile, html);
+            pdfParser.closeDocument();
+
             assertTrue(targetFile.isFile());
         }
     }

@@ -12,6 +12,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Objects;
 
+import static com.github.clagomess.pirilampo.core.enums.CompilationArtifactEnum.PDF;
+import static com.github.clagomess.pirilampo.core.enums.CompilationTypeEnum.FEATURE;
+
 @Slf4j
 @RequiredArgsConstructor
 public class FeatureToPDFCompiler extends Compiler {
@@ -20,6 +23,10 @@ public class FeatureToPDFCompiler extends Compiler {
     private final FeatureMetadataDto featureMetadataDto;
 
     public FeatureToPDFCompiler(ParametersDto parameters) {
+        if(parameters.getCompilationType() != FEATURE || parameters.getCompilationArtifact() != PDF){
+            throw new RuntimeException("Wrong compilation parameters");
+        }
+
         this.parameters = parameters;
         this.feature = parameters.getProjectSource();
         this.featureMetadataDto = getFeatureMetadata(parameters, feature);
