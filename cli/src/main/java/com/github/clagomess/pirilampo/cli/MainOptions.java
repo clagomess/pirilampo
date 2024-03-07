@@ -183,12 +183,11 @@ public class MainOptions {
             parameters.validate();
 
             return parameters;
-        } catch (ParseException | ParametersException e ) {
+        } catch (ParseException | ParametersException e) {
             log.error(e.getMessage());
+            new HelpFormatter().printHelp("Pirilampo", options);
         } catch (Throwable e) {
             log.error(log.getName(), e);
-        } finally {
-            new HelpFormatter().printHelp("Pirilampo", options);
         }
 
         System.exit(1);

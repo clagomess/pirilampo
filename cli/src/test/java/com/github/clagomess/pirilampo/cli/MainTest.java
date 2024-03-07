@@ -1,69 +1,52 @@
 package com.github.clagomess.pirilampo.cli;
 
-import com.github.clagomess.pirilampo.cli.Main;
+import com.ginsberg.junit.exit.ExpectSystemExitWithStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
-import java.io.File;
-import java.util.Calendar;
+import java.util.LinkedList;
+import java.util.List;
 
 @Slf4j
 public class MainTest {
-    /*
-    @Rule
-    public final ExpectedSystemExit exit = ExpectedSystemExit.none();
+    @Test
+    @ExpectSystemExitWithStatus(1)
+    public void main_options_validate(){
+        Main.main(new String[]{"-projectSource", "aaa"});
+    }
 
-    private File criarPasta(){
-        String dir = System.getProperty("java.io.tmpdir");
-        dir += File.separator;
-        dir += "pirilampo_test";
+    @ParameterizedTest
+    @CsvSource(value = {
+        "FEATURE,HTML,feature/xxx.Feature,",
+        "FEATURE,PDF,feature/xxx.Feature,",
+        "FOLDER,HTML,feature,",
+        "FOLDER_DIFF,HTML,feature,master",
+        "FOLDER,PDF,feature,",
+    })
+    @ExpectSystemExitWithStatus(0)
+    public void main_ok(
+            String compilationType,
+            String compilationArtifact,
+            String projectSource,
+            String projectMasterSource
+    ){
+        List<String> argv = new LinkedList<>();
+        argv.add("-projectSource");
+        argv.add(getClass().getResource(projectSource).getFile());
 
-        File f = new File(dir);
-
-        if (f.isDirectory() || f.mkdir()) {
-            dir += File.separator;
-            dir += (new Long(Calendar.getInstance().getTime().getTime())).toString();
-
-            f = new File(dir);
-            if(f.mkdir()){
-                pastas.add(f);
-            }
-
-            log.info("Pasta de teste: {}", f.getAbsolutePath());
+        if(projectMasterSource != null) {
+            argv.add("-projectMasterSource");
+            argv.add(getClass().getResource(projectMasterSource).getFile());
         }
 
-        return f;
+        argv.add("-compilationType");
+        argv.add(compilationType);
+
+        argv.add("-compilationArtifact");
+        argv.add(compilationArtifact);
+
+        Main.main(argv.toArray(new String[0]));
     }
-
-    @Test
-    public void testMain() throws Exception {
-        exit.expectSystemExit();
-
-        String outDir = criarPasta().getAbsolutePath();
-        Main.main(new String[]{
-                "-feature_path",
-                resourcePath + File.separator + "feature",
-                "-name",
-                "XXX",
-                "-version",
-                "1.2.3",
-                "-output",
-                outDir,
-        });
-        Assert.assertTrue((new File(outDir + File.separator + "index.html")).isFile());
-
-        outDir = criarPasta().getAbsolutePath();
-        Main.main(new String[]{
-                "-feature",
-                resourcePath + File.separator + "feature/xxx.Feature",
-                "-name",
-                "XXX",
-                "-version",
-                "1.2.3",
-                "-output",
-                criarPasta().getAbsolutePath(),
-        });
-        Assert.assertTrue((new File(outDir + File.separator + "xxx.html")).isFile());
-    }
-    */
 }

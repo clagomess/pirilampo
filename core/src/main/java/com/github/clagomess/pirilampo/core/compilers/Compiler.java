@@ -2,8 +2,6 @@ package com.github.clagomess.pirilampo.core.compilers;
 
 import com.github.clagomess.pirilampo.core.dto.FeatureMetadataDto;
 import com.github.clagomess.pirilampo.core.dto.ParametersDto;
-import com.github.clagomess.pirilampo.core.enums.CompilationArtifactEnum;
-import com.github.clagomess.pirilampo.core.enums.CompilationTypeEnum;
 import org.apache.commons.io.input.BOMInputStream;
 
 import java.io.*;
@@ -12,6 +10,10 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static com.github.clagomess.pirilampo.core.enums.CompilationArtifactEnum.HTML;
+import static com.github.clagomess.pirilampo.core.enums.CompilationTypeEnum.FOLDER;
+import static com.github.clagomess.pirilampo.core.enums.CompilationTypeEnum.FOLDER_DIFF;
 
 public abstract class Compiler {
     public String getFeatureExtension(File f){
@@ -64,7 +66,7 @@ public abstract class Compiler {
     }
 
     protected File getOutArtifact(ParametersDto parameters){
-        if(parameters.getCompilationType() == CompilationTypeEnum.FOLDER){
+        if(Arrays.asList(FOLDER, FOLDER_DIFF).contains(parameters.getCompilationType())){
             File targetDir = parameters.getProjectTarget() != null ?
                     new File(parameters.getProjectTarget(), "html") :
                     new File(parameters.getProjectSource().getParent(), "html");
@@ -73,12 +75,12 @@ public abstract class Compiler {
                 throw new RuntimeException(String.format("Failed to create dir: %s", targetDir.getAbsolutePath()));
             }
 
-            return new File(targetDir, parameters.getCompilationArtifact() == CompilationArtifactEnum.HTML ? "index.html" : "index.pdf");
+            return new File(targetDir, parameters.getCompilationArtifact() == HTML ? "index.html" : "index.pdf");
         }else{
             String filename = String.format(
                     "%s.%s",
                     getFeatureMetadata(parameters, parameters.getProjectSource()).getName(),
-                    parameters.getCompilationArtifact() == CompilationArtifactEnum.HTML ? "html" : "pdf"
+                    parameters.getCompilationArtifact() == HTML ? "html" : "pdf"
             );
 
             File targetDir = parameters.getProjectTarget() != null ?

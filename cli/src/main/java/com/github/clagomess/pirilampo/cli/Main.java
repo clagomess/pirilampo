@@ -1,72 +1,56 @@
 package com.github.clagomess.pirilampo.cli;
 
+import com.github.clagomess.pirilampo.core.compilers.FeatureToHTMLCompiler;
+import com.github.clagomess.pirilampo.core.compilers.FeatureToPDFCompiler;
+import com.github.clagomess.pirilampo.core.compilers.FolderToHTMLCompiler;
+import com.github.clagomess.pirilampo.core.compilers.FolderToPDFCompiler;
+import com.github.clagomess.pirilampo.core.dto.ParametersDto;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.Arrays;
+
+import static com.github.clagomess.pirilampo.core.enums.CompilationArtifactEnum.HTML;
+import static com.github.clagomess.pirilampo.core.enums.CompilationArtifactEnum.PDF;
+import static com.github.clagomess.pirilampo.core.enums.CompilationTypeEnum.*;
 
 @Slf4j
 public class Main {
-    /*
-    public static void main(String[] args) throws Exception {
-        Main main = new Main();
-        log.info("Pirilampo - Ver.: {}", main.getVersion());
+    private static final MainOptions mainOptions = new MainOptions();
 
-        if(args.length > 0){
-            CommandLine cmd = consoleOptions(args);
-            Compilador compilador = new Compilador();
-
-            if(cmd.getOptionValue("feature") == null && cmd.getOptionValue("feature_path") == null){
-                log.warn("É necessário informar {feature} ou {feature_path}");
-                System.exit(1);
-            }
-
-            if(cmd.getOptionValue("feature") != null){
-                compilador.compilarFeature(new Parametro(cmd));
-                System.exit(0);
-            }
-
-            if(cmd.getOptionValue("feature_path") != null){
-                compilador.compilarPasta(new Parametro(cmd));
-                System.exit(0);
-            }
-        }else{
-            MainUi.launch(MainUi.class);
-        }
-    }
-
-    private static CommandLine consoleOptions(String[] args){
-        Options options = new Options();
-        Option option;
-
-        options.addOption(new Option("feature", true, "Arquivo *.feature"));
-        options.addOption(new Option("feature_path", true, "Diretório contendo arquivos *.feature"));
-        options.addOption(new Option("feature_path_master", true, "Diretório contendo arquivos *.feature master"));
-        options.addOption(new Option("output", true, "Diretório de saída"));
-
-        option = new Option("name", true, "Nome do projeto");
-        option.setRequired(true);
-        options.addOption(option);
-
-        option = new Option("version", true, "Versão");
-        option.setRequired(true);
-        options.addOption(option);
-
-        CommandLineParser parser = new DefaultParser();
-        HelpFormatter formatter = new HelpFormatter();
-        CommandLine cmd = null;
+    public static void main(String[] args) {
+        log.info("Pirilampo - Ver.: {}", Main.class.getPackage().getImplementationVersion());
 
         try {
-            cmd = parser.parse(options, args);
-        } catch (ParseException e) {
-            log.info(e.getMessage());
-            formatter.printHelp("Pirilampo", options);
+            ParametersDto parameters = mainOptions.getArgs(args);
 
+            if (parameters.getCompilationType() == FEATURE &&
+                    parameters.getCompilationArtifact() == HTML
+            ) {
+                new FeatureToHTMLCompiler(parameters).build();
+            }
+
+            if (parameters.getCompilationType() == FEATURE &&
+                    parameters.getCompilationArtifact() == PDF
+            ) {
+                new FeatureToPDFCompiler(parameters).build();
+            }
+
+            if (Arrays.asList(FOLDER, FOLDER_DIFF).contains(parameters.getCompilationType()) &&
+                    parameters.getCompilationArtifact() == HTML
+            ) {
+                new FolderToHTMLCompiler(parameters).build();
+            }
+
+            if (parameters.getCompilationType() == FOLDER &&
+                    parameters.getCompilationArtifact() == PDF
+            ) {
+                new FolderToPDFCompiler(parameters).build();
+            }
+
+            System.exit(0);
+        } catch (Throwable e) {
+            log.error(log.getName(), e);
             System.exit(1);
         }
-
-        return cmd;
     }
-
-    private synchronized String getVersion(){
-        return getClass().getPackage().getImplementationVersion();
-    }
-    */
 }
