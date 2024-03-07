@@ -1,6 +1,5 @@
 package com.github.clagomess.pirilampo.core.parsers;
 
-
 import com.github.clagomess.pirilampo.core.compilers.Compiler;
 import com.github.clagomess.pirilampo.core.dto.ParametersDto;
 import lombok.extern.slf4j.Slf4j;

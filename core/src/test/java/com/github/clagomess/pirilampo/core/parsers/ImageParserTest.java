@@ -29,5 +29,7 @@ public class ImageParserTest extends Common {
         parameters.setProjectSource(featureFolder);
 
         assertEquals(expected, imageParser.parse(parameters, featureFile, filename));
+
+        //@TODO: check master
     }
 }

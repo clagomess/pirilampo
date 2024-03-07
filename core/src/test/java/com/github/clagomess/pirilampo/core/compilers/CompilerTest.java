@@ -19,8 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
 public class CompilerTest extends Common {
-    private static final class InheritorCompiler extends Compiler {}
-    private final InheritorCompiler compiler = new InheritorCompiler();
+    private final Compiler compiler = new Compiler(){};
 
     @Test
     public void listFolder() throws Exception {
