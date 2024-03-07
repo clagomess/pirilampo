@@ -5,11 +5,14 @@ import com.github.clagomess.pirilampo.core.enums.CompilationArtifactEnum;
 import com.github.clagomess.pirilampo.core.enums.CompilationTypeEnum;
 import com.github.clagomess.pirilampo.core.enums.HtmlPanelToggleEnum;
 import com.github.clagomess.pirilampo.core.enums.LayoutPdfEnum;
+import com.github.clagomess.pirilampo.core.exception.ParametersException;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.cli.*;
 
 import java.io.File;
 import java.util.Arrays;
 
+@Slf4j
 public class MainOptions {
     private final ParametersDto defaultParameters = new ParametersDto();
 
@@ -177,12 +180,18 @@ public class MainOptions {
                 parameters.setProjectTarget(new File(cmd.getOptionValue(projectTarget)));
             }
 
+            parameters.validate();
+
             return parameters;
-        } catch (ParseException e) {
-            System.out.println(e.getMessage());
+        } catch (ParseException | ParametersException e ) {
+            log.error(e.getMessage());
+        } catch (Throwable e) {
+            log.error(log.getName(), e);
+        } finally {
             new HelpFormatter().printHelp("Pirilampo", options);
-            System.exit(1);
-            return null;
         }
+
+        System.exit(1);
+        return null;
     }
 }

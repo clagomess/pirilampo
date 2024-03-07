@@ -13,4 +13,10 @@ public class MainOptionsTest {
     public void getArgs(){
         mainOptions.getArgs(new String[]{"-projectLogo", "aaa"});
     }
+
+    @Test
+    @ExpectSystemExitWithStatus(1)
+    public void getArgs_trigger_validate(){
+        mainOptions.getArgs(new String[]{"-projectSource", "aaa"});
+    }
 }
