@@ -58,7 +58,7 @@ public class FeatureToPDFCompiler extends Compiler {
                                 .getResource("htmlTemplate/dist/feature-pdf.min.css"))
                                 .openStream();
         ){
-            new PdfParser().build(fos, html, css, parameters.getLayoutPdf());
+            // new PdfParser().build(fos, html, css, parameters.getLayoutPdf()); @TODO: fix
         }
 
         // @TODO: remove buffer file

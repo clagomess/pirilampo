@@ -21,48 +21,61 @@ public class FolderToPDFCompiler extends Compiler {
         List<File> arquivos = listFolder(parameters.getProjectSource());
         if(arquivos.isEmpty()) return;
 
-        File bufferHtml = File.createTempFile("pirilampo-buffer-", ".html");
-        log.info("Created buffer file: {}", bufferHtml);
+        File outArtifact = getOutArtifact(parameters);
 
         try (
-                FileOutputStream fos = new FileOutputStream(bufferHtml);
-                BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos, StandardCharsets.UTF_8));
-                PrintWriter out = new PrintWriter(bw);
-        ){
-            out.print("<!DOCTYPE html><html lang=\"en\"><body>");
-
-            for (File feature : arquivos) {
-                out.print("<h1 class=\"page-header\">");
-                out.print(String.format(
-                        "%s <small>%s <em>%s</em></small>",
-                        parameters.getProjectName(),
-                        getFeatureMetadata(parameters, feature).getName(),
-                        parameters.getProjectVersion()
-                ));
-                out.print("</h1>");
-
-                new GherkinDocumentParser(parameters, feature).build(out);
-
-                out.print("<span style=\"page-break-after: always\"></span>");
-            }
-
-            out.print("</body></html>");
-        }
-
-        // @TODO: maibe a pipe with these streams?
-
-        try (
-                FileOutputStream fos = new FileOutputStream(getOutArtifact(parameters));
-                InputStream html = Files.newInputStream(bufferHtml.toPath());
+                FileOutputStream fosPDF = new FileOutputStream(outArtifact);
                 InputStream css = Objects.requireNonNull(Thread.currentThread().getContextClassLoader()
                                 .getResource("htmlTemplate/dist/feature-pdf.min.css"))
                         .openStream();
         ){
-            new PdfParser().build(fos, html, css, parameters.getLayoutPdf());
+            parameters.setEmbedImages(false);
+
+            PdfParser pdfParser = new PdfParser(parameters, css);
+            pdfParser.initDocument(fosPDF);
+
+            for (File feature : arquivos) {
+                File bufferHtml = File.createTempFile("pirilampo-buffer-", ".html");
+                log.info("Created buffer file: {}", bufferHtml);
+
+                try (
+                        FileOutputStream fosHTML = new FileOutputStream(bufferHtml);
+                        BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fosHTML, StandardCharsets.UTF_8));
+                        PrintWriter out = new PrintWriter(bw);
+                ) {
+                    // @TODO: improve titles for pdf index
+                    out.print("<!DOCTYPE html><html lang=\"en\"><body>");
+                    out.print("<h1 class=\"page-header\">");
+                    out.print(String.format(
+                            "%s <small>%s <em>%s</em></small>",
+                            parameters.getProjectName(),
+                            getFeatureMetadata(parameters, feature).getName(),
+                            parameters.getProjectVersion()
+                    ));
+                    out.print("</h1>");
+
+                    new GherkinDocumentParser(parameters, feature).build(out);
+
+                    out.print("<span style=\"page-break-after: always\"></span>");
+                    out.print("</body></html>");
+                } catch (Throwable e){
+                    bufferHtml.delete();
+                    throw e;
+                } finally {
+                    if(bufferHtml.exists()){
+                        pdfParser.addFeatureHTML(Files.newInputStream(bufferHtml.toPath()));
+                    }
+
+                    bufferHtml.delete();
+                }
+            }
+
+            pdfParser.closeDocument();
+        } catch (Throwable e){
+            outArtifact.delete();
+            throw e;
         }
 
-        // @TODO: remove buffer file
-        // @TODO: impl. PDF Index
         // @TODO: add done and took
     }
 }

@@ -24,6 +24,7 @@ public abstract class Compiler {
     }
 
     protected List<File> listFolder(File curDir) throws Exception {
+        // @TODO: maibe ordered?
         List<File> buffer = new LinkedList<>();
 
         listFolder(buffer, curDir);
