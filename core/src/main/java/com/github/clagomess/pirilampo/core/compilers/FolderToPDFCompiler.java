@@ -63,7 +63,7 @@ public class FolderToPDFCompiler extends Compiler {
                     throw e;
                 } finally {
                     if(bufferHtml.exists()){
-                        pdfParser.addFeatureHTML(Files.newInputStream(bufferHtml.toPath()));
+                        pdfParser.addFeatureHTML(feature, Files.newInputStream(bufferHtml.toPath()));
                     }
 
                     bufferHtml.delete();
