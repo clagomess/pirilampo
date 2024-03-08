@@ -26,7 +26,7 @@ import static com.github.clagomess.pirilampo.core.enums.CompilationTypeEnum.FOLD
 public class FolderToHTMLCompiler extends Compiler {
     private final ImageParser imageParser = new ImageParser();
     private final ParametersDto parameters;
-    private final Map<String, FeatureIndexDto> indice = new HashMap<>();
+    protected final Map<String, FeatureIndexDto> index = new HashMap<>();
     private List<FeatureMasterDto> masterFiles = null;
 
     public static final String HTML_OPEN_TEMPLATE = "<script type=\"text/ng-template\" id=\"%s\">";
@@ -125,7 +125,7 @@ public class FolderToHTMLCompiler extends Compiler {
 
     protected void buildIndex(PrintWriter out) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
-        String json = mapper.writeValueAsString(indice);
+        String json = mapper.writeValueAsString(index);
         out.println(String.format("var indice = %s;", json)); //@TODO: melhorar performance
     }
 
@@ -195,7 +195,7 @@ public class FolderToHTMLCompiler extends Compiler {
                 gherkinDocumentParser.build(out);
                 out.print(HTML_CLOSE_TEMPLATE);
 
-                indice.put(featureMetadataDto.getId(), new FeatureIndexDto(
+                index.put(featureMetadataDto.getId(), new FeatureIndexDto(
                         gherkinDocumentParser.getFeatureTitulo(),
                         gherkinDocumentParser.getFeatureIndexValues()
                 ));
