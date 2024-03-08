@@ -1,7 +1,5 @@
 package com.github.clagomess.pirilampo.core.compilers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.clagomess.pirilampo.core.dto.FeatureIndexDto;
 import com.github.clagomess.pirilampo.core.dto.FeatureMasterDto;
 import com.github.clagomess.pirilampo.core.dto.FeatureMetadataDto;
@@ -124,10 +122,10 @@ public class FolderToHTMLCompiler extends Compiler {
         out.print(HTML_CLOSE_TEMPLATE);
     }
 
-    protected void buildIndex(PrintWriter out) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-        String json = mapper.writeValueAsString(index);
-        out.println(String.format("var indice = %s;", json)); //@TODO: melhorar performance
+    protected void buildIndex(PrintWriter out) throws IOException {
+        out.print("var indice = ");
+        mapper.writeValue(out, index);
+        out.println(";");
     }
 
     public void build() throws Exception {

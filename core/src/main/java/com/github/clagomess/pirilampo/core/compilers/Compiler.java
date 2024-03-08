@@ -1,5 +1,7 @@
 package com.github.clagomess.pirilampo.core.compilers;
 
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.clagomess.pirilampo.core.dto.FeatureMetadataDto;
 import com.github.clagomess.pirilampo.core.dto.ParametersDto;
 import lombok.Getter;
@@ -20,6 +22,10 @@ import static com.github.clagomess.pirilampo.core.enums.CompilationTypeEnum.FOLD
 
 @Slf4j
 public abstract class Compiler {
+    protected final ObjectMapper mapper = new ObjectMapper() {{
+        disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
+    }};
+
     public String getFeatureExtension(File f){
         Matcher matcher = Pattern.compile("\\.feature$", Pattern.CASE_INSENSITIVE)
                 .matcher(f.getName());
