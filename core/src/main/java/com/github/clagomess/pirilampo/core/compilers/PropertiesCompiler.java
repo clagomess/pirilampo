@@ -1,73 +1,106 @@
 package com.github.clagomess.pirilampo.core.compilers;
 
-
 import com.github.clagomess.pirilampo.core.dto.ParametersDto;
+import com.github.clagomess.pirilampo.core.enums.CompilationArtifactEnum;
+import com.github.clagomess.pirilampo.core.enums.CompilationTypeEnum;
+import com.github.clagomess.pirilampo.core.enums.HtmlPanelToggleEnum;
+import com.github.clagomess.pirilampo.core.enums.LayoutPdfEnum;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
 import java.util.Properties;
 
 @Slf4j
-public class PropertiesCompiler {
-    private static final String FILENAME = "/../html/config.properties";
+public class PropertiesCompiler extends Compiler {
+    protected static final String FILENAME = "config.properties";
 
-    public static ParametersDto getData(String sourcePath){
-        Properties prop = new Properties();
-        InputStream input = null;
-
-        if((new File(sourcePath + FILENAME)).isFile()) {
-            try {
-                input = new FileInputStream(sourcePath + FILENAME);
-
-                prop.load(input);
-            } catch (IOException ex) {
-                log.warn(log.getName(), ex);
-            } finally {
-                if (input != null) {
-                    try {
-                        input.close();
-                    } catch (IOException e) {
-                        log.warn(log.getName(), e);
-                    }
-                }
-            }
+    protected File getSourceDir(ParametersDto parameters){
+        if(parameters.getProjectSource().isDirectory()){
+            return parameters.getProjectSource();
+        } else {
+            return parameters.getProjectSource().getParentFile();
         }
-
-        return null; //new ParametersDto(prop); @TODO: check this
     }
 
-    public static void setData(ParametersDto parameters){
-        File file = new File(parameters.getProjectSource() + FILENAME);
+    public void loadData(ParametersDto parameters){
+        File file = new File(getSourceDir(parameters), FILENAME);
+        if(!file.isFile()) return;
 
-        if(!file.isFile()){
-            try {
-                if(file.createNewFile()){
-                    log.info("Arquivo de configuração criado em: {}", file.getAbsolutePath());
-                }
-            } catch (IOException e) {
-                log.error(e.getMessage());
+        try (InputStream input = Files.newInputStream(file.toPath())){
+            Properties prop = new Properties();
+            prop.load(input);
+
+            parameters.setProjectName(prop.getProperty("projectName", parameters.getProjectName()));
+            parameters.setProjectVersion(prop.getProperty("projectVersion", parameters.getProjectVersion()));
+
+            if(prop.containsKey("projectLogo")){
+                parameters.setProjectLogo(StringUtils.isNotBlank(prop.getProperty("projectLogo")) ?
+                        new File(prop.getProperty("projectLogo")) :
+                        null
+                );
             }
-        }
 
-        try (OutputStream output = new FileOutputStream(parameters.getProjectSource() + FILENAME)){
-            Properties prop = parametroToProperties(parameters);
+            parameters.setLayoutPdf(LayoutPdfEnum.valueOf(prop.getProperty(
+                    "layoutPdf",
+                    parameters.getLayoutPdf().name()
+            )));
+
+            parameters.setHtmlPanelToggle(HtmlPanelToggleEnum.valueOf(prop.getProperty(
+                    "htmlPanelToggle",
+                    parameters.getHtmlPanelToggle().name()
+            )));
+
+            parameters.setMenuColor(prop.getProperty("menuColor", parameters.getMenuColor()));
+            parameters.setMenuTextColor(prop.getProperty("menuTextColor", parameters.getMenuTextColor()));
+
+            parameters.setEmbedImages(Boolean.parseBoolean(prop.getProperty(
+                    "embedImages",
+                    String.valueOf(parameters.isEmbedImages())
+            )));
+
+            parameters.setCompilationType(CompilationTypeEnum.valueOf(prop.getProperty(
+                    "compilationType",
+                    parameters.getCompilationType().name()
+            )));
+
+            parameters.setCompilationArtifact(CompilationArtifactEnum.valueOf(prop.getProperty(
+                    "compilationArtifact",
+                    parameters.getCompilationArtifact().name()
+            )));
+
+        } catch (IOException e) {
+            log.error(log.getName(), e);
+        }
+    }
+
+    public void setData(ParametersDto parameters){
+        File file = new File(getSourceDir(parameters), FILENAME);
+
+        try (OutputStream output = Files.newOutputStream(file.toPath())){
+            Properties prop = new Properties();
+            prop.setProperty("projectName", parameters.getProjectName());
+            prop.setProperty("projectVersion", parameters.getProjectVersion());
+            prop.setProperty("projectLogo",
+                    parameters.getProjectLogo() != null ?
+                            parameters.getProjectLogo().getAbsolutePath() :
+                            ""
+            );
+            prop.setProperty("layoutPdf", parameters.getLayoutPdf().name());
+            prop.setProperty("htmlPanelToggle", parameters.getHtmlPanelToggle().name());
+            prop.setProperty("menuColor", parameters.getMenuColor());
+            prop.setProperty("menuTextColor", parameters.getMenuTextColor());
+            prop.setProperty("embedImages", String.valueOf(parameters.isEmbedImages()));
+            prop.setProperty("compilationType", parameters.getCompilationType().name());
+            prop.setProperty("compilationArtifact", parameters.getCompilationArtifact().name());
+
             prop.store(output, null);
         } catch (IOException ex) {
             log.error(log.getName(), ex);
         }
-    }
-
-    public static Properties parametroToProperties(ParametersDto parameters){
-        Properties prop = new Properties();
-        /* @TODO: check
-        prop.setProperty("txtNome", parameters.getTxtNome());
-        prop.setProperty("txtVersao", parameters.getTxtVersao());
-        prop.setProperty("txtLogoSrc", parameters.getTxtLogoSrc() != null ? parameters.getTxtLogoSrc() : "");
-        prop.setProperty("clrMenu", parameters.getClrMenu());
-        prop.setProperty("clrTextoMenu", parameters.getClrTextoMenu());
-        prop.setProperty("sitEmbedarImagens", parameters.getSitEmbedarImagens().toString());
-        prop.setProperty("tipPainelFechado", parameters.getTipPainel().toString());
-        */
-        return prop;
     }
 }
