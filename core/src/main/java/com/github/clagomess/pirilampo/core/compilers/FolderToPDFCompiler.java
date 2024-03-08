@@ -27,6 +27,8 @@ public class FolderToPDFCompiler extends Compiler {
     }
 
     public void build() throws Exception {
+        startTimer();
+
         Set<File> arquivos = listFolder(parameters.getProjectSource());
         if(arquivos.isEmpty()) return;
 
@@ -96,7 +98,6 @@ public class FolderToPDFCompiler extends Compiler {
             throw e;
         }
 
-        // @TODO: add done and took
-        // @TODO: attach HTML at END
+        stopTimer();
     }
 }

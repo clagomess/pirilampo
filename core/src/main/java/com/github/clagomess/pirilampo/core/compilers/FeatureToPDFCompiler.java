@@ -33,6 +33,8 @@ public class FeatureToPDFCompiler extends Compiler {
     }
 
     public void build() throws Exception {
+        startTimer();
+
         File bufferHtml = File.createTempFile("pirilampo-buffer-", ".html");
         log.info("Created buffer file: {}", bufferHtml);
         File outArtifact = getOutArtifact(parameters);
@@ -83,6 +85,6 @@ public class FeatureToPDFCompiler extends Compiler {
             throw e;
         }
 
-        // @TODO: add done and took
+        stopTimer();
     }
 }

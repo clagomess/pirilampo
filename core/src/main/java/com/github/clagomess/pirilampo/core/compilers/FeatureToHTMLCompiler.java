@@ -26,6 +26,7 @@ public class FeatureToHTMLCompiler extends Compiler {
     }
 
     public void build() throws Exception {
+        startTimer();
         GherkinDocumentParser gherkinDocumentParser = new GherkinDocumentParser(parameters, feature);
 
         try (
@@ -55,6 +56,6 @@ public class FeatureToHTMLCompiler extends Compiler {
             out.print("</div></div></div></body></html>");
         }
 
-        // @TODO: add done and took
+        stopTimer();
     }
 }

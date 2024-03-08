@@ -2,11 +2,13 @@ package com.github.clagomess.pirilampo.core.compilers;
 
 import com.github.clagomess.pirilampo.core.dto.FeatureMetadataDto;
 import com.github.clagomess.pirilampo.core.dto.ParametersDto;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.input.BOMInputStream;
 
 import java.io.*;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -18,6 +20,7 @@ import static com.github.clagomess.pirilampo.core.enums.CompilationArtifactEnum.
 import static com.github.clagomess.pirilampo.core.enums.CompilationTypeEnum.FOLDER;
 import static com.github.clagomess.pirilampo.core.enums.CompilationTypeEnum.FOLDER_DIFF;
 
+@Slf4j
 public abstract class Compiler {
     public String getFeatureExtension(File f){
         Matcher matcher = Pattern.compile("\\.feature$", Pattern.CASE_INSENSITIVE)
@@ -145,5 +148,14 @@ public abstract class Compiler {
         }
 
         return null;
+    }
+
+    private long initTimer;
+    protected void startTimer(){
+        initTimer = Instant.now().toEpochMilli();
+    }
+
+    protected void stopTimer(){
+        log.info("Compilation time: {}ms", Instant.now().toEpochMilli() - initTimer);
     }
 }

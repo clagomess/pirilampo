@@ -130,8 +130,9 @@ public class FolderToHTMLCompiler extends Compiler {
     }
 
     public void build() throws Exception {
-        MenuParser menuParser = new MenuParser(parameters);
+        startTimer();
 
+        MenuParser menuParser = new MenuParser(parameters);
         Set<File> arquivos = listFolder(parameters.getProjectSource());
         if(arquivos.isEmpty()) return;
 
@@ -220,6 +221,6 @@ public class FolderToHTMLCompiler extends Compiler {
             out.print("</body></html>");
         }
 
-        // @TODO: add done and took
+        stopTimer();
     }
 }
