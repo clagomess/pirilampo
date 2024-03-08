@@ -71,7 +71,9 @@ public class FeatureToPDFCompiler extends Compiler {
             }
 
             if(bufferHtml.exists()){
-                pdfParser.addFeatureHTML(feature, Files.newInputStream(bufferHtml.toPath()));
+                try(InputStream html = Files.newInputStream(bufferHtml.toPath())) {
+                    pdfParser.addFeatureHTML(feature, html);
+                }
             }
 
             pdfParser.closeDocument();

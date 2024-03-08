@@ -83,7 +83,9 @@ public class FolderToPDFCompiler extends Compiler {
                 }
 
                 if(bufferHtml.exists()){
-                    pdfParser.addFeatureHTML(feature, Files.newInputStream(bufferHtml.toPath())); //@TODO: not closeable
+                    try(InputStream html = Files.newInputStream(bufferHtml.toPath())) {
+                        pdfParser.addFeatureHTML(feature, html);
+                    }
                 }
             }
 
