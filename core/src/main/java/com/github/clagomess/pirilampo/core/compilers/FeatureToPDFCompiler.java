@@ -35,8 +35,7 @@ public class FeatureToPDFCompiler extends Compiler {
     public void build() throws Exception {
         startTimer();
 
-        File bufferHtml = File.createTempFile("pirilampo-buffer-", ".html");
-        log.info("Created buffer file: {}", bufferHtml);
+        File bufferHtml = createTempFile();
         File outArtifact = getOutArtifact(parameters);
 
         try (
@@ -68,23 +67,19 @@ public class FeatureToPDFCompiler extends Compiler {
                 new GherkinDocumentParser(parameters, feature).build(out);
 
                 out.print("</body></html>");
-            } catch (Throwable e){
-                bufferHtml.delete();
-                throw e;
-            } finally {
-                if(bufferHtml.exists()){
-                    pdfParser.addFeatureHTML(feature, Files.newInputStream(bufferHtml.toPath()));
-                }
+            }
 
-                bufferHtml.delete();
+            if(bufferHtml.exists()){
+                pdfParser.addFeatureHTML(feature, Files.newInputStream(bufferHtml.toPath()));
             }
 
             pdfParser.closeDocument();
         } catch (Throwable e){
             outArtifact.delete();
+            deleteAllTempFiles();
             throw e;
+        } finally {
+            stopTimer();
         }
-
-        stopTimer();
     }
 }

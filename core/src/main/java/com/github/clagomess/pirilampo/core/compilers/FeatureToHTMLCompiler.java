@@ -29,8 +29,10 @@ public class FeatureToHTMLCompiler extends Compiler {
         startTimer();
         GherkinDocumentParser gherkinDocumentParser = new GherkinDocumentParser(parameters, feature);
 
+        File outArtifact = getOutArtifact(parameters);
+
         try (
-                FileOutputStream fos = new FileOutputStream(getOutArtifact(parameters));
+                FileOutputStream fos = new FileOutputStream(outArtifact);
                 BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos, StandardCharsets.UTF_8));
                 PrintWriter out = new PrintWriter(bw);
         ){
@@ -54,8 +56,11 @@ public class FeatureToHTMLCompiler extends Compiler {
             gherkinDocumentParser.build(out);
 
             out.print("</div></div></div></body></html>");
+        } catch (Throwable e){
+            outArtifact.delete();
+            throw e;
+        } finally {
+            stopTimer();
         }
-
-        stopTimer();
     }
 }

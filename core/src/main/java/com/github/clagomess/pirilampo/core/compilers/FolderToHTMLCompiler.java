@@ -136,8 +136,10 @@ public class FolderToHTMLCompiler extends Compiler {
         Set<File> arquivos = listFolder(parameters.getProjectSource());
         if(arquivos.isEmpty()) return;
 
+        File outArtifact = getOutArtifact(parameters);
+
         try (
-                FileOutputStream fos = new FileOutputStream(getOutArtifact(parameters));
+                FileOutputStream fos = new FileOutputStream(outArtifact);
                 BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fos, StandardCharsets.UTF_8));
                 PrintWriter out = new PrintWriter(bw);
         ){
@@ -219,8 +221,11 @@ public class FolderToHTMLCompiler extends Compiler {
             writeResourceToOut("htmlTemplate/dist/feature-pasta-angular.min.js", out);
             out.print("</script>\n");
             out.print("</body></html>");
+        } catch (Throwable e){
+            outArtifact.delete();
+            throw e;
+        } finally {
+            stopTimer();
         }
-
-        stopTimer();
     }
 }

@@ -2,25 +2,35 @@ package com.github.clagomess.pirilampo.core.compilers;
 
 import com.github.clagomess.pirilampo.core.Common;
 import com.github.clagomess.pirilampo.core.dto.ParametersDto;
-import com.github.clagomess.pirilampo.core.compilers.FolderToHTMLCompiler;
+import com.github.clagomess.pirilampo.core.exception.FeatureException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
 public class FolderToHTMLCompilerTest extends Common {
+    private final File targetFile = new File("target/FolderToHTMLCompilerTest");
+
+    @BeforeEach
+    public void setup(){
+        if(!targetFile.isDirectory()){
+            assertTrue(targetFile.mkdir());
+        }else{
+            Arrays.stream(targetFile.listFiles()).forEach(File::delete);
+        }
+    }
+
     @Test
     public void build() throws Exception {
         File logoFile = new File(Thread.currentThread()
                 .getContextClassLoader()
                 .getResource("logo_xxx.png").getFile());
-
-        File targetFile = new File("target/FolderToHTMLCompilerTest");
-        if(!targetFile.isDirectory()) assertTrue(targetFile.mkdir());
 
         ParametersDto parameters = new ParametersDto();
         parameters.setMenuColor("#666");
@@ -45,9 +55,6 @@ public class FolderToHTMLCompilerTest extends Common {
 
     @Test
     public void build_master() throws Exception {
-        File targetFile = new File("target/FolderToHTMLCompilerTest");
-        if(!targetFile.isDirectory()) assertTrue(targetFile.mkdir());
-
         ParametersDto parameters = new ParametersDto();
         parameters.setProjectSource(featureFolder);
         parameters.setProjectMasterSource(featureMasterFolder);
@@ -62,5 +69,14 @@ public class FolderToHTMLCompilerTest extends Common {
         assertTrue(htmlString.contains("YYY_MASTER_YYY"));
     }
 
-    // @TODO: impl unit for test remove buffer on error
+    @Test
+    public void checkDeletedBuffersOnError() {
+        ParametersDto parameters = new ParametersDto();
+        parameters.setProjectSource(featureErrorFolder);
+        parameters.setProjectTarget(targetFile);
+
+        assertThrowsExactly(FeatureException.class, () -> new FolderToHTMLCompiler(parameters).build());
+
+        assertFalse(new File(targetFile,"html/index.html").exists());
+    }
 }

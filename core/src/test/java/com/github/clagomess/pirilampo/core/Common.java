@@ -15,4 +15,12 @@ public abstract class Common {
     protected final File featureFile = new File(Objects.requireNonNull(Thread.currentThread()
             .getContextClassLoader()
             .getResource("feature/xxx.Feature")).getFile());
+
+    protected final File featureErrorFolder = new File(Objects.requireNonNull(Thread.currentThread()
+            .getContextClassLoader()
+            .getResource("feature_error")).getFile());
+
+    protected final File featureErrorFile = new File(Objects.requireNonNull(Thread.currentThread()
+            .getContextClassLoader()
+            .getResource("feature_error/yyy.feature")).getFile());
 }

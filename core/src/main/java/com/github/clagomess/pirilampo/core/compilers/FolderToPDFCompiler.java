@@ -46,8 +46,7 @@ public class FolderToPDFCompiler extends Compiler {
             pdfParser.initDocument(fosPDF);
 
             for (File feature : arquivos) {
-                File bufferHtml = File.createTempFile("pirilampo-buffer-", ".html");
-                log.info("Created buffer file: {}", bufferHtml);
+                File bufferHtml = createTempFile();
 
                 try (
                         FileOutputStream fosHTML = new FileOutputStream(bufferHtml);
@@ -80,24 +79,20 @@ public class FolderToPDFCompiler extends Compiler {
                     }
 
                     out.print("</body></html>");
-                } catch (Throwable e){
-                    bufferHtml.delete();
-                    throw e;
-                } finally {
-                    if(bufferHtml.exists()){
-                        pdfParser.addFeatureHTML(feature, Files.newInputStream(bufferHtml.toPath())); //@TODO: not closeable
-                    }
+                }
 
-                    bufferHtml.delete();
+                if(bufferHtml.exists()){
+                    pdfParser.addFeatureHTML(feature, Files.newInputStream(bufferHtml.toPath())); //@TODO: not closeable
                 }
             }
 
             pdfParser.closeDocument();
         } catch (Throwable e){
             outArtifact.delete();
+            deleteAllTempFiles();
             throw e;
+        } finally {
+            stopTimer();
         }
-
-        stopTimer();
     }
 }

@@ -2,6 +2,7 @@ package com.github.clagomess.pirilampo.core.compilers;
 
 import com.github.clagomess.pirilampo.core.dto.FeatureMetadataDto;
 import com.github.clagomess.pirilampo.core.dto.ParametersDto;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.input.BOMInputStream;
 
@@ -9,10 +10,7 @@ import java.io.*;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
-import java.util.Arrays;
-import java.util.LinkedHashSet;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -157,5 +155,18 @@ public abstract class Compiler {
 
     protected void stopTimer(){
         log.info("Compilation time: {}ms", Instant.now().toEpochMilli() - initTimer);
+    }
+
+    @Getter
+    private final List<File> tempFiles = new LinkedList<>();
+    protected File createTempFile() throws IOException {
+        File bufferHtml = File.createTempFile("pirilampo-buffer-", ".tmp");
+        tempFiles.add(bufferHtml);
+        log.info("Created buffer file: {}", bufferHtml);
+        return bufferHtml;
+    }
+
+    protected void deleteAllTempFiles(){
+        tempFiles.forEach(File::delete);
     }
 }
