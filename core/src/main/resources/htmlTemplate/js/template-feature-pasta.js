@@ -51,5 +51,40 @@ $('#busca').typeahead({
         suggestion: Handlebars.compile("<div><p><strong>{{name}}</strong></p>{{txt}}</div>")
     }
 }).bind('typeahead:select', function(ev, suggestion) {
-    window.location = "#/feature/" + suggestion.url + '/' + encodeURIComponent(suggestion.txt);
+    window.location = "#!/feature/" + suggestion.url + '/' + encodeURIComponent(suggestion.txt);
 });
+
+
+function createMenuItem(parent, menu){
+    let li = document.createElement('li');
+    let a = document.createElement('a');
+    a.text = menu.title;
+    a.setAttribute('href', menu.url ? '#!/feature/' + menu.url : 'javascript:;');
+
+    if(['NEW', 'DIFFERENT'].indexOf(menu.diff) !== -1){
+        let span = document.createElement('span');
+        span.className = (menu.diff == 'NEW' ? 'icon-diff-novo' : 'icon-diff-diferente');
+        a.prepend(span);
+    }
+
+    if(menu.children.length > 0) {
+        menuIdx++;
+        a.setAttribute('data-toggle', 'collapse');
+        a.setAttribute('data-target', '#menu-' + menuIdx);
+
+        let ul = document.createElement('ul');
+        ul.id = 'menu-' + menuIdx;
+        ul.className = 'collapse';
+
+        for(let item of menu.children){
+            createMenuItem(ul, item);
+        }
+
+        li.append(a);
+        li.append(ul);
+    }else{
+        li.append(a);
+    }
+
+    parent.append(li);
+}

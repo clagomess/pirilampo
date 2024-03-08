@@ -1,9 +1,6 @@
 package com.github.clagomess.pirilampo.core.compilers;
 
-import com.github.clagomess.pirilampo.core.dto.FeatureIndexDto;
-import com.github.clagomess.pirilampo.core.dto.FeatureMasterDto;
-import com.github.clagomess.pirilampo.core.dto.FeatureMetadataDto;
-import com.github.clagomess.pirilampo.core.dto.ParametersDto;
+import com.github.clagomess.pirilampo.core.dto.*;
 import com.github.clagomess.pirilampo.core.enums.DiffEnum;
 import com.github.clagomess.pirilampo.core.parsers.GherkinDocumentParser;
 import com.github.clagomess.pirilampo.core.parsers.ImageParser;
@@ -26,6 +23,7 @@ public class FolderToHTMLCompiler extends Compiler {
     private final ImageParser imageParser = new ImageParser();
     private final ParametersDto parameters;
     protected final Map<String, FeatureIndexDto> index = new HashMap<>();
+    protected final MenuParser menuParser;
     private List<FeatureMasterDto> masterFiles = null;
 
     public static final String HTML_OPEN_TEMPLATE = "<script type=\"text/ng-template\" id=\"%s\">";
@@ -39,6 +37,7 @@ public class FolderToHTMLCompiler extends Compiler {
         }
 
         this.parameters = parameters;
+        this.menuParser = new MenuParser(parameters);
     }
 
     protected DiffEnum diffMaster(FeatureMetadataDto featureMetadataDto, File featureBranch, PrintWriter out) throws Exception {
@@ -91,7 +90,7 @@ public class FolderToHTMLCompiler extends Compiler {
         return diff;
     }
 
-    protected void buildMenu(PrintWriter out){
+    protected void buildSidebar(PrintWriter out){
         out.print("<div id=\"sidebar-wrapper\">");
         out.print("<ul class=\"sidebar-nav\">");
         out.print("<li class=\"sidebar-brand\">");
@@ -108,7 +107,6 @@ public class FolderToHTMLCompiler extends Compiler {
         }
 
         out.print("</li>");
-        out.print("#HTML_MENU#"); //@TODO: vai ter que ser alimentado via javascript por causa da ordem exec
         out.print("</ul>");
         out.print("</div>");
     }
@@ -128,10 +126,26 @@ public class FolderToHTMLCompiler extends Compiler {
         out.println(";");
     }
 
+    protected void buildMenu(PrintWriter out) throws IOException {
+        out.println();
+        out.println("let menuIdx = 0;");
+
+        if(menuParser.getMenu().getChildren().isEmpty()) {
+            out.print("createMenuItem(document.getElementsByClassName('sidebar-nav')[0], ");
+            mapper.writeValue(out, menuParser.getMenu());
+            out.println(");");
+        } else {
+            for(MenuDto menu : menuParser.getMenu().getChildren()) {
+                out.print("createMenuItem(document.getElementsByClassName('sidebar-nav')[0], ");
+                mapper.writeValue(out, menu);
+                out.println(");");
+            }
+        }
+    }
+
     public void build() throws Exception {
         startTimer();
 
-        MenuParser menuParser = new MenuParser(parameters);
         Set<File> arquivos = listFolder(parameters.getProjectSource());
         if(arquivos.isEmpty()) return;
 
@@ -170,7 +184,7 @@ public class FolderToHTMLCompiler extends Compiler {
             out.print("</style>");
             out.print("</head><body>\n");
             out.print("<div id=\"wrapper\">");
-            buildMenu(out);
+            buildSidebar(out);
             writeResourceToOut("htmlTemplate/html/template-feature-pasta-content-wrapper.html", out);
             out.print("</div>");
 
@@ -215,7 +229,7 @@ public class FolderToHTMLCompiler extends Compiler {
 
             out.print("<script type=\"text/javascript\">\n");
             buildIndex(out);
-            // parseMenu.getHtml(); //@TODO: prever solução
+            buildMenu(out);
             writeResourceToOut("htmlTemplate/dist/feature-pasta.min.js", out);
             writeResourceToOut("htmlTemplate/dist/feature-pasta-angular.min.js", out);
             out.print("</script>\n");

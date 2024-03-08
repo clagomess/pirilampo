@@ -99,6 +99,24 @@ public class FolderToHTMLCompilerTest extends Common {
     }
 
     @Test
+    public void buildMenu() throws IOException {
+        ParametersDto parameters = new ParametersDto();
+        parameters.setProjectSource(featureFolder);
+        parameters.setProjectMasterSource(featureMasterFolder);
+        parameters.setProjectTarget(targetFile);
+
+        val compiler = new FolderToHTMLCompiler(parameters);
+
+        StringWriter sw = new StringWriter();
+        try (PrintWriter out = new PrintWriter(sw)){
+            compiler.buildMenu(out);
+            log.info("{}", sw);
+        }
+
+        Assertions.assertThat(sw.toString()).contains("var menu = {};");
+    }
+
+    @Test
     public void checkIsSavedProperties() throws Exception {
         ParametersDto parameters = new ParametersDto();
         parameters.setProjectSource(featureFolder);
