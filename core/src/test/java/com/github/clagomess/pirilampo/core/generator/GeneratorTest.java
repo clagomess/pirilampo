@@ -1,19 +1,32 @@
 package com.github.clagomess.pirilampo.core.generator;
 
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Arrays;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Slf4j
 public class GeneratorTest {
-    private final Generator generator = new Generator();
-    private final File path = new File("target");
+    private final File path = new File("target/GeneratorTest");
+    private final Generator generator = new Generator(path);
 
     public void build(){
         generator.build();
+    }
+
+    @BeforeEach
+    public void setup(){
+        if(!path.isDirectory()){
+            assertTrue(path.mkdir());
+        }else{
+            Arrays.stream(path.listFiles()).forEach(File::delete);
+        }
     }
 
     @Test

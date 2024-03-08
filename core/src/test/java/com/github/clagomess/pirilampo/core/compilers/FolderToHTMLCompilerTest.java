@@ -113,7 +113,9 @@ public class FolderToHTMLCompilerTest extends Common {
             log.info("{}", sw);
         }
 
-        Assertions.assertThat(sw.toString()).contains("var menu = {};");
+        Assertions.assertThat(sw.toString())
+                .contains("let menuIdx = 0;")
+                .contains("createMenuItem");
     }
 
     @Test

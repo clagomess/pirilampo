@@ -1,5 +1,6 @@
 package com.github.clagomess.pirilampo.core.generator;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.coobird.thumbnailator.Thumbnails;
 import net.coobird.thumbnailator.geometry.Positions;
@@ -16,11 +17,13 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 
 @Slf4j
+@RequiredArgsConstructor
 public class Generator {
-    public File root = new File("target/features");
-    public List<File> paths = new LinkedList<>();
-    public List<File> features = new LinkedList<>();
-    public int qtdFeatures = 1000;
+    public final File root;
+    public final List<File> paths = new LinkedList<>();
+    public final List<File> features = new LinkedList<>();
+    public final int qtdFeatures = 1000;
+    public final int qtdMaxCenario = 15;
 
     public void build(){
         AtomicInteger progress = new AtomicInteger(1);
@@ -95,7 +98,7 @@ public class Generator {
         out.println("    Dado " + genWords((int) Math.ceil(Math.random() * 45)));
         out.println("");
 
-        int qtdCenario = (int) Math.ceil(Math.random() * 15);
+        int qtdCenario = (int) Math.ceil(Math.random() * qtdMaxCenario);
         IntStream.rangeClosed(1, qtdCenario).forEach(i -> genCenario(out, path));
     }
 

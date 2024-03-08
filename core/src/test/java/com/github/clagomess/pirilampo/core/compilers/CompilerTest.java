@@ -129,8 +129,8 @@ public class CompilerTest extends Common {
             String target,
             String expected
     ) throws IOException {
-        File targetDir = new File("target/feature");
-        if(!targetDir.exists()) assertTrue(targetDir.mkdir());
+        File targetDir = new File("target/CompilerTest/feature");
+        if(!targetDir.exists()) assertTrue(targetDir.mkdirs());
         File targetFile = new File(targetDir, "xxx.Feature");
         if(!targetFile.exists()) FileUtils.writeStringToFile(targetFile, "");
 
