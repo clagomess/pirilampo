@@ -99,6 +99,8 @@ public class PropertiesCompiler extends Compiler {
             prop.setProperty("compilationArtifact", parameters.getCompilationArtifact().name());
 
             prop.store(output, null);
+
+            log.info("- saved configuration at {}", file);
         } catch (IOException ex) {
             log.error(log.getName(), ex);
         }

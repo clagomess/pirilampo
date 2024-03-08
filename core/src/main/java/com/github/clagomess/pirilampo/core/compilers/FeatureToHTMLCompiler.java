@@ -11,6 +11,7 @@ import static com.github.clagomess.pirilampo.core.enums.CompilationArtifactEnum.
 import static com.github.clagomess.pirilampo.core.enums.CompilationTypeEnum.FEATURE;
 
 public class FeatureToHTMLCompiler extends Compiler {
+    private final PropertiesCompiler propertiesCompiler = new PropertiesCompiler();
     private final ParametersDto parameters;
     private final File feature;
     private final FeatureMetadataDto featureMetadataDto;
@@ -60,6 +61,7 @@ public class FeatureToHTMLCompiler extends Compiler {
             outArtifact.delete();
             throw e;
         } finally {
+            propertiesCompiler.setData(parameters);
             stopTimer();
         }
     }

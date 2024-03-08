@@ -77,6 +77,22 @@ public class FeatureToPDFCompilerTest extends Common {
     }
 
     @Test
+    public void checkIsSavedProperties() throws Exception {
+        ParametersDto parameters = new ParametersDto();
+        parameters.setProjectSource(featureFile);
+        parameters.setProjectTarget(targetFile);
+        parameters.setCompilationType(CompilationTypeEnum.FEATURE);
+        parameters.setCompilationArtifact(CompilationArtifactEnum.PDF);
+
+        new FeatureToPDFCompiler(parameters).build();
+
+        assertTrue(new File(
+                parameters.getProjectSource().getParentFile(),
+                PropertiesCompiler.FILENAME
+        ).isFile());
+    }
+
+    @Test
     public void checkDeletedBuffersOnError() {
         ParametersDto parameters = new ParametersDto();
         parameters.setProjectSource(featureErrorFile);

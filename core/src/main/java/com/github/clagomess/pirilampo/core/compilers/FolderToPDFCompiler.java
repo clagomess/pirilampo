@@ -16,6 +16,7 @@ import static com.github.clagomess.pirilampo.core.enums.CompilationTypeEnum.FOLD
 
 @Slf4j
 public class FolderToPDFCompiler extends Compiler {
+    private final PropertiesCompiler propertiesCompiler = new PropertiesCompiler();
     private final ParametersDto parameters;
 
     public FolderToPDFCompiler(ParametersDto parameters) {
@@ -92,6 +93,7 @@ public class FolderToPDFCompiler extends Compiler {
             deleteAllTempFiles();
             throw e;
         } finally {
+            propertiesCompiler.setData(parameters);
             stopTimer();
         }
     }

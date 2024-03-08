@@ -99,6 +99,20 @@ public class FolderToHTMLCompilerTest extends Common {
     }
 
     @Test
+    public void checkIsSavedProperties() throws Exception {
+        ParametersDto parameters = new ParametersDto();
+        parameters.setProjectSource(featureFolder);
+        parameters.setProjectTarget(targetFile);
+
+        new FolderToHTMLCompiler(parameters).build();
+
+        assertTrue(new File(
+                parameters.getProjectSource(),
+                PropertiesCompiler.FILENAME
+        ).isFile());
+    }
+
+    @Test
     public void checkDeletedBuffersOnError() {
         ParametersDto parameters = new ParametersDto();
         parameters.setProjectSource(featureErrorFolder);

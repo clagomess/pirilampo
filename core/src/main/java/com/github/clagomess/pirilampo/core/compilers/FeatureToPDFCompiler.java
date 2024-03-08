@@ -18,6 +18,7 @@ import static com.github.clagomess.pirilampo.core.enums.CompilationTypeEnum.FEAT
 @Slf4j
 @RequiredArgsConstructor
 public class FeatureToPDFCompiler extends Compiler {
+    private final PropertiesCompiler propertiesCompiler = new PropertiesCompiler();
     private final ParametersDto parameters;
     private final File feature;
     private final FeatureMetadataDto featureMetadataDto;
@@ -79,6 +80,7 @@ public class FeatureToPDFCompiler extends Compiler {
             deleteAllTempFiles();
             throw e;
         } finally {
+            propertiesCompiler.setData(parameters);
             stopTimer();
         }
     }

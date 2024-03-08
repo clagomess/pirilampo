@@ -58,6 +58,22 @@ public class FeatureToHTMLCompilerTest extends Common {
     }
 
     @Test
+    public void checkIsSavedProperties() throws Exception {
+        ParametersDto parameters = new ParametersDto();
+        parameters.setProjectSource(featureFile);
+        parameters.setProjectTarget(targetFile);
+        parameters.setCompilationType(CompilationTypeEnum.FEATURE);
+        parameters.setCompilationArtifact(CompilationArtifactEnum.HTML);
+
+        new FeatureToHTMLCompiler(parameters).build();
+
+        assertTrue(new File(
+                parameters.getProjectSource().getParentFile(),
+                PropertiesCompiler.FILENAME
+        ).isFile());
+    }
+
+    @Test
     public void checkDeletedBuffersOnError() {
         ParametersDto parameters = new ParametersDto();
         parameters.setProjectSource(featureErrorFile);

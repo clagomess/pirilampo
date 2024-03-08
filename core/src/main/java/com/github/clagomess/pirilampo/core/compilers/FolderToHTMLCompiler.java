@@ -24,6 +24,7 @@ import static com.github.clagomess.pirilampo.core.enums.CompilationTypeEnum.FOLD
 
 @Slf4j
 public class FolderToHTMLCompiler extends Compiler {
+    private final PropertiesCompiler propertiesCompiler = new PropertiesCompiler();
     private final ImageParser imageParser = new ImageParser();
     private final ParametersDto parameters;
     protected final Map<String, FeatureIndexDto> index = new HashMap<>();
@@ -225,6 +226,7 @@ public class FolderToHTMLCompiler extends Compiler {
             outArtifact.delete();
             throw e;
         } finally {
+            propertiesCompiler.setData(parameters);
             stopTimer();
         }
     }

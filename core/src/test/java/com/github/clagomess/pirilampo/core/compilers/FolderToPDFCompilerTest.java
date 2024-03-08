@@ -58,6 +58,22 @@ public class FolderToPDFCompilerTest extends Common {
     // @TODO: validate content html
 
     @Test
+    public void checkIsSavedProperties() throws Exception {
+        ParametersDto parameters = new ParametersDto();
+        parameters.setProjectSource(featureFolder);
+        parameters.setProjectTarget(targetFile);
+        parameters.setCompilationType(CompilationTypeEnum.FOLDER);
+        parameters.setCompilationArtifact(CompilationArtifactEnum.PDF);
+
+        new FolderToPDFCompiler(parameters).build();
+
+        assertTrue(new File(
+                parameters.getProjectSource(),
+                PropertiesCompiler.FILENAME
+        ).isFile());
+    }
+
+    @Test
     public void checkDeletedBuffersOnError() {
         ParametersDto parameters = new ParametersDto();
         parameters.setProjectSource(featureErrorFolder);
