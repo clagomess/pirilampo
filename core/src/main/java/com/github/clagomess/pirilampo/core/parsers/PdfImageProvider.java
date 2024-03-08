@@ -71,9 +71,11 @@ public class PdfImageProvider extends AbstractImageProvider {
                     InputStream in = new BufferedInputStream(new URL(src).openStream());
                     FileOutputStream fos = new FileOutputStream(cacheImage);
             ) {
-                int value;
-                while ((value = in.read()) != -1) {
-                    fos.write(value);
+                byte[] buffer = new byte[1024 * 4];
+                int n;
+
+                while ((n = in.read(buffer)) != -1) {
+                    fos.write(buffer, 0, n);
                 }
             }
 

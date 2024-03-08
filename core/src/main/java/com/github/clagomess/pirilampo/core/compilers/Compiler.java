@@ -114,9 +114,11 @@ public abstract class Compiler {
                 FileReader fr = new FileReader(url.getFile());
                 BufferedReader br = new BufferedReader(fr)
         ){
-            int value;
-            while ((value = br.read()) != -1) {
-                out.print((char) value);
+            char[] buffer = new char[1024 * 4];
+            int n;
+
+            while ((n = br.read(buffer)) != -1) {
+                out.write(buffer, 0, n);
             }
         }
     }
@@ -127,9 +129,11 @@ public abstract class Compiler {
                 BOMInputStream bis = new BOMInputStream(fis);
                 BufferedReader br = new BufferedReader(new InputStreamReader(bis, StandardCharsets.UTF_8));
         ){
-            int value;
-            while ((value = br.read()) != -1) {
-                out.print((char) value);
+            char[] buffer = new char[1024 * 4];
+            int n;
+
+            while ((n = br.read(buffer)) != -1) {
+                out.write(buffer, 0, n);
             }
         }
     }
