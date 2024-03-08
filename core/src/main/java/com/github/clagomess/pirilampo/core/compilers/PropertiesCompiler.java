@@ -1,4 +1,4 @@
-package com.github.clagomess.pirilampo.core.util;
+package com.github.clagomess.pirilampo.core.compilers;
 
 
 import com.github.clagomess.pirilampo.core.dto.ParametersDto;
@@ -8,7 +8,7 @@ import java.io.*;
 import java.util.Properties;
 
 @Slf4j
-public class PropertiesUtil {
+public class PropertiesCompiler {
     private static final String FILENAME = "/../html/config.properties";
 
     public static ParametersDto getData(String sourcePath){
