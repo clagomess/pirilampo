@@ -241,13 +241,6 @@ public class GherkinDocumentParser extends Compiler {
 
         putIndexValue(txt);
 
-        // pega endereço ou base64 da imagem
-        Matcher mImgSrc = Pattern.compile("src=\"(.+?)\"").matcher(txt);
-        while (mImgSrc.find()) {
-            String imgSrc = imageParser.parse(parameters, feature, mImgSrc.group(1));
-            txt = txt.replace(mImgSrc.group(), "src=\"" + imgSrc + "\"");
-        }
-
         // verifica html embeded
         Matcher mHtmlHref = Pattern.compile("href=\"(.+?\\.html)\"").matcher(txt);
         while(mHtmlHref.find()) {
@@ -258,6 +251,13 @@ public class GherkinDocumentParser extends Compiler {
                 paginaHtmlAnexo.add(htmlEmbed);
                 txt = txt.replace(mHtmlHref.group(), "href=\"#/html/" + filename + "\"");
             }
+        }
+
+        // pega endereço ou base64 da imagem
+        Matcher mImgSrc = Pattern.compile("src=\"(.+?)\"").matcher(txt);
+        while (mImgSrc.find()) {
+            String imgSrc = imageParser.parse(parameters, feature, mImgSrc.group(1));
+            txt = txt.replace(mImgSrc.group(), "src=\"" + imgSrc + "\"");
         }
 
         return txt;
