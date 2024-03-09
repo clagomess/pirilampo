@@ -17,15 +17,14 @@ import org.apache.commons.lang.StringUtils;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Slf4j
 public class GherkinDocumentParser extends Compiler {
     private final ImageParser imageParser = new ImageParser();
+    private final IndexParser indexParser;
     private final MarkdownParser markdownParser = new MarkdownParser();
     private final ParametersDto parameters;
     private final File feature;
@@ -34,10 +33,9 @@ public class GherkinDocumentParser extends Compiler {
     private final List<File> paginaHtmlAnexo;
 
     @Getter
-    private final Set<String> featureIndexValues = new LinkedHashSet<>();
-
-    @Getter
     private String featureTitulo = null;
+
+    private final String featureId;
 
     private static final String HTML_TITULO = "<h2>%s</h2>\n";
     private static final String HTML_PARAGRAFO = "<p>%s</p>\n";
@@ -62,25 +60,19 @@ public class GherkinDocumentParser extends Compiler {
     private static final String HTML_CHILDREN_TABLE_TD = "<td>%s</td>\n";
 
     public GherkinDocumentParser(ParametersDto parameters, File feature){
+        this(null, parameters, feature);
+    }
+
+    public GherkinDocumentParser(
+            IndexParser indexParser,
+            ParametersDto parameters,
+            File feature
+    ){
+        this.indexParser = indexParser;
         this.parameters = parameters;
         this.feature = feature;
         this.paginaHtmlAnexo = new ArrayList<>();
-    }
-
-    protected String putIndexValue(String value){
-        if(StringUtils.isBlank(value) || value.length() < 3) return null;
-
-        value = value.replaceAll("<.+?>", "");
-        value = value.replace("&lt;", "");
-        value = value.replace("&gt;", "");
-        value = StringUtils.trimToNull(value);
-
-        if(StringUtils.isNotBlank(value) && value.length() > 3) {
-            featureIndexValues.add(value);
-            return value;
-        }else{
-            return null;
-        }
+        this.featureId = getFeatureMetadata(parameters, feature).getId();
     }
 
     public void build(PrintWriter out) throws Exception {
@@ -239,7 +231,7 @@ public class GherkinDocumentParser extends Compiler {
         txt = txt.replace("&quot;", "\"");
         txt = txt.replace("&lt;br&gt;", "<br/>");
 
-        putIndexValue(txt);
+        if(indexParser != null) indexParser.putFeaturePhrase(featureId, txt);
 
         // verifica html embeded
         Matcher mHtmlHref = Pattern.compile("href=\"(.+?\\.html)\"").matcher(txt);

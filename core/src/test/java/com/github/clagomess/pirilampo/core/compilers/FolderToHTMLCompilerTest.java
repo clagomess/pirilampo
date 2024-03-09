@@ -1,7 +1,6 @@
 package com.github.clagomess.pirilampo.core.compilers;
 
 import com.github.clagomess.pirilampo.core.Common;
-import com.github.clagomess.pirilampo.core.dto.FeatureIndexDto;
 import com.github.clagomess.pirilampo.core.dto.ParametersDto;
 import com.github.clagomess.pirilampo.core.exception.FeatureException;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +15,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Arrays;
-import java.util.TreeSet;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -74,28 +72,6 @@ public class FolderToHTMLCompilerTest extends Common {
         String htmlString = FileUtils.readFileToString(htmlFile);
 
         assertTrue(htmlString.contains("YYY_MASTER_YYY"));
-    }
-
-    @Test
-    public void buildIndex() throws IOException {
-        ParametersDto parameters = new ParametersDto();
-        parameters.setProjectSource(featureFolder);
-        parameters.setProjectMasterSource(featureMasterFolder);
-        parameters.setProjectTarget(targetFile);
-
-        val compiler = new FolderToHTMLCompiler(parameters);
-        compiler.index.put("a", new FeatureIndexDto("a", new TreeSet<>()));
-
-        StringWriter sw = new StringWriter();
-        try (PrintWriter out = new PrintWriter(sw)){
-            compiler.buildIndex(out);
-            log.info("{}", sw);
-        }
-
-        Assertions.assertThat(sw.toString())
-                .contains("{\"a\":{\"name\":\"a\",\"values\":[]}}")
-                .contains("var indice =")
-                .contains(";");
     }
 
     @Test

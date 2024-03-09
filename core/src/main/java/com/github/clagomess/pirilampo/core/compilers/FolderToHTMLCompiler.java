@@ -1,16 +1,23 @@
 package com.github.clagomess.pirilampo.core.compilers;
 
-import com.github.clagomess.pirilampo.core.dto.*;
+import com.github.clagomess.pirilampo.core.dto.FeatureMasterDto;
+import com.github.clagomess.pirilampo.core.dto.FeatureMetadataDto;
+import com.github.clagomess.pirilampo.core.dto.MenuDto;
+import com.github.clagomess.pirilampo.core.dto.ParametersDto;
 import com.github.clagomess.pirilampo.core.enums.DiffEnum;
 import com.github.clagomess.pirilampo.core.parsers.GherkinDocumentParser;
 import com.github.clagomess.pirilampo.core.parsers.ImageParser;
+import com.github.clagomess.pirilampo.core.parsers.IndexParser;
 import com.github.clagomess.pirilampo.core.parsers.MenuParser;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static com.github.clagomess.pirilampo.core.enums.CompilationArtifactEnum.HTML;
@@ -22,7 +29,7 @@ public class FolderToHTMLCompiler extends Compiler {
     private final PropertiesCompiler propertiesCompiler = new PropertiesCompiler();
     private final ImageParser imageParser = new ImageParser();
     private final ParametersDto parameters;
-    protected final Map<String, FeatureIndexDto> index = new HashMap<>();
+    private final IndexParser indexParser = new IndexParser();
     protected final MenuParser menuParser;
     private List<FeatureMasterDto> masterFiles = null;
 
@@ -120,12 +127,6 @@ public class FolderToHTMLCompiler extends Compiler {
         out.print(HTML_CLOSE_TEMPLATE);
     }
 
-    protected void buildIndex(PrintWriter out) throws IOException {
-        out.print("var indice = ");
-        mapper.writeValue(out, index);
-        out.println(";");
-    }
-
     protected void buildMenu(PrintWriter out) throws IOException {
         out.println();
         out.println("let menuIdx = 0;");
@@ -203,15 +204,15 @@ public class FolderToHTMLCompiler extends Compiler {
                 if(diff == DiffEnum.EQUAL) continue;
 
                 // Gera a feture
-                GherkinDocumentParser gherkinDocumentParser = new GherkinDocumentParser(parameters, f);
+                GherkinDocumentParser gherkinDocumentParser = new GherkinDocumentParser(indexParser, parameters, f);
                 out.print(String.format(HTML_OPEN_TEMPLATE, featureMetadataDto.getIdHtml()));
                 gherkinDocumentParser.build(out);
                 out.print(HTML_CLOSE_TEMPLATE);
 
-                index.put(featureMetadataDto.getId(), new FeatureIndexDto(
-                        gherkinDocumentParser.getFeatureTitulo(),
-                        gherkinDocumentParser.getFeatureIndexValues()
-                ));
+                indexParser.setFeatureTitle(
+                        featureMetadataDto.getId(),
+                        gherkinDocumentParser.getFeatureTitulo()
+                );
 
                 menuParser.addMenuItem(f, diff, gherkinDocumentParser.getFeatureTitulo());
 
@@ -228,7 +229,7 @@ public class FolderToHTMLCompiler extends Compiler {
             writeResourceToOut("htmlTemplate/html/template-feature-pasta-footer.html", out);
 
             out.print("<script type=\"text/javascript\">\n");
-            buildIndex(out);
+            indexParser.buildIndex(out);
             buildMenu(out);
             writeResourceToOut("htmlTemplate/dist/feature-pasta.min.js", out);
             writeResourceToOut("htmlTemplate/dist/feature-pasta-angular.min.js", out);
