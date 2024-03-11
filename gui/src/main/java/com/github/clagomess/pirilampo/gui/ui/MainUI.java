@@ -55,11 +55,16 @@ public class MainUI extends JFrame {
         pTabArtifact.addTab("PDF", pPdf);
         add(pTabArtifact, "wrap");
 
+        /*
         JPanel pProgress = new JPanel(new MigLayout("", "[grow,fill]"));
         pProgress.setBorder(BorderFactory.createTitledBorder("Progress"));
         pProgress.add(new JProgressBar(), "wrap");
         pProgress.add(new JTextArea(), "wrap");
         add(pProgress);
+        */
+
+        add(form.btnCompile);
+        getRootPane().setDefaultButton(form.btnCompile);
 
         pack();
         setLocationRelativeTo(null);

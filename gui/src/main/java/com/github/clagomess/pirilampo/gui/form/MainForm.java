@@ -69,7 +69,7 @@ public class MainForm {
         new RadioButtonGroupComponent.RadioButton<>("Closed", HtmlPanelToggleEnum.CLOSED)
     ));
 
-    public final JCheckBox chkEmbedImages = new JCheckBox();
+    public final JCheckBox chkEmbedImages = new JCheckBox(){{setSelected(true);}};
     public final ColorChooserComponent ccMenuColor = new ColorChooserComponent(
             "Menu Color",
             defaultDto.getMenuColor()
@@ -84,4 +84,6 @@ public class MainForm {
             new RadioButtonGroupComponent.RadioButton<>(LayoutPdfEnum.PORTRAIT, true),
             new RadioButtonGroupComponent.RadioButton<>(LayoutPdfEnum.LANDSCAPE)
     ));
+
+    public final JButton btnCompile = new JButton("Compile!");
 }
