@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 public class IndexParser extends Compiler {
     protected int idx = -1;
@@ -61,7 +62,8 @@ public class IndexParser extends Compiler {
 
     public void buildIndex(PrintWriter out) throws IOException {
         out.print("let indexPhrases = ");
-        mapper.writeValue(out, phrases);
+        mapper.writeValue(out, phrases.entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey)));
         out.println(";");
 
         out.print("let indexMap = ");

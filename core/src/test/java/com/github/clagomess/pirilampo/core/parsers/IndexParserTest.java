@@ -90,7 +90,7 @@ public class IndexParserTest {
         }
 
         Assertions.assertThat(sw.toString())
-                .contains("let indexPhrases = {\"a new func\":1,\"checkpoint\":2,\"f-id\":0};")
+                .contains("let indexPhrases = {\"0\":\"f-id\",\"1\":\"a new func\",\"2\":\"checkpoint\"};")
                 .contains("let indexMap = {\"0\":{\"title\":2,\"phrases\":[1]}};");
     }
 }
