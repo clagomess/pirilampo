@@ -70,8 +70,14 @@ public class MainForm {
     ));
 
     public final JCheckBox chkEmbedImages = new JCheckBox();
-    public final ColorChooserComponent ccMenuColor = new ColorChooserComponent();
-    public final ColorChooserComponent ccMenuTextColor = new ColorChooserComponent();
+    public final ColorChooserComponent ccMenuColor = new ColorChooserComponent(
+            "Menu Color",
+            defaultDto.getMenuColor()
+    );
+    public final ColorChooserComponent ccMenuTextColor = new ColorChooserComponent(
+            "Menu Text Coloer",
+            defaultDto.getMenuTextColor()
+    );
 
     // PDF
     public final RadioButtonGroupComponent<LayoutPdfEnum> rbLayoutPdfEnum = new RadioButtonGroupComponent<>(Arrays.asList(
