@@ -29,6 +29,9 @@ public class FolderToPDFCompiler extends Compiler {
 
     public void build() throws Exception {
         startTimer();
+        progressCount = 0;
+        buttons.setEnabled(false);
+        progress.setProgress(-1);
 
         Set<File> arquivos = listFolder(parameters.getProjectSource());
         if(arquivos.isEmpty()) return;
@@ -87,6 +90,10 @@ public class FolderToPDFCompiler extends Compiler {
                         pdfParser.addFeatureHTML(feature, html);
                     }
                 }
+
+                // progress
+                progressCount++;
+                progress.setProgress(progressCount / arquivos.size());
             }
 
             pdfParser.closeDocument();
@@ -96,6 +103,9 @@ public class FolderToPDFCompiler extends Compiler {
             throw e;
         } finally {
             propertiesCompiler.setData(parameters);
+            buttons.setEnabled(true);
+            progressCount = 0;
+            progress.setProgress(0);
             stopTimer();
         }
     }

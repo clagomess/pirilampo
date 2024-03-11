@@ -4,7 +4,10 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.clagomess.pirilampo.core.dto.FeatureMetadataDto;
 import com.github.clagomess.pirilampo.core.dto.ParametersDto;
+import com.github.clagomess.pirilampo.core.fi.UIButtonsFI;
+import com.github.clagomess.pirilampo.core.fi.UIProgressFI;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.input.BOMInputStream;
 
@@ -22,6 +25,15 @@ import static com.github.clagomess.pirilampo.core.enums.CompilationTypeEnum.FOLD
 
 @Slf4j
 public abstract class Compiler {
+    @Setter
+    protected UIProgressFI progress = (value) -> {};
+
+    @Setter
+    protected UIButtonsFI buttons = (enabled) -> {};
+
+    @Setter
+    protected float progressCount = 0;
+
     protected final ObjectMapper mapper = new ObjectMapper() {{
         disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
     }};

@@ -28,6 +28,9 @@ public class FeatureToHTMLCompiler extends Compiler {
 
     public void build() throws Exception {
         startTimer();
+        buttons.setEnabled(false);
+        progress.setProgress(-1);
+
         GherkinDocumentParser gherkinDocumentParser = new GherkinDocumentParser(parameters, feature);
 
         File outArtifact = getOutArtifact(parameters);
@@ -62,6 +65,8 @@ public class FeatureToHTMLCompiler extends Compiler {
             throw e;
         } finally {
             propertiesCompiler.setData(parameters);
+            buttons.setEnabled(true);
+            progress.setProgress(0);
             stopTimer();
         }
     }

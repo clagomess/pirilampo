@@ -35,6 +35,8 @@ public class FeatureToPDFCompiler extends Compiler {
 
     public void build() throws Exception {
         startTimer();
+        buttons.setEnabled(false);
+        progress.setProgress(-1);
 
         File bufferHtml = createTempFile();
         File outArtifact = getOutArtifact(parameters);
@@ -83,6 +85,8 @@ public class FeatureToPDFCompiler extends Compiler {
             throw e;
         } finally {
             propertiesCompiler.setData(parameters);
+            buttons.setEnabled(true);
+            progress.setProgress(0);
             stopTimer();
         }
     }

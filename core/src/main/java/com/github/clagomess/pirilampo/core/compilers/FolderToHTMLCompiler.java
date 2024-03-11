@@ -146,6 +146,9 @@ public class FolderToHTMLCompiler extends Compiler {
 
     public void build() throws Exception {
         startTimer();
+        progressCount = 0;
+        buttons.setEnabled(false);
+        progress.setProgress(-1);
 
         Set<File> arquivos = listFolder(parameters.getProjectSource());
         if(arquivos.isEmpty()) return;
@@ -189,13 +192,7 @@ public class FolderToHTMLCompiler extends Compiler {
             writeResourceToOut("htmlTemplate/html/template-feature-pasta-content-wrapper.html", out);
             out.print("</div>");
 
-            int progressNum = 1;
-
             for(File f : arquivos){
-                // progress
-                //ProgressBind.setProgress(progressNum / (double) arquivos.size()); @TODO: check
-                progressNum++;
-
                 // monta nome menu
                 FeatureMetadataDto featureMetadataDto = getFeatureMetadata(parameters, f);
 
@@ -223,6 +220,9 @@ public class FolderToHTMLCompiler extends Compiler {
                     out.print(HTML_CLOSE_TEMPLATE);
                 }
 
+                // progress
+                progressCount++;
+                progress.setProgress(progressCount / arquivos.size());
             }
 
             buildTemplateIndex(out);
@@ -240,6 +240,9 @@ public class FolderToHTMLCompiler extends Compiler {
             throw e;
         } finally {
             propertiesCompiler.setData(parameters);
+            buttons.setEnabled(true);
+            progressCount = 0;
+            progress.setProgress(0);
             stopTimer();
         }
     }
