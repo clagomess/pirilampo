@@ -1,37 +1,72 @@
 package com.github.clagomess.pirilampo.gui.ui;
 
-import br.com.pirilampo.bean.MainForm;
-import br.com.pirilampo.bean.Parametro;
-import br.com.pirilampo.bind.ConsoleBind;
-import br.com.pirilampo.bind.ProgressBind;
-import br.com.pirilampo.constant.Artefato;
-import br.com.pirilampo.constant.Compilacao;
-import br.com.pirilampo.core.Compilador;
-import br.com.pirilampo.util.ExceptionUtil;
-import br.com.pirilampo.util.PropertiesUtil;
-import javafx.application.Platform;
-import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
-import javafx.scene.paint.Color;
-import javafx.stage.DirectoryChooser;
-import javafx.stage.FileChooser;
-import javafx.stage.Stage;
+import com.github.clagomess.pirilampo.gui.form.MainForm;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
+import net.miginfocom.swing.MigLayout;
 
-import java.io.File;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
-import java.util.prefs.Preferences;
+import javax.swing.*;
+import java.awt.*;
 
 @Slf4j
-public class MainController extends MainForm implements Initializable {
-    private final String MSG_OPE_SUCESSO = "Operação realizada com sucesso!";
-    private final List<Color> cores = new ArrayList<>();
+public class MainUI extends JFrame {
+    private final MainForm form = new MainForm();
 
-    @Override
+    public MainUI() {
+        setTitle("Pirilampo");
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        setMinimumSize(new Dimension(500, 400));
+        setLayout(new MigLayout("insets 10 10 10 10", "[grow,fill]", ""));
+
+        JPanel pSource = new JPanel(new MigLayout("", "[grow,fill]"));
+        pSource.setBorder(BorderFactory.createTitledBorder("Source"));
+        pSource.add(form.rbCompilationType, "wrap");
+        pSource.add(form.fcProjectSource, "wrap");
+        pSource.add(form.fcProjectMasterSource, "wrap");
+        add(pSource, "wrap");
+
+        JPanel pProject = new JPanel(new MigLayout("", "[grow,fill]"));
+        pProject.setBorder(BorderFactory.createTitledBorder("Project"));
+        pProject.add(new JLabel("Name"));
+        pProject.add(new JLabel("Version"), "wrap");
+        pProject.add(form.txtProjectName);
+        pProject.add(form.txtProjectVersion, "wrap");
+        pProject.add(new JLabel("Logo"), "wrap");
+        pProject.add(form.fcProjectLogo, "span 2, wrap");
+        add(pProject, "wrap");
+
+        JTabbedPane pTabArtifact = new JTabbedPane();
+        pTabArtifact.setBorder(BorderFactory.createTitledBorder("Artifact"));
+
+        JPanel pHtml = new JPanel(new MigLayout("", "[grow,fill]"));
+        pHtml.add(new JLabel("Panel Toggle"));
+        pHtml.add(new JLabel("Embed Images?"), "wrap");
+        pHtml.add(form.rbHtmlPanelToggle);
+        pHtml.add(form.chkEmbedImages, "wrap");
+        pHtml.add(new JLabel("Menu Color"));
+        pHtml.add(new JLabel("Menu Text Color"), "wrap");
+        pHtml.add(form.ccMenuColor);
+        pHtml.add(form.ccMenuTextColor, "wrap");
+
+        JPanel pPdf = new JPanel(new MigLayout("", "[grow,fill]"));
+        pPdf.add(new JLabel("PDF Layout"), "wrap");
+        pPdf.add(form.rbLayoutPdfEnum, "wrap");
+
+        pTabArtifact.addTab("HTML", pHtml);
+        pTabArtifact.addTab("PDF", pPdf);
+        add(pTabArtifact, "wrap");
+
+        JPanel pProgress = new JPanel(new MigLayout("", "[grow,fill]"));
+        pProgress.setBorder(BorderFactory.createTitledBorder("Progress"));
+        pProgress.add(new JProgressBar(), "wrap");
+        pProgress.add(new JTextArea(), "wrap");
+        add(pProgress);
+
+        pack();
+        setLocationRelativeTo(null);
+        setVisible(true);
+    }
+
+    /*
     public void initialize(URL location, ResourceBundle resources) {
         Parametro parametro = new Parametro();
 
@@ -219,4 +254,5 @@ public class MainController extends MainForm implements Initializable {
 
         alert.showAndWait();
     }
+     */
 }

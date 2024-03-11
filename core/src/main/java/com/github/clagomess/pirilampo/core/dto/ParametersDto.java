@@ -83,6 +83,8 @@ public class ParametersDto {
             throw new ParametersException("Option <Project Master Source> must be a folder");
         }
 
+        // @TODO: project Master equals sourcer
+
         if(projectTarget != null && !projectTarget.isDirectory()){
             throw new ParametersException("Option <Project Target> must be a folder");
         }

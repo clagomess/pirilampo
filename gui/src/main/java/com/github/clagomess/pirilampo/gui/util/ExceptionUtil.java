@@ -1,7 +1,6 @@
 package com.github.clagomess.pirilampo.gui.util;
 
 
-import br.com.pirilampo.core.exception.FeatureException;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
@@ -22,7 +21,7 @@ public class ExceptionUtil {
 
         Alert alert = new Alert(Alert.AlertType.WARNING);
         alert.setResizable(true);
-
+        /*
         if(e instanceof FeatureException){
             titulo = "Erro ao executar a operação.";
             log = e.getMessage();
@@ -38,6 +37,7 @@ public class ExceptionUtil {
                 log = trace.toString();
             }
         }
+        */
 
         alert.setHeaderText(titulo);
 
