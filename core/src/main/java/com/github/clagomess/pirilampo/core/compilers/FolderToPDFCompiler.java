@@ -39,8 +39,8 @@ public class FolderToPDFCompiler extends Compiler implements ArtifactCompiler {
 
         try (
                 FileOutputStream fosPDF = new FileOutputStream(outArtifact);
-                InputStream css = Objects.requireNonNull(Thread.currentThread().getContextClassLoader()
-                                .getResource("htmlTemplate/dist/feature-pdf.min.css"))
+                InputStream css = Objects.requireNonNull(getClass()
+                                .getResource("../dist/feature-pdf.min.css"))
                         .openStream();
         ){
             parameters.setEmbedImages(false);

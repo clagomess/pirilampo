@@ -45,7 +45,7 @@ public class FeatureToHTMLCompiler extends Compiler implements ArtifactCompiler 
             out.print("<meta name=\"viewport\" content=\"width=device-width, shrink-to-fit=no, initial-scale=1\">");
             out.print(String.format("<title>%s</title>", parameters.getProjectName()));
             out.print("<style>");
-            writeResourceToOut("htmlTemplate/dist/feature.min.css", out);
+            writeResourceToOut("../dist/feature.min.css", out);
             out.print("</style>");
             out.print("</head><body>");
             out.print("<div class=\"container\"><div class=\"row\"><div class=\"col-sm-12\">");

@@ -110,7 +110,7 @@ public abstract class Compiler {
     }
 
     protected void writeResourceToOut(String resource, PrintWriter out) throws IOException {
-        URL url = Thread.currentThread().getContextClassLoader().getResource(resource);
+        URL url = getClass().getResource(resource);
         if(url == null){
             throw new FileNotFoundException(String.format(
                     "Resource %s not loaded",

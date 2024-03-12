@@ -106,13 +106,12 @@ public class ParametersDtoTest extends Common {
     @ParameterizedTest
     @CsvSource(value = {
        "FOLDER,",
-       "FOLDER,feature/xxx.Feature",
-       "FOLDER_DIFF,feature/xxx.Feature",
-       "FEATURE,feature",
+       "FOLDER,../feature/xxx.Feature",
+       "FOLDER_DIFF,../feature/xxx.Feature",
+       "FEATURE,../feature",
     })
     public void validate_projectSource(CompilationTypeEnum compilationTypeEnum, String source){
-        val projectSource = source != null ? new File(Objects.requireNonNull(Thread.currentThread()
-                .getContextClassLoader()
+        val projectSource = source != null ? new File(Objects.requireNonNull(getClass()
                 .getResource(source)).getFile()) : null;
 
         val dto = new ParametersDto();
@@ -124,13 +123,12 @@ public class ParametersDtoTest extends Common {
 
     @ParameterizedTest
     @CsvSource(value = {
-            "FOLDER,feature",
-            "FOLDER_DIFF,feature/xxx.Feature",
+            "FOLDER,../feature",
+            "FOLDER_DIFF,../feature/xxx.Feature",
             "FOLDER_DIFF,",
     })
     public void validate_projectMasterSource(CompilationTypeEnum compilationTypeEnum, String sourceMaster){
-        val projectMasterSource = sourceMaster != null ? new File(Objects.requireNonNull(Thread.currentThread()
-                .getContextClassLoader()
+        val projectMasterSource = sourceMaster != null ? new File(Objects.requireNonNull(getClass()
                 .getResource(sourceMaster)).getFile()) : null;
 
         val dto = new ParametersDto();

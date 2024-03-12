@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.Arrays;
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -33,9 +34,8 @@ public class FolderToHTMLCompilerTest extends Common {
 
     @Test
     public void build() throws Exception {
-        File logoFile = new File(Thread.currentThread()
-                .getContextClassLoader()
-                .getResource("logo_xxx.png").getFile());
+        File logoFile = new File(Objects.requireNonNull(getClass()
+                .getResource("../logo_xxx.png")).getFile());
 
         ParametersDto parameters = new ParametersDto();
         parameters.setMenuColor("#666");

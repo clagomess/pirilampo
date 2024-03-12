@@ -14,6 +14,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 import java.io.*;
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -36,8 +37,8 @@ public class CompilerTest extends Common {
 
     @ParameterizedTest
     @CsvSource({
-            "feature,,feature/xxx.Feature,_xxx,_xxx.html,_xxx.feature,xxx",
-            "feature,master,master/xxx.Feature,_xxx,_xxx.html,_xxx.feature,xxx",
+            "../feature,,../feature/xxx.Feature,_xxx,_xxx.html,_xxx.feature,xxx",
+            "../feature,../master,../master/xxx.Feature,_xxx,_xxx.html,_xxx.feature,xxx",
     })
     public void getFeatureMetadata(
             String source,
@@ -48,18 +49,15 @@ public class CompilerTest extends Common {
             String expectedIdFeature,
             String expectedIdName
     ){
-        File sourceFile = new File(Thread.currentThread()
-                .getContextClassLoader()
-                .getResource(source).getFile());
+        File sourceFile = new File(Objects.requireNonNull(getClass()
+                .getResource(source)).getFile());
 
         File sourceMasterFile = StringUtils.isNotBlank(sourceMaster) ?
-                new File(Thread.currentThread()
-                        .getContextClassLoader()
-                        .getResource(sourceMaster).getFile()) : null;
+                new File(Objects.requireNonNull(getClass()
+                        .getResource(sourceMaster)).getFile()) : null;
 
-        File featureFile = new File(Thread.currentThread()
-                .getContextClassLoader()
-                .getResource(feature).getFile());
+        File featureFile = new File(Objects.requireNonNull(getClass()
+                .getResource(feature)).getFile());
 
         ParametersDto parameters = new ParametersDto();
         parameters.setProjectSource(sourceFile);
@@ -75,15 +73,14 @@ public class CompilerTest extends Common {
 
     @ParameterizedTest
     @CsvSource({
-        "feature/html_embed.html,.html",
-        "feature/xxx.png,.png",
+        "../feature/html_embed.html,.html",
+        "../feature/xxx.png,.png",
     })
     public void writeResourceToOut(String resource, String suffix) throws IOException {
         File tmpFile = File.createTempFile("writeResourceToOut-", suffix);
 
-        File resourceFile = new File(Thread.currentThread()
-                .getContextClassLoader()
-                .getResource(resource).getFile());
+        File resourceFile = new File(Objects.requireNonNull(getClass()
+                .getResource(resource)).getFile());
 
         try (
                 FileOutputStream fos = new FileOutputStream(tmpFile);
@@ -98,9 +95,8 @@ public class CompilerTest extends Common {
 
     @Test
     public void writeFileToOut()  throws IOException {
-        File resourceFile = new File(Thread.currentThread()
-                .getContextClassLoader()
-                .getResource("feature/html_embed.html").getFile());
+        File resourceFile = new File(Objects.requireNonNull(getClass()
+                .getResource("../feature/html_embed.html")).getFile());
 
         try(
                 StringWriter sw = new StringWriter();
