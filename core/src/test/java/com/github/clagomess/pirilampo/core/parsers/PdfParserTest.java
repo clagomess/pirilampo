@@ -8,7 +8,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.nio.file.Files;
-import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -25,9 +24,7 @@ public class PdfParserTest {
         try (
                 FileOutputStream fos = new FileOutputStream(targetFile);
                 InputStream html = Files.newInputStream(sourceFile.toPath());
-                InputStream css = Objects.requireNonNull(getClass()
-                                .getResource("../dist/feature-pdf.min.css"))
-                        .openStream();
+                InputStream css = getClass().getResourceAsStream("PdfParserTest/foo.css")
         ){
             PdfParser pdfParser = new PdfParser(new ParametersDto(), css);
             pdfParser.initDocument(fos);

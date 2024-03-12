@@ -11,7 +11,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.input.BOMInputStream;
 
 import java.io.*;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.*;
@@ -110,8 +109,8 @@ public abstract class Compiler {
     }
 
     protected void writeResourceToOut(String resource, PrintWriter out) throws IOException {
-        URL url = getClass().getResource(resource);
-        if(url == null){
+        InputStream is = Compiler.class.getResourceAsStream(resource);
+        if(is == null){
             throw new FileNotFoundException(String.format(
                     "Resource %s not loaded",
                     resource
@@ -119,8 +118,8 @@ public abstract class Compiler {
         }
 
         try(
-                FileReader fr = new FileReader(url.getFile());
-                BufferedReader br = new BufferedReader(fr)
+                InputStreamReader isr = new InputStreamReader(is);
+                BufferedReader br = new BufferedReader(isr)
         ){
             char[] buffer = new char[1024 * 4];
             int n;

@@ -165,7 +165,7 @@ public class FolderToHTMLCompiler extends Compiler implements ArtifactCompiler {
             out.print("<meta name=\"viewport\" content=\"width=device-width, shrink-to-fit=no, initial-scale=1\">");
             out.print(String.format("<title>%s</title>", parameters.getProjectName()));
             out.print("<style>");
-            writeResourceToOut("../dist/feature-pasta.min.css", out);
+            writeResourceToOut("dist/feature-pasta.min.css", out);
             out.print("\n\n");
             out.print(String.format(
                     "#sidebar-wrapper {background: %s;}",
@@ -188,7 +188,7 @@ public class FolderToHTMLCompiler extends Compiler implements ArtifactCompiler {
             out.print("</head><body>\n");
             out.print("<div id=\"wrapper\">");
             buildSidebar(out);
-            writeResourceToOut("../html/template-feature-pasta-content-wrapper.html", out);
+            writeResourceToOut("html/template-feature-pasta-content-wrapper.html", out);
             out.print("</div>");
 
             for(File f : arquivos){
@@ -225,13 +225,13 @@ public class FolderToHTMLCompiler extends Compiler implements ArtifactCompiler {
             }
 
             buildTemplateIndex(out);
-            writeResourceToOut("../html/template-feature-pasta-footer.html", out);
+            writeResourceToOut("html/template-feature-pasta-footer.html", out);
 
             out.print("<script type=\"text/javascript\">\n");
             indexParser.buildIndex(out);
             buildMenu(out);
-            writeResourceToOut("../dist/feature-pasta.min.js", out);
-            writeResourceToOut("../dist/feature-pasta-angular.min.js", out);
+            writeResourceToOut("dist/feature-pasta.min.js", out);
+            writeResourceToOut("dist/feature-pasta-angular.min.js", out);
             out.print("</script>\n");
             out.print("</body></html>");
         } catch (Throwable e){
