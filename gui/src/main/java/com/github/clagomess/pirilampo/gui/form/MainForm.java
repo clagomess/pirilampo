@@ -7,9 +7,11 @@ import com.github.clagomess.pirilampo.core.enums.LayoutPdfEnum;
 import com.github.clagomess.pirilampo.gui.component.ColorChooserComponent;
 import com.github.clagomess.pirilampo.gui.component.FileChooserComponent;
 import com.github.clagomess.pirilampo.gui.component.RadioButtonGroupComponent;
+import com.github.clagomess.pirilampo.gui.util.AppenderUtil;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import java.awt.*;
 import java.util.Arrays;
 
 public class MainForm {
@@ -84,6 +86,24 @@ public class MainForm {
             new RadioButtonGroupComponent.RadioButton<>(LayoutPdfEnum.PORTRAIT, true),
             new RadioButtonGroupComponent.RadioButton<>(LayoutPdfEnum.LANDSCAPE)
     ));
+
+    // progress
+    public JProgressBar progress = new JProgressBar(){{setStringPainted(true);}};
+    public JTextArea console = new JTextArea(){{
+        setLineWrap(true);
+        setWrapStyleWord(true);
+        setEditable(false);
+        setFont(new Font(
+                "Consolas",
+                this.getFont().getStyle(),
+                this.getFont().getSize()
+        ));
+
+        AppenderUtil.setOnChange(text -> {
+            this.setText(text);
+            this.setCaretPosition(this.getDocument().getLength());
+        });
+    }};
 
     public final JButton btnCompile = new JButton("Compile!");
 }
