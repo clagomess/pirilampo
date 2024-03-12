@@ -197,26 +197,26 @@ public class FolderToHTMLCompiler extends Compiler implements ArtifactCompiler {
 
                 // Processa Diff Master
                 DiffEnum diff = diffMaster(featureMetadataDto, f, out);
-                if(diff == DiffEnum.EQUAL) continue;
-
-                // Gera a feture
-                GherkinDocumentParser gherkinDocumentParser = new GherkinDocumentParser(indexParser, parameters, f);
-                out.print(String.format(HTML_OPEN_TEMPLATE, featureMetadataDto.getIdHtml()));
-                gherkinDocumentParser.build(out);
-                out.print(HTML_CLOSE_TEMPLATE);
-
-                indexParser.setFeatureTitle(
-                        featureMetadataDto.getId(),
-                        gherkinDocumentParser.getFeatureTitulo()
-                );
-
-                menuParser.addMenuItem(f, diff, gherkinDocumentParser.getFeatureTitulo());
-
-                // adiciona html embed
-                for (File htmlEmbed : gherkinDocumentParser.getPaginaHtmlAnexo()){
-                    out.print(String.format(HTML_OPEN_TEMPLATE, htmlEmbed.getName()));
-                    writeFileToOut(htmlEmbed, out);
+                if(diff != DiffEnum.EQUAL) {
+                    // Gera a feture
+                    GherkinDocumentParser gherkinDocumentParser = new GherkinDocumentParser(indexParser, parameters, f);
+                    out.print(String.format(HTML_OPEN_TEMPLATE, featureMetadataDto.getIdHtml()));
+                    gherkinDocumentParser.build(out);
                     out.print(HTML_CLOSE_TEMPLATE);
+
+                    indexParser.setFeatureTitle(
+                            featureMetadataDto.getId(),
+                            gherkinDocumentParser.getFeatureTitulo()
+                    );
+
+                    menuParser.addMenuItem(f, diff, gherkinDocumentParser.getFeatureTitulo());
+
+                    // adiciona html embed
+                    for (File htmlEmbed : gherkinDocumentParser.getPaginaHtmlAnexo()) {
+                        out.print(String.format(HTML_OPEN_TEMPLATE, htmlEmbed.getName()));
+                        writeFileToOut(htmlEmbed, out);
+                        out.print(HTML_CLOSE_TEMPLATE);
+                    }
                 }
 
                 // progress
