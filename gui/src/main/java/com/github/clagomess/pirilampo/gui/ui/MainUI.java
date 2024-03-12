@@ -21,7 +21,8 @@ public class MainUI extends JFrame {
     public MainUI() {
         setTitle("Pirilampo");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setMinimumSize(new Dimension(500, 400));
+        setMinimumSize(new Dimension(550, 400));
+        setResizable(false);
         setLayout(new MigLayout("insets 10 10 10 10", "[grow,fill]", ""));
 
         JPanel pSource = new JPanel(new MigLayout("", "[grow,fill]"));
@@ -115,9 +116,16 @@ public class MainUI extends JFrame {
                 if (compiler == null) throw new RuntimeException("Failed to start compuler");
                 compiler.setProgress((value -> form.progress.setValue((int) Math.round(value * 100f))));
                 compiler.build();
-                // @TODO: impl. msg ok
+
+                JOptionPane.showMessageDialog(this, "Compilation done");
             }catch (Throwable e){
-                log.error(log.getName(), e); //@TODO: to UI
+                log.error(log.getName(), e);
+                JOptionPane.showMessageDialog(
+                        this,
+                        e.getMessage(),
+                        "ERROR",
+                        JOptionPane.ERROR_MESSAGE
+                );
             } finally {
                 form.btnCompile.setEnabled(true);
             }
