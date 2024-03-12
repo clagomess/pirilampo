@@ -25,7 +25,7 @@ import static com.github.clagomess.pirilampo.core.enums.CompilationTypeEnum.FOLD
 import static com.github.clagomess.pirilampo.core.enums.CompilationTypeEnum.FOLDER_DIFF;
 
 @Slf4j
-public class FolderToHTMLCompiler extends Compiler {
+public class FolderToHTMLCompiler extends Compiler implements ArtifactCompiler {
     private final PropertiesCompiler propertiesCompiler = new PropertiesCompiler();
     private final ImageParser imageParser = new ImageParser();
     private final ParametersDto parameters;
@@ -147,7 +147,6 @@ public class FolderToHTMLCompiler extends Compiler {
     public void build() throws Exception {
         startTimer();
         progressCount = 0;
-        buttons.setEnabled(false);
         progress.setProgress(-1);
 
         Set<File> arquivos = listFolder(parameters.getProjectSource());
@@ -240,7 +239,6 @@ public class FolderToHTMLCompiler extends Compiler {
             throw e;
         } finally {
             propertiesCompiler.setData(parameters);
-            buttons.setEnabled(true);
             progressCount = 0;
             progress.setProgress(0);
             stopTimer();

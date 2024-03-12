@@ -15,7 +15,7 @@ import static com.github.clagomess.pirilampo.core.enums.CompilationArtifactEnum.
 import static com.github.clagomess.pirilampo.core.enums.CompilationTypeEnum.FOLDER;
 
 @Slf4j
-public class FolderToPDFCompiler extends Compiler {
+public class FolderToPDFCompiler extends Compiler implements ArtifactCompiler {
     private final PropertiesCompiler propertiesCompiler = new PropertiesCompiler();
     private final ParametersDto parameters;
 
@@ -30,7 +30,6 @@ public class FolderToPDFCompiler extends Compiler {
     public void build() throws Exception {
         startTimer();
         progressCount = 0;
-        buttons.setEnabled(false);
         progress.setProgress(-1);
 
         Set<File> arquivos = listFolder(parameters.getProjectSource());
@@ -103,7 +102,6 @@ public class FolderToPDFCompiler extends Compiler {
             throw e;
         } finally {
             propertiesCompiler.setData(parameters);
-            buttons.setEnabled(true);
             progressCount = 0;
             progress.setProgress(0);
             stopTimer();

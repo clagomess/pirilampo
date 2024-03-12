@@ -14,21 +14,29 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.util.Arrays;
 
+import static com.github.clagomess.pirilampo.core.enums.CompilationArtifactEnum.HTML;
+import static com.github.clagomess.pirilampo.core.enums.CompilationArtifactEnum.PDF;
+import static com.github.clagomess.pirilampo.core.enums.CompilationTypeEnum.*;
+import static com.github.clagomess.pirilampo.core.enums.HtmlPanelToggleEnum.CLOSED;
+import static com.github.clagomess.pirilampo.core.enums.HtmlPanelToggleEnum.OPENED;
+import static com.github.clagomess.pirilampo.core.enums.LayoutPdfEnum.LANDSCAPE;
+import static com.github.clagomess.pirilampo.core.enums.LayoutPdfEnum.PORTRAIT;
+
 public class MainForm {
     private final ParametersDto defaultDto = new ParametersDto();
 
     // source
     public final RadioButtonGroupComponent<CompilationTypeEnum> rbCompilationType = new RadioButtonGroupComponent<>(Arrays.asList(
-            new RadioButtonGroupComponent.RadioButton<>("Folder", CompilationTypeEnum.FOLDER, true),
-            new RadioButtonGroupComponent.RadioButton<>("Diff", CompilationTypeEnum.FOLDER_DIFF),
-            new RadioButtonGroupComponent.RadioButton<>("Feature", CompilationTypeEnum.FEATURE)
+            new RadioButtonGroupComponent.RadioButton<>("Folder", FOLDER, true),
+            new RadioButtonGroupComponent.RadioButton<>("Diff", FOLDER_DIFF),
+            new RadioButtonGroupComponent.RadioButton<>("Feature", FEATURE)
     ));
 
     public final FileChooserComponent fcProjectSource = new FileChooserComponent() {{
         rbCompilationType.addOnChange(value -> fcProjectSource.reset());
 
         setConfig(fc -> {
-            if(rbCompilationType.getSelectedValue() == CompilationTypeEnum.FEATURE){
+            if(rbCompilationType.getSelectedValue() == FEATURE){
                 fc.setAcceptAllFileFilterUsed(false);
                 fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
                 fc.addChoosableFileFilter(new FileNameExtensionFilter(
@@ -47,7 +55,7 @@ public class MainForm {
 
         rbCompilationType.addOnChange(value -> {
             fcProjectMasterSource.reset();
-            fcProjectMasterSource.setEnabled(value == CompilationTypeEnum.FOLDER_DIFF);
+            fcProjectMasterSource.setEnabled(value == FOLDER_DIFF);
         });
     }};
 
@@ -65,10 +73,14 @@ public class MainForm {
         });
     }};
 
+    public JTabbedPane pTabArtifact = new JTabbedPane(){{
+        setBorder(BorderFactory.createTitledBorder("Artifact"));
+    }};
+
     // HTML
     public final RadioButtonGroupComponent<HtmlPanelToggleEnum> rbHtmlPanelToggle = new RadioButtonGroupComponent<>(Arrays.asList(
-        new RadioButtonGroupComponent.RadioButton<>("Opened", HtmlPanelToggleEnum.OPENED, true),
-        new RadioButtonGroupComponent.RadioButton<>("Closed", HtmlPanelToggleEnum.CLOSED)
+        new RadioButtonGroupComponent.RadioButton<>("Opened", OPENED, true),
+        new RadioButtonGroupComponent.RadioButton<>("Closed", CLOSED)
     ));
 
     public final JCheckBox chkEmbedImages = new JCheckBox(){{setSelected(true);}};
@@ -83,8 +95,8 @@ public class MainForm {
 
     // PDF
     public final RadioButtonGroupComponent<LayoutPdfEnum> rbLayoutPdfEnum = new RadioButtonGroupComponent<>(Arrays.asList(
-            new RadioButtonGroupComponent.RadioButton<>(LayoutPdfEnum.PORTRAIT, true),
-            new RadioButtonGroupComponent.RadioButton<>(LayoutPdfEnum.LANDSCAPE)
+            new RadioButtonGroupComponent.RadioButton<>(PORTRAIT, true),
+            new RadioButtonGroupComponent.RadioButton<>(LANDSCAPE)
     ));
 
     // progress
@@ -106,4 +118,22 @@ public class MainForm {
     }};
 
     public final JButton btnCompile = new JButton("Compile!");
+
+    public ParametersDto toDto(){
+        ParametersDto dto = new ParametersDto();
+        dto.setProjectName(txtProjectName.getText());
+        dto.setProjectVersion(txtProjectVersion.getText());
+        dto.setProjectLogo(fcProjectLogo.getValue());
+        dto.setLayoutPdf(rbLayoutPdfEnum.getSelectedValue());
+        dto.setHtmlPanelToggle(rbHtmlPanelToggle.getSelectedValue());
+        dto.setMenuColor(ccMenuColor.getValue());
+        dto.setMenuTextColor(ccMenuTextColor.getValue());
+        dto.setEmbedImages(chkEmbedImages.isSelected());
+        dto.setCompilationType(rbCompilationType.getSelectedValue());
+        dto.setCompilationArtifact(pTabArtifact.getSelectedIndex() == 0 ? HTML : PDF);
+        dto.setProjectSource(fcProjectSource.getValue());
+        dto.setProjectMasterSource(fcProjectMasterSource.getValue());
+
+        return dto;
+    }
 }

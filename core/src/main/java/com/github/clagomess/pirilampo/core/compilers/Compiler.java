@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.clagomess.pirilampo.core.dto.FeatureMetadataDto;
 import com.github.clagomess.pirilampo.core.dto.ParametersDto;
-import com.github.clagomess.pirilampo.core.fi.UIButtonsFI;
 import com.github.clagomess.pirilampo.core.fi.UIProgressFI;
 import lombok.Getter;
 import lombok.Setter;
@@ -27,9 +26,6 @@ import static com.github.clagomess.pirilampo.core.enums.CompilationTypeEnum.FOLD
 public abstract class Compiler {
     @Setter
     protected UIProgressFI progress = (value) -> {};
-
-    @Setter
-    protected UIButtonsFI buttons = (enabled) -> {};
 
     @Setter
     protected float progressCount = 0;
