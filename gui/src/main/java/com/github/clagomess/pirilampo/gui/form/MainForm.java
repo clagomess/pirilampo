@@ -1,6 +1,7 @@
 package com.github.clagomess.pirilampo.gui.form;
 
 import com.github.clagomess.pirilampo.core.dto.ParametersDto;
+import com.github.clagomess.pirilampo.core.enums.CompilationArtifactEnum;
 import com.github.clagomess.pirilampo.core.enums.CompilationTypeEnum;
 import com.github.clagomess.pirilampo.core.enums.HtmlPanelToggleEnum;
 import com.github.clagomess.pirilampo.core.enums.LayoutPdfEnum;
@@ -117,7 +118,12 @@ public class MainForm {
         });
     }};
 
-    public final JButton btnCompile = new JButton("Compile!");
+    public final JButton btnCompile = new JButton("Compile HTML!") {{
+        pTabArtifact.addChangeListener(l -> {
+            CompilationArtifactEnum artifact = pTabArtifact.getSelectedIndex() == 0 ? HTML : PDF;
+            this.setText(String.format("Compile %s!", artifact));
+        });
+    }};
 
     public ParametersDto toDto(){
         ParametersDto dto = new ParametersDto();

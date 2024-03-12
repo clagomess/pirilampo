@@ -1,13 +1,17 @@
 package com.github.clagomess.pirilampo.gui.component;
 
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import net.miginfocom.swing.MigLayout;
 import org.apache.commons.lang.StringUtils;
 
 import javax.swing.*;
 import javax.swing.colorchooser.AbstractColorChooserPanel;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.*;
 
+@Slf4j
 public class ColorChooserComponent extends JPanel {
     private final JPanel color = new JPanel();
     private final JTextField text = new JTextField();
@@ -22,6 +26,31 @@ public class ColorChooserComponent extends JPanel {
         value = StringUtils.isNotBlank(text.getText()) ? text.getText() : defaultColor;
         text.setText(value);
         color.setBackground(Color.decode(value));
+
+        text.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                decode(text.getText());
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                decode(text.getText());
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                decode(text.getText());
+            }
+
+            public void decode(String value){
+                try {
+                    color.setBackground(Color.decode(value));
+                }catch (Throwable e){
+                    log.warn(log.getName(), e);
+                }
+            }
+        });
 
         button.addActionListener(l -> {
             JColorChooser pane = new JColorChooser(Color.decode(value));
