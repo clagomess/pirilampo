@@ -6,11 +6,10 @@
     <parent>
         <groupId>com.github.clagomess.pirilampo</groupId>
         <artifactId>pirilampo-parent</artifactId>
-        <version>1.2.0</version>
+        <version>2.0.0</version>
     </parent>
 
     <artifactId>pirilampo-gui</artifactId>
-    <version>1.2.0</version>
 
     <properties>
 
@@ -20,7 +19,7 @@
         <dependency>
             <groupId>com.github.clagomess.pirilampo</groupId>
             <artifactId>pirilampo-core</artifactId>
-            <version>1.2.0</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.formdev</groupId>
@@ -35,28 +34,11 @@
     </dependencies>
 
     <build>
-        <finalName>${project.artifactId}</finalName>
-
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <excludes>
-                    <exclude>htmlTemplate/node_modules/**</exclude>
-                    <exclude>htmlTemplate/css/**</exclude>
-                    <exclude>htmlTemplate/js/**</exclude>
-                    <exclude>htmlTemplate/build.sh</exclude>
-                    <exclude>htmlTemplate/gulpfile.js</exclude>
-                    <exclude>htmlTemplate/package.json</exclude>
-                    <exclude>htmlTemplate/package-lock.json</exclude>
-                </excludes>
-            </resource>
-        </resources>
-
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.7.0</version>
+                <version>${maven-compiler-plugin.version}</version>
                 <configuration>
                     <annotationProcessorPaths>
                         <path>
@@ -70,49 +52,25 @@
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>2.4</version>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>${maven-assembly-plugin.version}</version>
                 <configuration>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
                     <archive>
                         <manifest>
-                            <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-                            <addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+                            <addClasspath>true</addClasspath>
+                            <mainClass>com.github.clagomess.pirilampo.gui.Main</mainClass>
                         </manifest>
                     </archive>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>2.3</version>
-                <configuration>
-                    <createDependencyReducedPom>false</createDependencyReducedPom>
-                    <filters>
-                        <filter>
-                            <artifact>*:*</artifact>
-                            <excludes>
-                                <exclude>META-INF/*.SF</exclude>
-                                <exclude>META-INF/*.DSA</exclude>
-                                <exclude>META-INF/*.RSA</exclude>
-                            </excludes>
-                        </filter>
-                    </filters>
                 </configuration>
                 <executions>
                     <execution>
                         <phase>package</phase>
                         <goals>
-                            <goal>shade</goal>
+                            <goal>single</goal>
                         </goals>
-                        <configuration>
-                            <transformers>
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>br.com.pirilampo.main.Main</mainClass>
-                                </transformer>
-                            </transformers>
-                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -120,7 +78,7 @@
             <plugin>
                 <groupId>com.akathist.maven.plugins.launch4j</groupId>
                 <artifactId>launch4j-maven-plugin</artifactId>
-                <version>1.7.25</version>
+                <version>2.4.1</version>
                 <executions>
                     <execution>
                         <id>exe</id>
@@ -130,16 +88,16 @@
                         </goals>
                         <configuration>
                             <headerType>gui</headerType>
-                            <outfile>target/${project.name}.exe</outfile>
-                            <jar>target/${project.artifactId}.jar</jar>
+                            <outfile>${project.build.directory}/${project.build.finalName}.exe</outfile>
+                            <jar>${project.build.directory}/${project.build.finalName}-jar-with-dependencies.jar</jar>
                             <errTitle>${project.name}</errTitle>
-                            <icon>src/main/resources/img_02.ico</icon>
+                            <icon>src/main/resources/com/github/clagomess/pirilampo/gui/img_02.ico</icon>
                             <classPath>
-                                <mainClass>br.com.pirilampo.main.Main</mainClass>
+                                <mainClass>com.github.clagomess.pirilampo.gui.Main</mainClass>
                             </classPath>
                             <jre>
-                                <minVersion>${java.version}</minVersion>
-                                <jdkPreference>jreOnly</jdkPreference>
+                                <path>%JAVA_HOME%;%PATH%</path>
+                                <minVersion>${maven.compiler.target}</minVersion>
                             </jre>
                             <versionInfo>
                                 <fileVersion>${project.version}.0</fileVersion>
@@ -171,10 +129,10 @@
                             <goal>sign</goal>
                         </goals>
                         <configuration>
-                            <file>target/${project.name}.exe</file>
-                            <name>${project.name}</name>
-                            <url>https://github.com/clagomess/pirilampo</url>
-                            <keystore>keystore/pirilampo.jks</keystore>
+                            <file>${project.build.directory}/${project.build.finalName}.exe</file>
+                            <name>${project.organization.name}</name>
+                            <url>${project.organization.url}</url>
+                            <keystore>../keystore/pirilampo.jks</keystore>
                             <alias>pirilampo</alias>
                             <storepass>9WPGe4wN</storepass>
                         </configuration>
