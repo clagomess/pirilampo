@@ -159,7 +159,7 @@ public class CompilerTest extends Common {
             "target/foo,target/foo/AbC.feature,AbC.feature",
             "target/foo,target/foo/bar/AbC.feature,bar/AbC.feature",
             "target,target/foo/bar/AbC.feature,foo/bar/AbC.feature",
-            "C:\\Users\\features,C:\\Users\\features\\AbC.feature,AbC.feature",
+            "\\C:\\Users\\features,\\C:\\Users\\features\\AbC.feature,AbC.feature",
     })
     public void getFeaturePathWithoutAbsolute(File base, File feature, String expected){
         assertEquals(expected, compiler.getFeaturePathWithoutAbsolute(base, feature));
