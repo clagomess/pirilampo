@@ -23,7 +23,7 @@ pipeline {
             }
             post {
                 success {
-                    archiveArtifacts '**/target/*-jar-with-dependencies.jar,**/target/*-.exe'
+                    archiveArtifacts '**/target/*-jar-with-dependencies.jar,**/target/*.exe'
                 }
             }
         }
