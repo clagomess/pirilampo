@@ -140,6 +140,16 @@ public class ParametersDtoTest extends Common {
     }
 
     @Test
+    public void validate_projectMasterSource_equals(){
+        val dto = new ParametersDto();
+        dto.setProjectSource(featureFolder);
+        dto.setProjectMasterSource(new File(featureFolder.getAbsolutePath()));
+        dto.setCompilationType(CompilationTypeEnum.FOLDER_DIFF);
+
+        assertThrowsExactly(ParametersException.class, dto::validate);
+    }
+
+    @Test
     public void validate_projectTarget(){
         val dto = new ParametersDto();
         dto.setProjectSource(featureFolder);

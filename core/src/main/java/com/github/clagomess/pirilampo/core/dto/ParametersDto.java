@@ -11,6 +11,7 @@ import org.apache.commons.lang.StringUtils;
 
 import java.io.File;
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.regex.Pattern;
 
 @Data
@@ -83,7 +84,9 @@ public class ParametersDto {
             throw new ParametersException("Option <Project Master Source> must be a folder");
         }
 
-        // @TODO: project Master equals sourcer
+        if(Objects.equals(projectMasterSource, projectSource)){
+            throw new ParametersException("Option <Project Master Source> can't be equals <Project Source>");
+        }
 
         if(projectTarget != null && !projectTarget.isDirectory()){
             throw new ParametersException("Option <Project Target> must be a folder");
