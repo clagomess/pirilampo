@@ -44,6 +44,8 @@ public class ColorChooserComponent extends JPanel {
             }
 
             public void decode(String value){
+                if(StringUtils.isBlank(value)) return;
+
                 try {
                     color.setBackground(Color.decode(value));
                 }catch (Throwable e){
