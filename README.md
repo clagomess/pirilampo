@@ -1,24 +1,60 @@
 <p align="center">
-    <img src="https://raw.githubusercontent.com/clagomess/pirilampo/master/src/main/resources/img_01.png" width="64">
+    <img src="https://raw.githubusercontent.com/clagomess/pirilampo/master/gui/src/main/resources/favicon.svg" width="64" alt="Logo">
 </p>
 
 <p align="center">
-    <a href="https://github.com/clagomess/pirilampo/releases/latest"><img src="https://img.shields.io/github/release/clagomess/pirilampo.svg?maxAge=2592000" alt="GitHub Release"></a>
-    <a href="https://github.com/clagomess/pirilampo/actions"><img src="https://img.shields.io/github/workflow/status/clagomess/pirilampo/Java CI" alt="GitHub Workflow"></a>
+    <a href="https://github.com/clagomess/pirilampo/releases/latest">
+        <img src="https://img.shields.io/github/release/clagomess/pirilampo.svg?maxAge=2592000" alt="GitHub Release">
+    </a>
 </p>
 
-## Sobre
-Pirilampo é um sistema gerador de documentação com base features escritos na linguagem Gherkin ([Cucumber](https://cucumber.io/docs/reference)) e com suporte a markedown ([CommonMark](http://commonmark.org/)).
+# Pirilampo
 
-## Instalação
- - Java JRE 8
- - Download: <a href="https://github.com/clagomess/pirilampo/releases/latest">https://github.com/clagomess/pirilampo/releases/latest</a>
- 
-## Imagem do Sistema
+The open source living documentation generator of features files writen in 
+[Gherkin](https://cucumber.io/docs/gherkin/reference/) and Markdown support.
+
+## Installation
+- Java JRE >= 8
+- Check: [All releases](https://github.com/clagomess/pirilampo/releases/latest)
+
+| Platform             | Download                                                                                                           |
+|----------------------|--------------------------------------------------------------------------------------------------------------------|
+| Windows x64          | [pirilampo-gui-2.0.0.exe](https://github.com/clagomess/pirilampo/releases/download/v2.0.0/pirilampo-gui-2.0.0.exe) |
+| Any (Executable JAR) | [pirilampo-gui-2.0.0.jar](https://github.com/clagomess/pirilampo/releases/download/v2.0.0/pirilampo-gui-2.0.0.jar) |
+| CLI                  | [pirilampo-cli-2.0.0.jar](https://github.com/clagomess/pirilampo/releases/download/v2.0.0/pirilampo-cli-2.0.0.jar) |
+
+## GUI running
+
+[//]: # (@TODO: change)
 <img src="https://raw.githubusercontent.com/clagomess/pirilampo/master/readme_assets/img_01.png" width="400">
  
-## Exemplos
-### Estrutura de pasta
+
+## CLI
+
+```
+java -jar pirilampo-cli-*.jar -projectSource /foo/bar/features
+```
+
+Available options:
+
+| Option              | Description                                                                        |
+|---------------------|------------------------------------------------------------------------------------|
+| compilationType     | Compilation Type. Expected values: [FOLDER, FOLDER_DIFF, FEATURE]. Default: FOLDER |
+| compilationArtifact | Compilation Artifact. Expected values: [HTML, PDF]. Default: HTML                  |
+| projectSource       | Folder or *.feature                                                                |
+| projectMasterSource | Folder to compare                                                                  |
+| projectTarget       | Target Folder                                                                      |
+| projectName         | Project Name. Default: Pirilampo                                                   |
+| projectVersion      | Project Version. Default: 1.0                                                      |
+| projectLogo         | Image file for logo                                                                |
+| menuColor           | Menu Color. Default: #14171A                                                       |
+| menuTextColor       | Menu Text Color. Default: #DDDDDD                                                  |
+| htmlPanelToggle     | Panel Toggle. Expected values: [CLOSED, OPENED]. Default: OPENED                   |
+| disableEmbedImages  | Disable Emded Images?                                                              |
+| layoutPdf           | Layout PDF. Expected values: [PORTRAIT,LANDSCAPE]. Default: PORTRAIT               |
+
+## Sample
+### Folder structure
 ```
 doc_exemplo/
 ├── feature/
@@ -41,6 +77,8 @@ Funcionalidade: Introdução
   | ![Image](https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/Independence_of_Brazil_1888.jpg/320px-Independence_of_Brazil_1888.jpg) |
 ```
 
-Html Individual | Html Múltiplas Feature | PDF Feature
---------------- | ---------------------- | -----------
-![a](https://raw.githubusercontent.com/clagomess/pirilampo/master/readme_assets/img_02.png) | ![b](https://raw.githubusercontent.com/clagomess/pirilampo/master/readme_assets/img_03.png) | ![c](https://raw.githubusercontent.com/clagomess/pirilampo/master/readme_assets/img_04.png)
+#### Compilation type/artifact
+
+| Feature/HTML                                                                                | Folder/HTML                                                                                 | Feature/PDF                                                                                 |
+|---------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------|
+| ![a](https://raw.githubusercontent.com/clagomess/pirilampo/master/readme_assets/img_02.png) | ![b](https://raw.githubusercontent.com/clagomess/pirilampo/master/readme_assets/img_03.png) | ![c](https://raw.githubusercontent.com/clagomess/pirilampo/master/readme_assets/img_04.png) |
