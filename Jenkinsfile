@@ -9,7 +9,7 @@ pipeline {
         }
         stage('Clone') {
             steps {
-                git branch: 'new-pirilampo', url: 'https://github.com/clagomess/pirilampo.git'
+                git branch: 'master', url: 'https://github.com/clagomess/pirilampo.git'
             }
         }
         stage('Build') {
