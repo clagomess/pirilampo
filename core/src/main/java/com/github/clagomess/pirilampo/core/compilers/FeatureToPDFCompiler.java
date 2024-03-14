@@ -1,6 +1,5 @@
 package com.github.clagomess.pirilampo.core.compilers;
 
-import com.github.clagomess.pirilampo.core.dto.FeatureMetadataDto;
 import com.github.clagomess.pirilampo.core.dto.ParametersDto;
 import com.github.clagomess.pirilampo.core.parsers.GherkinDocumentParser;
 import com.github.clagomess.pirilampo.core.parsers.PdfParser;
@@ -21,7 +20,6 @@ public class FeatureToPDFCompiler extends Compiler implements ArtifactCompiler {
     private final PropertiesCompiler propertiesCompiler = new PropertiesCompiler();
     private final ParametersDto parameters;
     private final File feature;
-    private final FeatureMetadataDto featureMetadataDto;
 
     public FeatureToPDFCompiler(ParametersDto parameters) {
         if(parameters.getCompilationType() != FEATURE || parameters.getCompilationArtifact() != PDF){
@@ -30,7 +28,6 @@ public class FeatureToPDFCompiler extends Compiler implements ArtifactCompiler {
 
         this.parameters = parameters;
         this.feature = parameters.getProjectSource();
-        this.featureMetadataDto = getFeatureMetadata(parameters, feature);
     }
 
     public void build() throws Exception {
@@ -59,9 +56,8 @@ public class FeatureToPDFCompiler extends Compiler implements ArtifactCompiler {
                 out.print("<!DOCTYPE html><html lang=\"en\"><body>");
                 out.print("<h1 class=\"page-header\">");
                 out.print(String.format(
-                        "%s <small>%s <em>%s</em></small>",
+                        "%s <small><em>%s</em></small>",
                         parameters.getProjectName(),
-                        featureMetadataDto.getName(),
                         parameters.getProjectVersion()
                 ));
                 out.print("</h1>");

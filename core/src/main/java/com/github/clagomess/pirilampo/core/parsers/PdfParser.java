@@ -52,7 +52,7 @@ public class PdfParser {
                 PageSize.A4.rotate()
         );
 
-        // document.addTitle(nomRelatorio); //@TODO: check this
+        document.addTitle(this.parameters.getProjectName());
         document.addCreationDate();
         document.addCreator("Pirilampo");
 
@@ -83,6 +83,10 @@ public class PdfParser {
 
     public void addFeatureHTML(File currentFeature, InputStream html) throws IOException {
         pdfImageProvider.setCurrentFeature(currentFeature);
+        xmlParser.parse(html);
+    }
+
+    public void addHTML(InputStream html) throws IOException {
         xmlParser.parse(html);
     }
 

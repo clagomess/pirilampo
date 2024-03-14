@@ -49,7 +49,7 @@ public class PdfImageProvider extends AbstractImageProvider {
 
         log.warn("-- Image not found");
 
-        return null; //@TODO: add empy image
+        return null;
     }
 
     @Override

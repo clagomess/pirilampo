@@ -38,7 +38,7 @@ function cssFeaturePasta(){
         'css/feature-base.css',
         'css/template-feature-pasta.css'
     ]))
-        .pipe(concat('feature-pasta.min.css', {newLine: ";\r\n"}))
+        .pipe(concat('feature-pasta.min.css', {newLine: "\r\n\r\n"}))
         .pipe(dest('dist'));
 }
 

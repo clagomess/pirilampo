@@ -48,6 +48,18 @@ public class FolderToPDFCompiler extends Compiler implements ArtifactCompiler {
             PdfParser pdfParser = new PdfParser(parameters, css);
             pdfParser.initDocument(fosPDF);
 
+            String title = "<!DOCTYPE html><html lang=\"en\"><body>" +
+                    "<div style=\"padding-top: 600px; text-align: center\">" +
+                    "<h1 class=\"page-header\">" +
+                    parameters.getProjectName() + "<br/>" +
+                    "<small><em>" + parameters.getProjectVersion() + "</em></small>" +
+                    "</h1>\n" +
+                    "</div>\n" +
+                    "<span style=\"page-break-after: always\"></span>" +
+                    "</body></html>";
+
+            pdfParser.addHTML(new ByteArrayInputStream(title.getBytes()));
+
             for (File feature : arquivos) {
                 File bufferHtml = createTempFile();
 
@@ -56,16 +68,7 @@ public class FolderToPDFCompiler extends Compiler implements ArtifactCompiler {
                         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(fosHTML, StandardCharsets.UTF_8));
                         PrintWriter out = new PrintWriter(bw);
                 ) {
-                    // @TODO: improve titles for pdf index
                     out.print("<!DOCTYPE html><html lang=\"en\"><body>");
-                    out.print("<h1 class=\"page-header\">");
-                    out.print(String.format(
-                            "%s <small>%s <em>%s</em></small>",
-                            parameters.getProjectName(),
-                            getFeatureMetadata(parameters, feature).getName(),
-                            parameters.getProjectVersion()
-                    ));
-                    out.print("</h1>");
 
                     GherkinDocumentParser parser = new GherkinDocumentParser(parameters, feature);
                     parser.build(out);
