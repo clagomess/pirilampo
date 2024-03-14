@@ -18,7 +18,7 @@ public class PdfParserTest {
         File target = new File("target/ParsePdfTest");
         if(!target.isDirectory()) assertTrue(target.mkdir());
 
-        File sourceFile = new File(getClass().getResource("FeatureToPDFCompilerTest/expected-build.html").getFile());
+        File sourceFile = new File(getClass().getResource("PdfParserTest/build.html").getFile());
         File targetFile = new File(target, "result.pdf");
 
         try (

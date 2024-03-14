@@ -56,6 +56,11 @@ public class FolderToHTMLCompilerTest extends Common {
         assertFalse(htmlString.contains("logo_xxx.png"));
         assertTrue(htmlString.contains("#/html/html_embed.html"));
         assertTrue(htmlString.contains("html_embed_txt"));
+
+        assertTrue(FileUtils.contentEquals(
+                new File(getClass().getResource("FolderToHTMLCompilerTest/expected-build.html").getFile()),
+                htmlFile
+        ));
     }
 
     @Test
@@ -72,6 +77,11 @@ public class FolderToHTMLCompilerTest extends Common {
         String htmlString = FileUtils.readFileToString(htmlFile);
 
         assertTrue(htmlString.contains("YYY_MASTER_YYY"));
+
+        assertTrue(FileUtils.contentEquals(
+                new File(getClass().getResource("FolderToHTMLCompilerTest/expected-build-master.html").getFile()),
+                htmlFile
+        ));
     }
 
     @Test

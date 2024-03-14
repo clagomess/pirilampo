@@ -72,8 +72,6 @@ public class FeatureToPDFCompilerTest extends Common {
 
             assertTrue(possuiImagens);
         }
-
-        // @TODO: also, validate html
     }
 
     @Test

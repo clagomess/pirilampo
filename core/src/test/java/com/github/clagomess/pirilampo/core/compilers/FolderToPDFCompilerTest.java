@@ -55,8 +55,6 @@ public class FolderToPDFCompilerTest extends Common {
         pdfDocument.close();
     }
 
-    // @TODO: validate content html
-
     @Test
     public void checkIsSavedProperties() throws Exception {
         ParametersDto parameters = new ParametersDto();

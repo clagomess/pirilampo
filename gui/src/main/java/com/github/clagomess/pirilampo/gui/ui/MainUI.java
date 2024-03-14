@@ -82,6 +82,8 @@ public class MainUI extends JFrame {
         setVisible(true);
     }
 
+    // @TODO: add eventListner to source to read properties
+
     public void compile(){
         new Thread(() -> {
             try {

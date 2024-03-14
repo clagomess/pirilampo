@@ -49,12 +49,10 @@ public class FeatureToHTMLCompilerTest extends Common {
         assertFalse(html.contains("&lt;br&gt;"));
         assertTrue(html.contains("<br/>"));
 
-        /* @TODO: check
         assertTrue(FileUtils.contentEquals(
                 new File(getClass().getResource("FeatureToHTMLCompilerTest/expected-build.html").getFile()),
                 htmlFile
         ));
-         */
     }
 
     @Test
