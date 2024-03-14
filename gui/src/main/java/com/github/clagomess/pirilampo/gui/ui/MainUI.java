@@ -2,6 +2,7 @@ package com.github.clagomess.pirilampo.gui.ui;
 
 import com.github.clagomess.pirilampo.core.compilers.*;
 import com.github.clagomess.pirilampo.core.dto.ParametersDto;
+import com.github.clagomess.pirilampo.gui.component.IconComponent;
 import com.github.clagomess.pirilampo.gui.form.MainForm;
 import lombok.extern.slf4j.Slf4j;
 import net.miginfocom.swing.MigLayout;
@@ -20,6 +21,7 @@ public class MainUI extends JFrame {
 
     public MainUI() {
         setTitle("Pirilampo");
+        setIconImage(IconComponent.FAVICON.getImage());
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setMinimumSize(new Dimension(550, 400));
         setResizable(false);

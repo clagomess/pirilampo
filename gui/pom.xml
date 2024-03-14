@@ -100,7 +100,7 @@
                             <outfile>${project.build.directory}/${project.build.finalName}.exe</outfile>
                             <jar>${project.build.directory}/${project.build.finalName}-jar-with-dependencies.jar</jar>
                             <errTitle>${project.name}</errTitle>
-                            <icon>src/main/resources/com/github/clagomess/pirilampo/gui/img_02.ico</icon>
+                            <icon>src/main/resources/favicon.ico</icon>
                             <classPath>
                                 <mainClass>com.github.clagomess.pirilampo.gui.Main</mainClass>
                             </classPath>
