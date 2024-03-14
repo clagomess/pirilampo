@@ -2,6 +2,7 @@ package com.github.clagomess.pirilampo.gui.ui;
 
 import com.github.clagomess.pirilampo.core.compilers.*;
 import com.github.clagomess.pirilampo.core.dto.ParametersDto;
+import com.github.clagomess.pirilampo.core.exception.FeatureException;
 import com.github.clagomess.pirilampo.gui.component.IconComponent;
 import com.github.clagomess.pirilampo.gui.form.MainForm;
 import lombok.extern.slf4j.Slf4j;
@@ -120,6 +121,14 @@ public class MainUI extends JFrame {
                 compiler.build();
 
                 JOptionPane.showMessageDialog(this, "Compilation done");
+            }catch (FeatureException e){
+                log.error(log.getName(), e);
+                JOptionPane.showMessageDialog(
+                        this,
+                        String.format("%s:\n\n%s", e.getFeature().getAbsolutePath(), e.getMessage()),
+                        "ERROR",
+                        JOptionPane.ERROR_MESSAGE
+                );
             }catch (Throwable e){
                 log.error(log.getName(), e);
                 JOptionPane.showMessageDialog(
