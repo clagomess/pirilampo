@@ -55,29 +55,35 @@ Available options:
 
 ## Sample
 ### Folder structure
+See at [doc_exemplo](https://github.com/clagomess/pirilampo/tree/new-pirilampo/readme_assets/doc_exemplo) 
 ```
 doc_exemplo/
 ├── feature/
 │   └── Independência do Brasil/
 │       └── 001 - Introdução.feature
+│       └── 320px-Independence_of_Brazil_1888.jpg
 └── html/
 ```
 
-#### Feature: 001 - Introdução.feature
+### Feature: 001 - Introdução.feature
 ```feature
 # language: pt
 # encoding: utf-8
 Funcionalidade: Introdução
-  **Independência do Brasil** é um processo que se estende de 1821 a 1825 e coloca em violenta oposição o [Reino do Brasil](https://pt.wikipedia.org/wiki/Reino_do_Brasil) e o Reino de Portugal, dentro do Reino Unido de Portugal, Brasil e Algarves. As Cortes Gerais e Extraordinárias da Nação Portuguesa, instaladas em 1820, como uma consequência da Revolução Liberal do Porto, tomam decisões, a partir de 1821, que tinham como objetivo reduzir novamente o Brasil ao seu antigo estatuto colonial.
+  **Independência do Brasil** é um processo que se estende de 1821 a 1825 e coloca em violenta oposição
+  o [Reino do Brasil](https://pt.wikipedia.org/wiki/Reino_do_Brasil) e o Reino de Portugal, dentro do Reino Unido de
+  Portugal, Brasil e Algarves. As Cortes Gerais e Extraordinárias da Nação Portuguesa, instaladas em 1820,
+  como uma consequência da Revolução Liberal do Porto, tomam decisões, a partir de 1821, que tinham como objetivo
+  reduzir novamente o Brasil ao seu antigo estatuto colonial.
 
   Contexto:
-  Dado Antecedendo o processo de independência do Brasil, mas com fortes influências sobre o mesmo, ocorre a transferência da corte portuguesa para o Brasil.
+    Dado Antecedendo o processo de independência do Brasil, mas com fortes influências sobre o mesmo, ocorre a transferência da corte portuguesa para o Brasil.
 
-  | Proclamação da Independência                                                                                                              |
-  | ![Image](https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/Independence_of_Brazil_1888.jpg/320px-Independence_of_Brazil_1888.jpg) |
+      | Proclamação da Independência                    |
+      | ![Image](320px-Independence_of_Brazil_1888.jpg) |
 ```
 
-#### Compilation type/artifact
+### Compilation type/artifact
 
 | Feature/HTML                                                                                | Folder/HTML                                                                                 | Feature/PDF                                                                                 |
 |---------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------|
