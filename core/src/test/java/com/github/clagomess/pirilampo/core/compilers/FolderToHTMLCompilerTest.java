@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -74,7 +75,7 @@ public class FolderToHTMLCompilerTest extends Common {
         File htmlFile = new File(targetFile,"html/index.html");
         assertTrue(htmlFile.isFile());
 
-        String htmlString = FileUtils.readFileToString(htmlFile);
+        String htmlString = FileUtils.readFileToString(htmlFile, StandardCharsets.UTF_8);
 
         assertTrue(htmlString.contains("YYY_MASTER_YYY"));
 

@@ -10,6 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -38,7 +39,7 @@ public class FeatureToHTMLCompilerTest extends Common {
         File htmlFile = new File(targetFile, "xxx.html");
         assertTrue(htmlFile.isFile());
 
-        String html = FileUtils.readFileToString(htmlFile);
+        String html = FileUtils.readFileToString(htmlFile, StandardCharsets.UTF_8);
 
         assertNotEquals(html, "");
         assertFalse(html.contains("xxx.png"));

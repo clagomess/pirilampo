@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -74,7 +75,7 @@ public class PropertiesCompilerTest extends Common {
         File result = new File(source, PropertiesCompiler.FILENAME);
         assertTrue(result.isFile());
 
-        Assertions.assertThat(FileUtils.readFileToString(result))
+        Assertions.assertThat(FileUtils.readFileToString(result, StandardCharsets.UTF_8))
                 .contains("projectName")
                 .contains("projectVersion")
                 .contains("projectLogo")

@@ -118,8 +118,8 @@ public abstract class Compiler {
         }
 
         try(
-                InputStreamReader isr = new InputStreamReader(is);
-                BufferedReader br = new BufferedReader(isr)
+                InputStreamReader isr = new InputStreamReader(new BOMInputStream(is), StandardCharsets.UTF_8);
+                BufferedReader br = new BufferedReader(isr);
         ){
             char[] buffer = new char[1024 * 4];
             int n;
@@ -133,8 +133,8 @@ public abstract class Compiler {
     protected void writeFileToOut(File file, PrintWriter out) throws IOException {
         try (
                 FileInputStream fis = new FileInputStream(file);
-                BOMInputStream bis = new BOMInputStream(fis);
-                BufferedReader br = new BufferedReader(new InputStreamReader(bis, StandardCharsets.UTF_8));
+                InputStreamReader isr = new InputStreamReader(new BOMInputStream(fis), StandardCharsets.UTF_8);
+                BufferedReader br = new BufferedReader(isr);
         ){
             char[] buffer = new char[1024 * 4];
             int n;
