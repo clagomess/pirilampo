@@ -165,4 +165,6 @@ public class MainUI extends JFrame {
             }
         }).start();
     }
+
+    // @TODO: add release notes
 }

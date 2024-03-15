@@ -7,6 +7,7 @@ import javax.swing.*;
 
 public class Main {
     public static void main(String[] args){
+        FlatIntelliJLaf.registerCustomDefaultsSource( "com.github.clagomess.pirilampo.gui" );
         FlatIntelliJLaf.setup();
         SwingUtilities.invokeLater(MainUI::new);
     }

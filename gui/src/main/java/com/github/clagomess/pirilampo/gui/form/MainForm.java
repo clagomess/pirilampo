@@ -90,7 +90,7 @@ public class MainForm {
             defaultDto.getMenuColor()
     );
     public final ColorChooserComponent ccMenuTextColor = new ColorChooserComponent(
-            "Menu Text Coloer",
+            "Menu Text Color",
             defaultDto.getMenuTextColor()
     );
 
