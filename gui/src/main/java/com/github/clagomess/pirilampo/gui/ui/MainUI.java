@@ -94,12 +94,12 @@ public class MainUI extends JFrame {
         form.txtProjectName.setText(parameters.getProjectName());
         form.txtProjectVersion.setText(parameters.getProjectVersion());
         form.fcProjectLogo.setValue(parameters.getProjectLogo());
-        //form.rbLayoutPdfEnum.setText(parameters.getLayoutPdf()); //@TODO: impl
-        //form.rbHtmlPanelToggle.setText(parameters.getHtmlPanelToggle()); //@TODO: impl
+        form.rbLayoutPdfEnum.setSelected(parameters.getLayoutPdf());
+        form.rbHtmlPanelToggle.setSelected(parameters.getHtmlPanelToggle());
         form.ccMenuColor.setValue(parameters.getMenuColor());
         form.ccMenuTextColor.setValue(parameters.getMenuTextColor());
         form.chkEmbedImages.setSelected(parameters.isEmbedImages());
-        //form.rbCompilationType.setText(parameters.getCompilationType()); //@TODO: impl
+        form.rbCompilationType.setSelected(parameters.getCompilationType());
         //form.pTabArtifact.setText(parameters.getCompilationArtifact()); //@TODO: impl
     }
 

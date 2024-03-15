@@ -35,6 +35,16 @@ public class RadioButtonGroupComponent<T extends Enum<T>> extends JPanel {
         return opt.map(RadioButton::getValue).orElse(null);
     }
 
+    public void setSelected(T selected){
+        if(selected == null) return;
+
+        Optional<RadioButton<T>> opt = elements.stream()
+                .filter(item -> item.value.equals(selected))
+                .findFirst();
+
+        opt.ifPresent(tRadioButton -> tRadioButton.setSelected(true));
+    }
+
     @Getter
     public static class RadioButton<T extends Enum<T>> extends JRadioButton {
         private final T value;

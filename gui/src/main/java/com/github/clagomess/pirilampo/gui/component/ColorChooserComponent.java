@@ -51,7 +51,7 @@ public class ColorChooserComponent extends JPanel {
                 value = color;
 
                 try {
-                    swatch.setBackground(Color.decode(color));
+                    swatch.setBackground(StringUtils.isNotBlank(color) ? Color.decode(color) : null);
                 }catch (Throwable e){
                     log.warn(log.getName(), e);
                     swatch.setBackground(null);
