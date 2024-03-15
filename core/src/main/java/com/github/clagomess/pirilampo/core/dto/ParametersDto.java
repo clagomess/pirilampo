@@ -35,7 +35,7 @@ public class ParametersDto {
         if(StringUtils.isBlank(projectName)) throw ParametersException.required("Project Name");
         if(StringUtils.isBlank(projectVersion)) throw ParametersException.required("Project Name");
 
-        if(projectLogo != null && !projectLogo.isFile()){
+        if(projectLogo != null && !projectLogo.isFile()){ //@TODO: can be a project logo
             throw new ParametersException("Option <Project Logo> must be a valid file");
         }
 
