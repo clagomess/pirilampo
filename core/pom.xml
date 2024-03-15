@@ -82,14 +82,14 @@
             <resource>
                 <directory>src/main/resources</directory>
                 <excludes>
-                    <exclude>htmlTemplate/node_modules/**</exclude>
-                    <exclude>htmlTemplate/css/**</exclude>
-                    <exclude>htmlTemplate/js/**</exclude>
-                    <exclude>htmlTemplate/build.sh</exclude>
-                    <exclude>htmlTemplate/gulpfile.js</exclude>
-                    <exclude>htmlTemplate/package.json</exclude>
-                    <exclude>htmlTemplate/package-lock.json</exclude>
-                    <exclude>htmlTemplate/.gitignore</exclude>
+                    <exclude>com/github/clagomess/pirilampo/core/compilers/node_modules/**</exclude>
+                    <exclude>com/github/clagomess/pirilampo/core/compilers/css/**</exclude>
+                    <exclude>com/github/clagomess/pirilampo/core/compilers/js/**</exclude>
+                    <exclude>com/github/clagomess/pirilampo/core/compilers/build.sh</exclude>
+                    <exclude>com/github/clagomess/pirilampo/core/compilers/gulpfile.js</exclude>
+                    <exclude>com/github/clagomess/pirilampo/core/compilers/package.json</exclude>
+                    <exclude>com/github/clagomess/pirilampo/core/compilers/package-lock.json</exclude>
+                    <exclude>com/github/clagomess/pirilampo/core/compilers/.gitignore</exclude>
                 </excludes>
             </resource>
         </resources>
