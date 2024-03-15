@@ -14,14 +14,22 @@ import java.util.prefs.Preferences;
 
 @Slf4j
 public class FileChooserComponent extends JPanel {
-    private final JTextField text = new JTextField();
+    final JTextField text = new JTextField();
     private final JButton button;
 
     @Setter
     private FileChooserFI config = (fc) -> {};
 
+    @Setter
+    private OnChangeFI onChange = file -> {};
+
     @Getter
     private File value = null;
+
+    public void setValue(File vl){
+        text.setText(vl != null ? vl.getAbsolutePath() : null);
+        value = vl;
+    }
 
     public FileChooserComponent(){
         this("Select");
@@ -34,17 +42,22 @@ public class FileChooserComponent extends JPanel {
         text.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
-                value = StringUtils.isNotBlank(text.getText()) ? new File(text.getText()) : null;
+                update();
             }
 
             @Override
             public void removeUpdate(DocumentEvent e) {
-                value = StringUtils.isNotBlank(text.getText()) ? new File(text.getText()) : null;
+                update();
             }
 
             @Override
             public void changedUpdate(DocumentEvent e) {
+                update();
+            }
+
+            public void update(){
                 value = StringUtils.isNotBlank(text.getText()) ? new File(text.getText()) : null;
+                onChange.change(value);
             }
         });
 
@@ -56,8 +69,7 @@ public class FileChooserComponent extends JPanel {
 
             int ret = fc.showOpenDialog(null);
             if(ret == JFileChooser.APPROVE_OPTION && fc.getSelectedFile() != null){
-                text.setText(fc.getSelectedFile().getAbsolutePath());
-                value = fc.getSelectedFile();
+                setValue(fc.getSelectedFile());
 
                 if(fc.getSelectedFile().isDirectory()){
                     prefs.put("LAST_USED_FOLDER", fc.getSelectedFile().getAbsolutePath());
@@ -74,6 +86,7 @@ public class FileChooserComponent extends JPanel {
 
     public void reset(){
         this.value = null;
+        onChange.change(null);
         this.text.setText(null);
     }
 
@@ -85,5 +98,10 @@ public class FileChooserComponent extends JPanel {
     @FunctionalInterface
     public interface FileChooserFI {
         void apply(JFileChooser fc);
+    }
+
+    @FunctionalInterface
+    public interface OnChangeFI {
+        void change(File file);
     }
 }

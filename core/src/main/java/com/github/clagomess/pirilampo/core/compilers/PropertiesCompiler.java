@@ -20,6 +20,8 @@ public class PropertiesCompiler extends Compiler {
     protected static final String FILENAME = "config.properties";
 
     protected File getSourceDir(ParametersDto parameters){
+        if(parameters.getProjectSource() == null) return null;
+
         if(parameters.getProjectSource().isDirectory()){
             return parameters.getProjectSource();
         } else {
@@ -28,6 +30,8 @@ public class PropertiesCompiler extends Compiler {
     }
 
     public void loadData(ParametersDto parameters){
+        if(parameters.getProjectSource() == null) return;
+
         File file = new File(getSourceDir(parameters), FILENAME);
         if(!file.isFile()) return;
 

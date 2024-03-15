@@ -15,8 +15,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
 public class PropertiesCompilerTest extends Common {
@@ -53,6 +52,12 @@ public class PropertiesCompilerTest extends Common {
     }
 
     @Test
+    public void getSourceDir_null(){
+        ParametersDto parameters = new ParametersDto();
+        assertNull(propertiesCompiler.getSourceDir(parameters));
+    }
+
+    @Test
     public void loadData(){
         ParametersDto parameters = new ParametersDto();
         parameters.setProjectSource(new File(getClass()
@@ -63,6 +68,13 @@ public class PropertiesCompilerTest extends Common {
         propertiesCompiler.loadData(parameters);
         assertEquals("foo-bar", parameters.getProjectName());
         assertTrue(parameters.isEmbedImages());
+    }
+
+    @Test
+    public void loadData_null(){
+        ParametersDto parameters = new ParametersDto();
+        propertiesCompiler.loadData(parameters);
+        assertNull(parameters.getProjectSource());
     }
 
     @Test

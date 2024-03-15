@@ -23,6 +23,8 @@ public class Main {
         try {
             ParametersDto parameters = mainOptions.getArgs(args);
 
+            // @TODO: load properties
+
             if (parameters.getCompilationType() == FEATURE &&
                     parameters.getCompilationArtifact() == HTML
             ) {

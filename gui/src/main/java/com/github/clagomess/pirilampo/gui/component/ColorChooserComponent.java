@@ -13,46 +13,53 @@ import java.awt.*;
 
 @Slf4j
 public class ColorChooserComponent extends JPanel {
-    private final JPanel color = new JPanel();
-    private final JTextField text = new JTextField();
+    private final String defaultColor;
+    final JPanel swatch = new JPanel();
+    final JTextField text = new JTextField();
     private final JButton button = new JButton("Select");
 
     @Getter
     private String value;
 
-    public ColorChooserComponent(String label, String defaultColor){
-        setLayout(new MigLayout("insets 0 0 0 0", "[grow,fill]"));
-
-        value = StringUtils.isNotBlank(text.getText()) ? text.getText() : defaultColor;
+    public void setValue(String vl){
+        value = StringUtils.isNotBlank(vl) ? vl : defaultColor;
         text.setText(value);
-        color.setBackground(Color.decode(value));
+    }
+
+    public ColorChooserComponent(String label, String defaultColor){
+        this.defaultColor = defaultColor;
+
+        setLayout(new MigLayout("insets 0 0 0 0", "[grow,fill]"));
 
         text.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
-                decode(text.getText());
+                update(text.getText());
             }
 
             @Override
             public void removeUpdate(DocumentEvent e) {
-                decode(text.getText());
+                update(text.getText());
             }
 
             @Override
             public void changedUpdate(DocumentEvent e) {
-                decode(text.getText());
+                update(text.getText());
             }
 
-            public void decode(String value){
-                if(StringUtils.isBlank(value)) return;
+            public void update(String color){
+                value = color;
 
                 try {
-                    color.setBackground(Color.decode(value));
+                    swatch.setBackground(Color.decode(color));
                 }catch (Throwable e){
                     log.warn(log.getName(), e);
+                    swatch.setBackground(null);
                 }
             }
         });
+
+        setValue(defaultColor);
 
         button.addActionListener(l -> {
             JColorChooser pane = new JColorChooser(Color.decode(value));
@@ -63,14 +70,17 @@ public class ColorChooserComponent extends JPanel {
             pane.removeChooserPanel(defaultPanels[1]);
 
             JColorChooser.createDialog(null, label, true, pane, a -> {
-                value = "#" + String.format("%06X", 0xFFFFFF & pane.getColor().getRGB());
-                text.setText(value);
-                color.setBackground(pane.getColor());
+                setValue(colorToHexString(pane.getColor()));
             },null).setVisible(true);
         });
 
-        add(color);
+        add(swatch);
         add(text, "width 100%");
         add(button);
+    }
+
+    protected String colorToHexString(Color color){
+        if(color == null) return null;
+        return "#" + String.format("%06X", 0xFFFFFF & color.getRGB());
     }
 }

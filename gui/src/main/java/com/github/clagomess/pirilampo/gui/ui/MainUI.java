@@ -10,6 +10,7 @@ import net.miginfocom.swing.MigLayout;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
 import java.util.Arrays;
 
 import static com.github.clagomess.pirilampo.core.enums.CompilationArtifactEnum.HTML;
@@ -19,6 +20,7 @@ import static com.github.clagomess.pirilampo.core.enums.CompilationTypeEnum.*;
 @Slf4j
 public class MainUI extends JFrame {
     private final MainForm form = new MainForm();
+    private final PropertiesCompiler propertiesCompiler = new PropertiesCompiler();
 
     public MainUI() {
         setTitle("Pirilampo");
@@ -77,12 +79,57 @@ public class MainUI extends JFrame {
         add(form.btnCompile);
         getRootPane().setDefaultButton(form.btnCompile);
 
+        // add events
+        form.fcProjectSource.setOnChange(this::projectSourceOnChange);
+
         pack();
         setLocationRelativeTo(null);
         setVisible(true);
     }
 
-    // @TODO: add eventListner to source to read properties
+    public void projectSourceOnChange(File file){
+        ParametersDto parameters = form.toDto();
+        propertiesCompiler.loadData(parameters);
+
+        form.txtProjectName.setText(parameters.getProjectName());
+        form.txtProjectVersion.setText(parameters.getProjectVersion());
+        form.fcProjectLogo.setValue(parameters.getProjectLogo());
+        //form.rbLayoutPdfEnum.setText(parameters.getLayoutPdf()); //@TODO: impl
+        //form.rbHtmlPanelToggle.setText(parameters.getHtmlPanelToggle()); //@TODO: impl
+        form.ccMenuColor.setValue(parameters.getMenuColor());
+        form.ccMenuTextColor.setValue(parameters.getMenuTextColor());
+        form.chkEmbedImages.setSelected(parameters.isEmbedImages());
+        //form.rbCompilationType.setText(parameters.getCompilationType()); //@TODO: impl
+        //form.pTabArtifact.setText(parameters.getCompilationArtifact()); //@TODO: impl
+    }
+
+    private ArtifactCompiler getArtifactCompiler(ParametersDto parameters){
+        if (parameters.getCompilationType() == FEATURE &&
+                parameters.getCompilationArtifact() == HTML
+        ) {
+            return new FeatureToHTMLCompiler(parameters);
+        }
+
+        if (parameters.getCompilationType() == FEATURE &&
+                parameters.getCompilationArtifact() == PDF
+        ) {
+            return new FeatureToPDFCompiler(parameters);
+        }
+
+        if (Arrays.asList(FOLDER, FOLDER_DIFF).contains(parameters.getCompilationType()) &&
+                parameters.getCompilationArtifact() == HTML
+        ) {
+            return new FolderToHTMLCompiler(parameters);
+        }
+
+        if (parameters.getCompilationType() == FOLDER &&
+                parameters.getCompilationArtifact() == PDF
+        ) {
+            return new FolderToPDFCompiler(parameters);
+        }
+
+        throw new RuntimeException("Failed to start compuler");
+    }
 
     public void compile(){
         new Thread(() -> {
@@ -92,33 +139,7 @@ public class MainUI extends JFrame {
                 ParametersDto parameters = form.toDto();
                 parameters.validate();
 
-                ArtifactCompiler compiler = null;
-
-                if (parameters.getCompilationType() == FEATURE &&
-                        parameters.getCompilationArtifact() == HTML
-                ) {
-                    compiler = new FeatureToHTMLCompiler(parameters);
-                }
-
-                if (parameters.getCompilationType() == FEATURE &&
-                        parameters.getCompilationArtifact() == PDF
-                ) {
-                    compiler = new FeatureToPDFCompiler(parameters);
-                }
-
-                if (Arrays.asList(FOLDER, FOLDER_DIFF).contains(parameters.getCompilationType()) &&
-                        parameters.getCompilationArtifact() == HTML
-                ) {
-                    compiler = new FolderToHTMLCompiler(parameters);
-                }
-
-                if (parameters.getCompilationType() == FOLDER &&
-                        parameters.getCompilationArtifact() == PDF
-                ) {
-                    compiler = new FolderToPDFCompiler(parameters);
-                }
-
-                if (compiler == null) throw new RuntimeException("Failed to start compuler");
+                ArtifactCompiler compiler = getArtifactCompiler(parameters);
                 compiler.setProgress((value -> form.progress.setValue((int) Math.round(value * 100f))));
                 compiler.build();
 
