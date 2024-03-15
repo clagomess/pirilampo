@@ -18,7 +18,7 @@ public class Main {
     private static final MainOptions mainOptions = new MainOptions();
 
     public static void main(String[] args) {
-        log.info("Pirilampo - Ver.: {}", Main.class.getPackage().getImplementationVersion());
+        log.info("Pirilampo - Ver.: {}", Main.class.getPackage().getImplementationVersion()); //@TODO: fixcd
 
         try {
             ParametersDto parameters = mainOptions.getArgs(args);
