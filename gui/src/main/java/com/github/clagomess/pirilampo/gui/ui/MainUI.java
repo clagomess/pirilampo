@@ -100,7 +100,7 @@ public class MainUI extends JFrame {
         form.ccMenuTextColor.setValue(parameters.getMenuTextColor());
         form.chkEmbedImages.setSelected(parameters.isEmbedImages());
         form.rbCompilationType.setSelected(parameters.getCompilationType());
-        //form.pTabArtifact.setText(parameters.getCompilationArtifact()); //@TODO: impl
+        form.pTabArtifact.setSelectedIndex(parameters.getCompilationArtifact() == HTML ? 0 : 1);
     }
 
     private ArtifactCompiler getArtifactCompiler(ParametersDto parameters){
