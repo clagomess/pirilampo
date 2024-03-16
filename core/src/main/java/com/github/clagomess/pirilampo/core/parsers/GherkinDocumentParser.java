@@ -16,29 +16,18 @@ import org.apache.commons.lang.StringUtils;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Slf4j
 public class GherkinDocumentParser extends Compiler {
-    private final ImageParser imageParser = new ImageParser();
-    private final IndexParser indexParser;
-    private final MarkdownParser markdownParser = new MarkdownParser();
     private final ParametersDto parameters;
     private final File feature;
 
     @Getter
-    private final List<File> paginaHtmlAnexo;
+    private final TextParser textParser;
 
     @Getter
     private String featureTitulo = null;
 
-    private final String featureId;
-
-    private static final String HTML_TITULO = "<h2>%s</h2>\n";
-    private static final String HTML_PARAGRAFO = "<p>%s</p>\n";
     private static final String HTML_STEP = "<p><span class=\"keyword\">%s</span> %s</p>\n";
 
     private static final String HTML_OPEN_CHILDREN = "<div class=\"panel panel-default\">\n" +
@@ -56,9 +45,6 @@ public class GherkinDocumentParser extends Compiler {
 
     private static final String HTML_CLOSE_CHILDREN_TABLE = "</table></div>";
 
-    private static final String HTML_CHILDREN_TABLE_TH = "<th>%s</th>\n";
-    private static final String HTML_CHILDREN_TABLE_TD = "<td>%s</td>\n";
-
     public GherkinDocumentParser(ParametersDto parameters, File feature){
         this(null, parameters, feature);
     }
@@ -68,11 +54,9 @@ public class GherkinDocumentParser extends Compiler {
             ParametersDto parameters,
             File feature
     ){
-        this.indexParser = indexParser;
         this.parameters = parameters;
         this.feature = feature;
-        this.paginaHtmlAnexo = new ArrayList<>();
-        this.featureId = getFeatureMetadata(parameters, feature).getId();
+        this.textParser = new TextParser(indexParser, parameters, feature);
     }
 
     public void build(PrintWriter out) throws Exception {
@@ -104,7 +88,9 @@ public class GherkinDocumentParser extends Compiler {
         out.print("<thead><tr>");
 
         for (TableCell tc : dataTable.getRows().get(0).getCells()) {
-            out.print(String.format(HTML_CHILDREN_TABLE_TH, format(tc.getValue(), false)));
+            out.print("<th>");
+            textParser.format(out, tc.getValue(), false);
+            out.println("</th>");
         }
 
         out.print("</tr></thead>");
@@ -116,7 +102,9 @@ public class GherkinDocumentParser extends Compiler {
 
             out.print("<tr>");
             for (TableCell tc : tr.getCells()) {
-                out.print(String.format(HTML_CHILDREN_TABLE_TD, format(tc.getValue())));
+                out.print("<td>");
+                textParser.format(out, tc.getValue(), true);
+                out.println("</td>");
             }
             out.print("</tr>");
         }
@@ -127,7 +115,7 @@ public class GherkinDocumentParser extends Compiler {
 
     private void parseStepDocString(DocString docString, PrintWriter out){
         out.print("<pre>");
-        out.print(format(docString.getContent(), false));
+        out.print(docString.getContent());
         out.print("</pre>");
     }
 
@@ -139,7 +127,9 @@ public class GherkinDocumentParser extends Compiler {
             out.print("<thead><tr>");
 
             for (TableCell tc : examples.getTableHeader().getCells()) {
-                out.print(String.format(HTML_CHILDREN_TABLE_TH, format(tc.getValue(), false)));
+                out.print("<th>");
+                textParser.format(out, tc.getValue(), false);
+                out.println("</th>");
             }
 
             out.print("</tr></thead>");
@@ -152,7 +142,9 @@ public class GherkinDocumentParser extends Compiler {
                 out.print("<tr>");
 
                 for (TableCell tc : tr.getCells()) {
-                    out.print(String.format(HTML_CHILDREN_TABLE_TD, format(tc.getValue())));
+                    out.print("<td>");
+                    textParser.format(out, tc.getValue(), true);
+                    out.println("</td>");
                 }
                 out.print("</tr>");
             }
@@ -164,10 +156,14 @@ public class GherkinDocumentParser extends Compiler {
     }
 
     private void build(GherkinDocument gd, PrintWriter out){
-        out.print(String.format(HTML_TITULO, format(gd.getFeature().getName(), false)));
+        out.print("<h2>");
+        textParser.format(out, gd.getFeature().getName(), false);
+        out.println("</h2>");
 
         if(StringUtils.isNotBlank(gd.getFeature().getDescription())) {
-            out.print(String.format(HTML_PARAGRAFO, format(gd.getFeature().getDescription())));
+            out.print("<p>");
+            textParser.format(out, gd.getFeature().getDescription(), true);
+            out.println("</p>");
         }
 
         int scenarioIdx = 0;
@@ -185,11 +181,18 @@ public class GherkinDocumentParser extends Compiler {
             }
 
             if(StringUtils.isNotBlank(sd.getDescription())){
-                out.print(String.format(HTML_PARAGRAFO, format(sd.getDescription())));
+                out.print("<p>");
+                textParser.format(out, sd.getDescription(), true);
+                out.println("</p>");
             }
 
             for (Step step : sd.getSteps()){
-                out.print(String.format(HTML_STEP, step.getKeyword(), format(step.getText())));
+                out.print("<p><span class=\"keyword\">");
+                out.print(step.getKeyword());
+                out.print("</span> ");
+                textParser.format(out, step.getText(), true);
+                out.println("</p>");
+
                 if(step.getArgument() == null) continue;
 
                 if(step.getArgument() instanceof DataTable) {
@@ -212,50 +215,5 @@ public class GherkinDocumentParser extends Compiler {
 
             scenarioIdx++;
         }
-    }
-
-    protected String format(String txtRaw, boolean makdown){
-        String txt = txtRaw.trim()
-                .replace("<", "&lt;")
-                .replace(">", "&gt;");
-
-        if(txt.length() < 3) return txt;
-
-        if(makdown) txt = markdownParser.build(txt);
-
-        final String img = "<br/><p><img src=\"$1\" $2/></p>";
-
-        txt = txt.replaceAll("<img src=\"(.+?)\"(.*?)>", img);
-        txt = txt.replaceAll("&lt;img src=&quot;(.+?)&quot;(.*?)&gt;", img);
-        txt = txt.replaceAll("&lt;strike&gt;(.+?)&lt;/strike&gt;", "<strike>$1</strike>");
-        txt = txt.replace("&quot;", "\"");
-        txt = txt.replace("&lt;br&gt;", "<br/>");
-
-        if(indexParser != null) indexParser.putFeaturePhrase(featureId, txt);
-
-        // verifica html embeded
-        Matcher mHtmlHref = Pattern.compile("href=\"(.+?\\.html)\"").matcher(txt);
-        while(mHtmlHref.find()) {
-            String filename = mHtmlHref.group(1);
-            File htmlEmbed = getAbsolutePathFeatureAsset(parameters, feature, filename);
-
-            if (htmlEmbed != null && htmlEmbed.isFile()) {
-                paginaHtmlAnexo.add(htmlEmbed);
-                txt = txt.replace(mHtmlHref.group(), "href=\"#/html/" + filename + "\"");
-            }
-        }
-
-        // pega endereço ou base64 da imagem
-        Matcher mImgSrc = Pattern.compile("src=\"(.+?)\"").matcher(txt);
-        while (mImgSrc.find()) {
-            String imgSrc = ""; // imageParser.parse(parameters, feature, mImgSrc.group(1)); @TODO: fix-me
-            txt = txt.replace(mImgSrc.group(), "src=\"" + imgSrc + "\"");
-        }
-
-        return txt;
-    }
-
-    private String format(String txt){
-        return format(txt, true);
     }
 }

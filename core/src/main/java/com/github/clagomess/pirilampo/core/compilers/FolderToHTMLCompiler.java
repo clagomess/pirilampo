@@ -213,7 +213,7 @@ public class FolderToHTMLCompiler extends Compiler implements ArtifactCompiler {
                     menuParser.addMenuItem(f, diff, gherkinDocumentParser.getFeatureTitulo());
 
                     // adiciona html embed
-                    for (File htmlEmbed : gherkinDocumentParser.getPaginaHtmlAnexo()) {
+                    for (File htmlEmbed : gherkinDocumentParser.getTextParser().getPaginaHtmlAnexo()) {
                         out.print(String.format(HTML_OPEN_TEMPLATE, htmlEmbed.getName()));
                         writeFileToOut(htmlEmbed, out);
                         out.print(HTML_CLOSE_TEMPLATE);

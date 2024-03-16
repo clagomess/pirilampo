@@ -152,7 +152,7 @@ public abstract class Compiler {
 
     public File getAbsolutePathFeatureAsset(ParametersDto parameters, File feature, String fileName){
         Set<File> basePaths = new LinkedHashSet<File>() {{
-            add(feature.getParentFile());
+            if(feature != null) add(feature.getParentFile());
             add(parameters.getProjectSource());
             if(parameters.getProjectMasterSource() != null) add(parameters.getProjectMasterSource());
         }};
