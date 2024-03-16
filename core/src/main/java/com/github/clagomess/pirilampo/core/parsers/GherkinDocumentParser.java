@@ -248,7 +248,7 @@ public class GherkinDocumentParser extends Compiler {
         // pega endereço ou base64 da imagem
         Matcher mImgSrc = Pattern.compile("src=\"(.+?)\"").matcher(txt);
         while (mImgSrc.find()) {
-            String imgSrc = imageParser.parse(parameters, feature, mImgSrc.group(1));
+            String imgSrc = ""; // imageParser.parse(parameters, feature, mImgSrc.group(1)); @TODO: fix-me
             txt = txt.replace(mImgSrc.group(), "src=\"" + imgSrc + "\"");
         }
 

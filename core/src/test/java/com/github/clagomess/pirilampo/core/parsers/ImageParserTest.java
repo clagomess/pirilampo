@@ -2,11 +2,13 @@ package com.github.clagomess.pirilampo.core.parsers;
 
 import com.github.clagomess.pirilampo.core.Common;
 import com.github.clagomess.pirilampo.core.dto.ParametersDto;
-import com.github.clagomess.pirilampo.core.parsers.ImageParser;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -28,6 +30,12 @@ public class ImageParserTest extends Common {
         parameters.setEmbedImages(embedded);
         parameters.setProjectSource(featureFolder);
 
-        assertEquals(expected, imageParser.parse(parameters, featureFile, filename));
+        StringWriter sw = new StringWriter();
+
+        try (PrintWriter out = new PrintWriter(sw)){
+            imageParser.parse(out, parameters, featureFile, filename);
+
+            assertEquals(expected, sw.toString());
+        }
     }
 }

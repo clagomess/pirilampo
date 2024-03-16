@@ -103,8 +103,9 @@ public class FolderToHTMLCompiler extends Compiler implements ArtifactCompiler {
         out.print("<li class=\"sidebar-brand\">");
 
         if(parameters.getProjectLogo() != null){
-            String logoString = imageParser.parse(parameters, parameters.getProjectLogo());
-            out.print(String.format("<a href=\"#/\"><img class=\"logo\" src=\"%s\"></a>", logoString));
+            out.print("<a href=\"#/\"><img class=\"logo\" src=\"");
+            imageParser.parse(out, parameters, null, parameters.getProjectLogo().toString());
+            out.print("\"></a>");
         }else{
             out.print(String.format(
                     "<a href=\"#/\">%s <small><em>%s</em></small></a>",

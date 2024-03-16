@@ -3,42 +3,52 @@ package com.github.clagomess.pirilampo.core.parsers;
 import com.github.clagomess.pirilampo.core.compilers.Compiler;
 import com.github.clagomess.pirilampo.core.dto.ParametersDto;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.URLConnection;
+import java.nio.file.Files;
 import java.util.Base64;
 
 @Slf4j
 public class ImageParser extends Compiler {
-    public String parse(ParametersDto parameters, File feature, String fileName){
+    public void parse(PrintWriter out, ParametersDto parameters, File feature, String fileName){
         File file = getAbsolutePathFeatureAsset(parameters, feature, fileName);
 
         if(file != null){
-            return parse(parameters, file);
+            parse(out, parameters, file);
         }else{
-            return fileName;
+            out.print(fileName);
         }
     }
 
-    public String parse(ParametersDto parameters, File image){
-        if(parameters.isEmbedImages() || image.equals(parameters.getProjectLogo())) {
-            try {
-                String base64 = Base64.getEncoder().encodeToString(FileUtils.readFileToByteArray(image));
-
-                if (StringUtils.isNotEmpty(base64)) {
-                    String mimeType = URLConnection.guessContentTypeFromName(image.getName());
-                    return "data:" + mimeType + ";base64," + base64;
-                }
-            } catch (IOException e) {
-                log.info(e.getMessage() + " - " + image.getAbsolutePath());
-            }
-        } else {
-            return "../" + getFeaturePathWithoutAbsolute(parameters.getProjectSource().getParentFile(), image);
+    protected void parse(PrintWriter out, ParametersDto parameters, File image){
+        if(!parameters.isEmbedImages()){
+            out.print("../");
+            out.print(getFeaturePathWithoutAbsolute(parameters.getProjectSource().getParentFile(), image));
+            return;
         }
 
-        return image.getName();
+        try(
+                InputStream is = Files.newInputStream(image.toPath());
+                BufferedInputStream bis = new BufferedInputStream(is);
+        ){
+            byte[] buffer = new byte[1024 * 4];
+            int n;
+
+            out.print("data:");
+            out.print(URLConnection.guessContentTypeFromName(image.getName()));
+            out.print(";base64,");
+
+            while ((n = bis.read(buffer)) != -1) {
+                byte[] result = new byte[n];
+                System.arraycopy(buffer, 0, result, 0, n);
+
+                String base64 = Base64.getEncoder().encodeToString(result);
+                out.print(base64);
+            }
+        } catch (IOException e) {
+            log.warn(e.getMessage() + " - " + image.getAbsolutePath());
+            out.print(image.getName());
+        }
     }
 }
