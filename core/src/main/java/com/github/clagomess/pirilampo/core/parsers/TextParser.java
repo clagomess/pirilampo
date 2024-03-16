@@ -3,6 +3,7 @@ package com.github.clagomess.pirilampo.core.parsers;
 import com.github.clagomess.pirilampo.core.compilers.Compiler;
 import com.github.clagomess.pirilampo.core.dto.ParametersDto;
 import lombok.Getter;
+import org.apache.commons.lang.StringUtils;
 
 import java.io.File;
 import java.io.PrintWriter;
@@ -35,9 +36,9 @@ public class TextParser extends Compiler {
     }
 
     public void format(PrintWriter out, String txtRaw, boolean makdown){
-        String txt = txtRaw.trim()
-                .replace("<", "&lt;")
-                .replace(">", "&gt;");
+        String txt = txtRaw.trim();
+        txt = StringUtils.replace(txt, "<", "&lt;");
+        txt = StringUtils.replace(txt, ">", "&gt;");
 
         if(txt.length() < 3){
             out.print(txt);
@@ -47,12 +48,11 @@ public class TextParser extends Compiler {
         if(makdown) txt = markdownParser.build(txt);
 
         String img = "<br/><p><img src=\"$1\" $2/></p>";
-
         txt = txt.replaceAll("<img src=\"(.+?)\"(.*?)>", img);
         txt = txt.replaceAll("&lt;img src=&quot;(.+?)&quot;(.*?)&gt;", img);
         txt = txt.replaceAll("&lt;strike&gt;(.+?)&lt;/strike&gt;", "<strike>$1</strike>");
-        txt = txt.replace("&quot;", "\"");
-        txt = txt.replace("&lt;br&gt;", "<br/>");
+        txt = StringUtils.replace(txt, "&quot;", "\"");
+        txt = StringUtils.replace(txt, "&lt;br&gt;", "<br/>");
 
         if(indexParser != null) indexParser.putFeaturePhrase(featureId, txt);
 
