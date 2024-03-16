@@ -28,23 +28,6 @@ public class GherkinDocumentParser extends Compiler {
     @Getter
     private String featureTitulo = null;
 
-    private static final String HTML_STEP = "<p><span class=\"keyword\">%s</span> %s</p>\n";
-
-    private static final String HTML_OPEN_CHILDREN = "<div class=\"panel panel-default\">\n" +
-            "<div class=\"panel-heading\" style=\"cursor: pointer;\" data-toggle=\"collapse\" data-target=\"#scenario-%s\"><h3>%s</h3></div>";
-
-    private static final String HTML_OPEN_CHILDREN_BODY = "<div id=\"scenario-%s\" class=\"panel-body collapse in\">";
-    private static final String HTML_OPEN_CHILDREN_BODY_CLOSED = "<div id=\"scenario-%s\" class=\"panel-body collapse\">";
-
-    private static final String HTML_CLOSE_CHILDREN = "</div>";
-    private static final String HTML_CLOSE_CHILDREN_BODY = "</div>";
-
-
-    private static final String HTML_OPEN_CHILDREN_TABLE = "<div class=\"table-responsive\">\n" +
-            "<table class=\"table table-condensed table-bordered table-hover table-striped\">\n";
-
-    private static final String HTML_CLOSE_CHILDREN_TABLE = "</table></div>";
-
     public GherkinDocumentParser(ParametersDto parameters, File feature){
         this(null, parameters, feature);
     }
@@ -80,17 +63,27 @@ public class GherkinDocumentParser extends Compiler {
         }
     }
 
+    private void parseHTMLTableHeadValue(PrintWriter out, String value){
+        out.print("<th>");
+        textParser.format(out, value, false);
+        out.println("</th>");
+    }
+
+    private void parseHTMLTableBodyValue(PrintWriter out, String value){
+        out.print("<td>");
+        textParser.format(out, value, true);
+        out.println("</td>");
+    }
+
     private void parseStepDataTable(DataTable dataTable, PrintWriter out){
         if(dataTable.getRows().isEmpty()) return;
 
-        out.print(HTML_OPEN_CHILDREN_TABLE);
-
+        out.println("<div class=\"table-responsive\">");
+        out.println("<table class=\"table table-condensed table-bordered table-hover table-striped\">");
         out.print("<thead><tr>");
 
         for (TableCell tc : dataTable.getRows().get(0).getCells()) {
-            out.print("<th>");
-            textParser.format(out, tc.getValue(), false);
-            out.println("</th>");
+            parseHTMLTableHeadValue(out, tc.getValue());
         }
 
         out.print("</tr></thead>");
@@ -102,15 +95,12 @@ public class GherkinDocumentParser extends Compiler {
 
             out.print("<tr>");
             for (TableCell tc : tr.getCells()) {
-                out.print("<td>");
-                textParser.format(out, tc.getValue(), true);
-                out.println("</td>");
+                parseHTMLTableBodyValue(out, tc.getValue());
             }
             out.print("</tr>");
         }
 
-        out.print("</tbody>");
-        out.print(HTML_CLOSE_CHILDREN_TABLE);
+        out.print("</tbody></table></div>");
     }
 
     private void parseStepDocString(DocString docString, PrintWriter out){
@@ -119,17 +109,24 @@ public class GherkinDocumentParser extends Compiler {
         out.print("</pre>");
     }
 
+    private void parseHTMLStep(PrintWriter out, String step, String value){
+        out.print("<p><span class=\"keyword\">");
+        out.print(step);
+        out.print("</span> ");
+        textParser.format(out, value, true);
+        out.println("</p>");
+    }
+
     private void parseScenarioOutlineExamples(Examples examples, PrintWriter out){
-        out.print(String.format(HTML_STEP, examples.getKeyword(), ":"));
-        out.print(HTML_OPEN_CHILDREN_TABLE);
+        parseHTMLStep(out, examples.getKeyword(), ":");
+        out.println("<div class=\"table-responsive\">");
+        out.println("<table class=\"table table-condensed table-bordered table-hover table-striped\">");
 
         if(examples.getTableHeader() != null) {
             out.print("<thead><tr>");
 
             for (TableCell tc : examples.getTableHeader().getCells()) {
-                out.print("<th>");
-                textParser.format(out, tc.getValue(), false);
-                out.println("</th>");
+                parseHTMLTableHeadValue(out, tc.getValue());
             }
 
             out.print("</tr></thead>");
@@ -142,9 +139,7 @@ public class GherkinDocumentParser extends Compiler {
                 out.print("<tr>");
 
                 for (TableCell tc : tr.getCells()) {
-                    out.print("<td>");
-                    textParser.format(out, tc.getValue(), true);
-                    out.println("</td>");
+                    parseHTMLTableBodyValue(out, tc.getValue());
                 }
                 out.print("</tr>");
             }
@@ -152,10 +147,27 @@ public class GherkinDocumentParser extends Compiler {
             out.print("</tbody>");
         }
 
-        out.print(HTML_CLOSE_CHILDREN_TABLE);
+        out.print("</table></div>");
     }
 
-    private void build(GherkinDocument gd, PrintWriter out){
+    private void parseHTMLScenarioPanelHead(PrintWriter out, int idx, String title) throws IOException {
+        out.println("<div class=\"panel panel-default\">");
+        out.print("<div class=\"panel-heading\" style=\"cursor: pointer;\" data-toggle=\"collapse\" data-target=\"#scenario-");
+        out.print(idx);
+        out.print("\"><h3>");
+        StringEscapeUtils.escapeHtml(out, title);
+        out.print("</h3></div>");
+    }
+
+    private void parseHTMLScenarioPanelBody(PrintWriter out, int idx){
+        out.print("<div id=\"scenario-");
+        out.print(idx);
+        out.print("\" class=\"panel-body collapse ");
+        if (parameters.getHtmlPanelToggle() == HtmlPanelToggleEnum.CLOSED) out.print("in");
+        out.print("\">");
+    }
+
+    private void build(GherkinDocument gd, PrintWriter out) throws IOException {
         out.print("<h2>");
         textParser.format(out, gd.getFeature().getName(), false);
         out.println("</h2>");
@@ -168,17 +180,13 @@ public class GherkinDocumentParser extends Compiler {
 
         int scenarioIdx = 0;
         for (ScenarioDefinition sd : gd.getFeature().getChildren()){
-            out.print(String.format(
-                    HTML_OPEN_CHILDREN,
+            parseHTMLScenarioPanelHead(
+                    out,
                     scenarioIdx,
-                    StringEscapeUtils.escapeHtml(StringUtils.isBlank(sd.getName()) ? sd.getKeyword() : sd.getName())
-            ));
+                    StringUtils.isBlank(sd.getName()) ? sd.getKeyword() : sd.getName()
+            );
 
-            if (parameters.getHtmlPanelToggle() == HtmlPanelToggleEnum.CLOSED) {
-                out.print(String.format(HTML_OPEN_CHILDREN_BODY_CLOSED, scenarioIdx));
-            }else{
-                out.print(String.format(HTML_OPEN_CHILDREN_BODY, scenarioIdx));
-            }
+            parseHTMLScenarioPanelBody(out, scenarioIdx);
 
             if(StringUtils.isNotBlank(sd.getDescription())){
                 out.print("<p>");
@@ -187,11 +195,7 @@ public class GherkinDocumentParser extends Compiler {
             }
 
             for (Step step : sd.getSteps()){
-                out.print("<p><span class=\"keyword\">");
-                out.print(step.getKeyword());
-                out.print("</span> ");
-                textParser.format(out, step.getText(), true);
-                out.println("</p>");
+                parseHTMLStep(out, step.getKeyword(), step.getText());
 
                 if(step.getArgument() == null) continue;
 
@@ -210,8 +214,7 @@ public class GherkinDocumentParser extends Compiler {
                 }
             }
 
-            out.print(HTML_CLOSE_CHILDREN_BODY);
-            out.print(HTML_CLOSE_CHILDREN);
+            out.print("</div></div>");
 
             scenarioIdx++;
         }
