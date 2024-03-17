@@ -33,10 +33,9 @@ public abstract class Compiler {
         disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
     }};
 
+    private final Pattern pFeatureExt = Pattern.compile("\\.feature$", Pattern.CASE_INSENSITIVE);
     public String getFeatureExtension(File f){
-        Matcher matcher = Pattern.compile("\\.feature$", Pattern.CASE_INSENSITIVE)
-                .matcher(f.getName());
-
+        Matcher matcher = pFeatureExt.matcher(f.getName());
         return matcher.find() ? matcher.group(0) : null;
     }
 

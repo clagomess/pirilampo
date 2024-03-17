@@ -2,7 +2,7 @@ package com.github.clagomess.pirilampo.core.parsers;
 
 import com.github.clagomess.pirilampo.core.compilers.Compiler;
 import com.github.clagomess.pirilampo.core.dto.FeatureIndexDto;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
 import java.io.PrintWriter;

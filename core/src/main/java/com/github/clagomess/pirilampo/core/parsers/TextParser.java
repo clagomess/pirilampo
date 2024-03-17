@@ -3,7 +3,7 @@ package com.github.clagomess.pirilampo.core.parsers;
 import com.github.clagomess.pirilampo.core.compilers.Compiler;
 import com.github.clagomess.pirilampo.core.dto.ParametersDto;
 import lombok.Getter;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.io.PrintWriter;
@@ -37,8 +37,7 @@ public class TextParser extends Compiler {
 
     public void format(PrintWriter out, String txtRaw, boolean makdown){
         String txt = txtRaw.trim();
-        txt = StringUtils.replace(txt, "<", "&lt;");
-        txt = StringUtils.replace(txt, ">", "&gt;");
+        txt = StringUtils.replaceEach(txt, new String[]{"<", ">"}, new String[]{"&lt;", "&gt;"});
 
         if(txt.length() < 3){
             out.print(txt);
@@ -51,8 +50,10 @@ public class TextParser extends Compiler {
         txt = txt.replaceAll("<img src=\"(.+?)\"(.*?)>", img);
         txt = txt.replaceAll("&lt;img src=&quot;(.+?)&quot;(.*?)&gt;", img);
         txt = txt.replaceAll("&lt;strike&gt;(.+?)&lt;/strike&gt;", "<strike>$1</strike>");
-        txt = StringUtils.replace(txt, "&quot;", "\"");
-        txt = StringUtils.replace(txt, "&lt;br&gt;", "<br/>");
+        txt = StringUtils.replaceEach(txt,
+                new String[]{"&quot;", "&lt;br&gt;"},
+                new String[]{"\"", "<br/>"}
+        );
 
         if(indexParser != null) indexParser.putFeaturePhrase(featureId, txt);
 
@@ -66,9 +67,9 @@ public class TextParser extends Compiler {
         findAndReplaceImagesSrcAndWriteOut(out, txt);
     }
 
+    private final Pattern pHtmlHref = Pattern.compile("href=\"(.+?\\.html)\"");
     protected String findAndReplaceEmbededHtmlHref(String txt){
-        Matcher mHtmlHref = Pattern.compile("href=\"(.+?\\.html)\"")
-                .matcher(txt);
+        Matcher mHtmlHref = pHtmlHref.matcher(txt);
 
         while(mHtmlHref.find()) {
             String filename = mHtmlHref.group(1);
@@ -83,9 +84,9 @@ public class TextParser extends Compiler {
         return txt;
     }
 
+    private final Pattern pImgSrc = Pattern.compile("src=\"(.+?)\"");
     protected void findAndReplaceImagesSrcAndWriteOut(PrintWriter out, String txt){
-        Matcher mImgSrc = Pattern.compile("src=\"(.+?)\"")
-                .matcher(txt);
+        Matcher mImgSrc = pImgSrc.matcher(txt);
 
         int position = 0;
 

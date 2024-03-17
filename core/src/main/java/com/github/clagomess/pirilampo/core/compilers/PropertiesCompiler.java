@@ -6,7 +6,7 @@ import com.github.clagomess.pirilampo.core.enums.CompilationTypeEnum;
 import com.github.clagomess.pirilampo.core.enums.HtmlPanelToggleEnum;
 import com.github.clagomess.pirilampo.core.enums.LayoutPdfEnum;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.io.IOException;

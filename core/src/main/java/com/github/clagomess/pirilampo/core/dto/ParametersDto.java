@@ -7,7 +7,7 @@ import com.github.clagomess.pirilampo.core.enums.LayoutPdfEnum;
 import com.github.clagomess.pirilampo.core.exception.ParametersException;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.util.Arrays;
