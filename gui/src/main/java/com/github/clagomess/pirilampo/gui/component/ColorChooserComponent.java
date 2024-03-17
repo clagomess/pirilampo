@@ -79,6 +79,11 @@ public class ColorChooserComponent extends JPanel {
         add(button);
     }
 
+    public void setEnabled(boolean enabled){
+        this.text.setEditable(enabled);
+        this.button.setEnabled(enabled);
+    }
+
     protected String colorToHexString(Color color){
         if(color == null) return null;
         return "#" + String.format("%06X", 0xFFFFFF & color.getRGB());

@@ -45,6 +45,10 @@ public class RadioButtonGroupComponent<T extends Enum<T>> extends JPanel {
         opt.ifPresent(tRadioButton -> tRadioButton.setSelected(true));
     }
 
+    public void setEnabled(boolean enabled){
+        elements.forEach(item -> item.setEnabled(enabled));
+    }
+
     @Getter
     public static class RadioButton<T extends Enum<T>> extends JRadioButton {
         private final T value;

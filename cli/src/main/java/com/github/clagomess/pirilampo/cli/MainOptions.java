@@ -139,7 +139,7 @@ public class MainOptions {
             }
 
             if(cmd.hasOption(projectLogo)) {
-                parameters.setProjectLogo(new File(cmd.getOptionValue(projectLogo)));
+                parameters.setProjectLogo(cmd.getOptionValue(projectLogo));
             }
 
             if(cmd.hasOption(layoutPdf)) {

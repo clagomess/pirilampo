@@ -7,6 +7,7 @@ import com.github.clagomess.pirilampo.core.enums.HtmlPanelToggleEnum;
 import com.github.clagomess.pirilampo.core.enums.LayoutPdfEnum;
 import com.github.clagomess.pirilampo.gui.component.ColorChooserComponent;
 import com.github.clagomess.pirilampo.gui.component.FileChooserComponent;
+import com.github.clagomess.pirilampo.gui.component.ProjectLogoChooserComponent;
 import com.github.clagomess.pirilampo.gui.component.RadioButtonGroupComponent;
 import com.github.clagomess.pirilampo.gui.util.AppenderUtil;
 
@@ -53,25 +54,15 @@ public class MainForm {
     public final FileChooserComponent fcProjectMasterSource = new FileChooserComponent("Select Master") {{
         setEnabled(false);
         setConfig(fc -> fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY));
-
-        rbCompilationType.addOnChange(value -> {
-            fcProjectMasterSource.reset();
-            fcProjectMasterSource.setEnabled(value == FOLDER_DIFF);
-        });
+        rbCompilationType.addOnChange(value -> setEnabled(value == FOLDER_DIFF));
     }};
 
     // project
     public final JTextField txtProjectName = new JTextField(defaultDto.getProjectName());
     public final JTextField txtProjectVersion = new JTextField(defaultDto.getProjectVersion());
-    public final FileChooserComponent fcProjectLogo = new FileChooserComponent() {{
-        setConfig(fc -> {
-            fc.setAcceptAllFileFilterUsed(false);
-            fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-            fc.addChoosableFileFilter(new FileNameExtensionFilter(
-                    "Images",
-                    "jpg", "jpeg", "png"
-            ));
-        });
+    public final ProjectLogoChooserComponent fcProjectLogo = new ProjectLogoChooserComponent() {{
+        setProjectSource(fcProjectSource::getValue);
+        rbCompilationType.addOnChange(value -> setEnabled(value != FEATURE));
     }};
 
     public JTabbedPane pTabArtifact = new JTabbedPane(){{
@@ -79,20 +70,26 @@ public class MainForm {
     }};
 
     // HTML
-    public final RadioButtonGroupComponent<HtmlPanelToggleEnum> rbHtmlPanelToggle = new RadioButtonGroupComponent<>(Arrays.asList(
+    public final RadioButtonGroupComponent<HtmlPanelToggleEnum> rbHtmlPanelToggle = new RadioButtonGroupComponent<HtmlPanelToggleEnum>(Arrays.asList(
         new RadioButtonGroupComponent.RadioButton<>("Opened", OPENED, true),
         new RadioButtonGroupComponent.RadioButton<>("Closed", CLOSED)
-    ));
+    )){{
+        rbCompilationType.addOnChange(value -> setEnabled(value != FEATURE));
+    }};
 
     public final JCheckBox chkEmbedImages = new JCheckBox(){{setSelected(true);}};
     public final ColorChooserComponent ccMenuColor = new ColorChooserComponent(
             "Menu Color",
             defaultDto.getMenuColor()
-    );
+    ){{
+        rbCompilationType.addOnChange(value -> setEnabled(value != FEATURE));
+    }};
     public final ColorChooserComponent ccMenuTextColor = new ColorChooserComponent(
             "Menu Text Color",
             defaultDto.getMenuTextColor()
-    );
+    ){{
+        rbCompilationType.addOnChange(value -> setEnabled(value != FEATURE));
+    }};
 
     // PDF
     public final RadioButtonGroupComponent<LayoutPdfEnum> rbLayoutPdfEnum = new RadioButtonGroupComponent<>(Arrays.asList(

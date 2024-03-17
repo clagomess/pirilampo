@@ -91,6 +91,7 @@ public class FileChooserComponent extends JPanel {
     }
 
     public void setEnabled(boolean enabled){
+        reset();
         this.text.setEditable(enabled);
         this.button.setEnabled(enabled);
     }
