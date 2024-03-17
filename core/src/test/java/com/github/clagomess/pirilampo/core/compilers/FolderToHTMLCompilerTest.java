@@ -16,7 +16,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
-import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -35,12 +34,9 @@ public class FolderToHTMLCompilerTest extends Common {
 
     @Test
     public void build() throws Exception {
-        File logoFile = new File(Objects.requireNonNull(getClass()
-                .getResource("../logo_xxx.png")).getFile());
-
         ParametersDto parameters = new ParametersDto();
         parameters.setMenuColor("#666");
-        parameters.setProjectLogo(logoFile);
+        parameters.setProjectLogo("logo_xxx.png");
         parameters.setProjectSource(featureFolder);
         parameters.setProjectTarget(targetFile);
 

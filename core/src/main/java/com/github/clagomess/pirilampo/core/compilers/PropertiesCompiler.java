@@ -6,7 +6,6 @@ import com.github.clagomess.pirilampo.core.enums.CompilationTypeEnum;
 import com.github.clagomess.pirilampo.core.enums.HtmlPanelToggleEnum;
 import com.github.clagomess.pirilampo.core.enums.LayoutPdfEnum;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -41,13 +40,7 @@ public class PropertiesCompiler extends Compiler {
 
             parameters.setProjectName(prop.getProperty("projectName", parameters.getProjectName()));
             parameters.setProjectVersion(prop.getProperty("projectVersion", parameters.getProjectVersion()));
-
-            if(prop.containsKey("projectLogo")){
-                parameters.setProjectLogo(StringUtils.isNotBlank(prop.getProperty("projectLogo")) ?
-                        new File(prop.getProperty("projectLogo")) :
-                        null
-                );
-            }
+            parameters.setProjectLogo(prop.getProperty("projectLogo", null));
 
             parameters.setLayoutPdf(LayoutPdfEnum.valueOf(prop.getProperty(
                     "layoutPdf",
@@ -89,11 +82,7 @@ public class PropertiesCompiler extends Compiler {
             Properties prop = new Properties();
             prop.setProperty("projectName", parameters.getProjectName());
             prop.setProperty("projectVersion", parameters.getProjectVersion());
-            prop.setProperty("projectLogo",
-                    parameters.getProjectLogo() != null ?
-                            parameters.getProjectLogo().getAbsolutePath() :
-                            ""
-            );
+            prop.setProperty("projectLogo", String.valueOf(parameters.getProjectLogo()));
             prop.setProperty("layoutPdf", parameters.getLayoutPdf().name());
             prop.setProperty("htmlPanelToggle", parameters.getHtmlPanelToggle().name());
             prop.setProperty("menuColor", parameters.getMenuColor());

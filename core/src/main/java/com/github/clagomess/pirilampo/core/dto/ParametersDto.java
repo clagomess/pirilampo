@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 public class ParametersDto {
     private String projectName = "Pirilampo";
     private String projectVersion = "1.0";
-    private File projectLogo;
+    private String projectLogo;
     private LayoutPdfEnum layoutPdf = LayoutPdfEnum.PORTRAIT;
     private HtmlPanelToggleEnum htmlPanelToggle = HtmlPanelToggleEnum.OPENED;
     private String menuColor = "#14171A";
@@ -34,10 +34,6 @@ public class ParametersDto {
     public void validate() throws ParametersException {
         if(StringUtils.isBlank(projectName)) throw ParametersException.required("Project Name");
         if(StringUtils.isBlank(projectVersion)) throw ParametersException.required("Project Version");
-
-        if(projectLogo != null && !projectLogo.isFile()){ //@TODO: can be a project logo
-            throw new ParametersException("Option <Project Logo> must be a valid file");
-        }
 
         if(layoutPdf == null) throw ParametersException.required("Layout PDF");
         if(htmlPanelToggle == null) throw ParametersException.required("HTML Panel Toggle");

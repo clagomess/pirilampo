@@ -37,15 +37,6 @@ public class ParametersDtoTest extends Common {
     }
 
     @Test
-    public void validate_projectLogo(){
-        val dto = new ParametersDto();
-        dto.setProjectSource(featureFolder);
-        dto.setProjectLogo(featureFolder);
-
-        assertThrowsExactly(ParametersException.class, dto::validate);
-    }
-
-    @Test
     public void validate_layoutPdf(){
         val dto = new ParametersDto();
         dto.setProjectSource(featureFolder);
