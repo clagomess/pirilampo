@@ -1,6 +1,5 @@
 package com.github.clagomess.pirilampo.core.parsers;
 
-import com.github.clagomess.pirilampo.core.parsers.MarkdownParser;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 
