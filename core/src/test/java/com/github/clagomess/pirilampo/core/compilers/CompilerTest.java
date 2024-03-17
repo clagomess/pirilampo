@@ -161,17 +161,17 @@ public class CompilerTest extends Common {
             "target,target/foo/bar/AbC.feature,foo/bar/AbC.feature",
             "/Users/features,/Users/features/AbC.feature,AbC.feature",
     })
-    public void getFeaturePathWithoutAbsolute(File base, File feature, String expected){
-        assertEquals(expected, compiler.getFeaturePathWithoutAbsolute(base, feature));
+    public void getFilePathWithoutAbsolute(File base, File feature, String expected){
+        assertEquals(expected, compiler.getFilePathWithoutAbsolute(base, feature));
     }
 
     @Test
-    public void getAbsolutePathFeatureAsset(){
+    public void getAbsolutePathFile(){
         ParametersDto parameters = new ParametersDto();
         parameters.setProjectSource(featureFolder);
         parameters.setProjectMasterSource(featureMasterFolder);
 
-        assertNotNull(compiler.getAbsolutePathFeatureAsset(
+        assertNotNull(compiler.getAbsolutePathFile(
                 parameters,
                 featureFile,
                 "xxx.png"

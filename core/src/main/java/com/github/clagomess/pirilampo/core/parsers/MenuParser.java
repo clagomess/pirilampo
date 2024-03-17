@@ -27,7 +27,7 @@ public class MenuParser extends Compiler {
                 diff
         );
 
-        String[] nodes = getFeaturePathWithoutAbsolute(parameters.getProjectSource(), feature).split("(\\\\|/)");
+        String[] nodes = getFilePathWithoutAbsolute(parameters.getProjectSource(), feature).split("(\\\\|/)");
 
         walker(menu.getChildren(), nodes, 0, item);
     }

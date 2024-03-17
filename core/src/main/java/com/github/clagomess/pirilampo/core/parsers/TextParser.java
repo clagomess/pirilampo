@@ -73,7 +73,7 @@ public class TextParser extends Compiler {
 
         while(mHtmlHref.find()) {
             String filename = mHtmlHref.group(1);
-            File htmlEmbed = getAbsolutePathFeatureAsset(parameters, feature, filename);
+            File htmlEmbed = getAbsolutePathFile(parameters, feature, filename);
 
             if (htmlEmbed != null && htmlEmbed.isFile()) {
                 paginaHtmlAnexo.add(htmlEmbed);

@@ -12,7 +12,7 @@ import java.util.Base64;
 @Slf4j
 public class ImageParser extends Compiler {
     public void parse(PrintWriter out, ParametersDto parameters, File feature, String fileName){
-        File file = getAbsolutePathFeatureAsset(parameters, feature, fileName);
+        File file = getAbsolutePathFile(parameters, feature, fileName);
 
         if(file != null){
             parse(out, parameters, file);
@@ -24,7 +24,7 @@ public class ImageParser extends Compiler {
     protected void parse(PrintWriter out, ParametersDto parameters, File image){
         if(!parameters.isEmbedImages()){
             out.print("../");
-            out.print(getFeaturePathWithoutAbsolute(parameters.getProjectSource().getParentFile(), image));
+            out.print(getFilePathWithoutAbsolute(parameters.getProjectSource().getParentFile(), image));
             return;
         }
 

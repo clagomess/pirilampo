@@ -53,14 +53,14 @@ public class FolderToHTMLCompiler extends Compiler implements ArtifactCompiler {
         if(masterFiles == null){
             masterFiles = listFolder(parameters.getProjectMasterSource()).stream()
                     .map(item -> new FeatureMasterDto(
-                            getFeaturePathWithoutAbsolute(parameters.getProjectMasterSource(), item),
+                            getFilePathWithoutAbsolute(parameters.getProjectMasterSource(), item),
                             item
                     )).collect(Collectors.toList());
         }
 
         if(masterFiles.isEmpty()) return DiffEnum.NOT_COMPARED;
 
-        String pathFeatureBranch = getFeaturePathWithoutAbsolute(parameters.getProjectSource(), featureBranch);
+        String pathFeatureBranch = getFilePathWithoutAbsolute(parameters.getProjectSource(), featureBranch);
 
         Optional<FeatureMasterDto> optFeatureMaster = masterFiles.stream()
                 .filter(item -> item.getPath().equals(pathFeatureBranch))
@@ -75,7 +75,7 @@ public class FolderToHTMLCompiler extends Compiler implements ArtifactCompiler {
             }
         }
 
-        log.info("Diff Master/Branch: {} - {}", diff, featureBranch.getAbsolutePath());
+        log.info("Diff Master/Branch: {} - {}", diff, featureBranch);
 
         // pula para o proximo
         if(diff.equals(DiffEnum.EQUAL)) return diff;

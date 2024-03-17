@@ -39,7 +39,7 @@ public class PdfImageProvider extends AbstractImageProvider {
                 if(imageCached != null) return Image.getInstance(imageCached.getAbsolutePath());
             }
 
-            File imageFile = compiler.getAbsolutePathFeatureAsset(parametersDto, currentFeature, src);
+            File imageFile = compiler.getAbsolutePathFile(parametersDto, currentFeature, src);
             if (imageFile != null && imageFile.isFile()){
                 return Image.getInstance(imageFile.getAbsolutePath());
             }

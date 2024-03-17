@@ -144,12 +144,12 @@ public abstract class Compiler {
         }
     }
 
-    public String getFeaturePathWithoutAbsolute(File base, File feature){
-        String resultDiff = feature.getAbsolutePath().replace(base.getAbsolutePath() + File.separator, "");
+    public String getFilePathWithoutAbsolute(File base, File file){
+        String resultDiff = file.getAbsolutePath().replace(base.getAbsolutePath() + File.separator, "");
         return resultDiff.replace(File.separator, "/");
     }
 
-    public File getAbsolutePathFeatureAsset(ParametersDto parameters, File feature, String fileName){
+    public File getAbsolutePathFile(ParametersDto parameters, File feature, String fileName){
         Set<File> basePaths = new LinkedHashSet<File>() {{
             if(feature != null) add(feature.getParentFile());
             add(parameters.getProjectSource());

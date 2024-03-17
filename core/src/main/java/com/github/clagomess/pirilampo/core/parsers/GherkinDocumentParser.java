@@ -47,7 +47,7 @@ public class GherkinDocumentParser extends Compiler {
                 BOMInputStream bis = new BOMInputStream(fis);
                 Reader in = new InputStreamReader(bis, StandardCharsets.UTF_8);
         ) {
-            log.info("COMPILING: {}", feature.getAbsolutePath());
+            log.info("COMPILING: {}", feature);
 
             GherkinDocument gd = new Parser<>(new AstBuilder()).parse(in, new TokenMatcher());
             if (gd != null){
@@ -56,7 +56,7 @@ public class GherkinDocumentParser extends Compiler {
                 build(gd, out);
             }
 
-            log.info("OK: {}", feature.getAbsolutePath());
+            log.info("OK");
         } catch (Throwable e) {
             throw new FeatureException(e, feature);
         }
