@@ -6,6 +6,7 @@ import com.github.clagomess.pirilampo.core.enums.CompilationArtifactEnum;
 import com.github.clagomess.pirilampo.core.enums.CompilationTypeEnum;
 import com.github.clagomess.pirilampo.core.exception.FeatureException;
 import org.apache.commons.io.FileUtils;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -39,21 +40,21 @@ public class FeatureToHTMLCompilerTest extends Common {
         File htmlFile = new File(targetFile, "xxx.html");
         assertTrue(htmlFile.isFile());
 
-        String html = FileUtils.readFileToString(htmlFile, StandardCharsets.UTF_8);
+        Assertions.assertThat(FileUtils.readFileToString(htmlFile, StandardCharsets.UTF_8))
+                .doesNotContain("xxx.png")
+                .doesNotContain("&lt;strike&gt;")
+                .doesNotContain("&lt;br&gt;")
+                .contains("https://pt.wikipedia.org/static/images/project-logos/ptwiki.png")
+                .contains("width=\"50\"")
+                .contains("<strike>")
+                .contains("<br/>")
+                ;
 
-        assertNotEquals(html, "");
-        assertFalse(html.contains("xxx.png"));
-        assertTrue(html.contains("https://pt.wikipedia.org/static/images/project-logos/ptwiki.png"));
-        assertTrue(html.contains("width=\"50\""));
-        assertFalse(html.contains("&lt;strike&gt;"));
-        assertTrue(html.contains("<strike>"));
-        assertFalse(html.contains("&lt;br&gt;"));
-        assertTrue(html.contains("<br/>"));
-
-        assertTrue(FileUtils.contentEquals(
-                new File(getClass().getResource("FeatureToHTMLCompilerTest/expected-build.html").getFile()),
-                htmlFile
-        ));
+        Assertions.assertThat(htmlFile)
+                .hasSameTextualContentAs(new File(getClass()
+                        .getResource("FeatureToHTMLCompilerTest/expected-build.html")
+                        .getFile()
+                ));
     }
 
     @Test

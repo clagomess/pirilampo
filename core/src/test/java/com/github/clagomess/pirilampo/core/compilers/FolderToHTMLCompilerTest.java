@@ -49,19 +49,19 @@ public class FolderToHTMLCompilerTest extends Common {
         File htmlFile = new File(targetFile,"html/index.html");
         assertTrue(htmlFile.isFile());
 
-        String htmlString = FileUtils.readFileToString(htmlFile);
-        assertNotEquals(htmlString, "");
+        Assertions.assertThat(FileUtils.readFileToString(htmlFile))
+                .doesNotContain((new File(String.valueOf(parameters.getProjectLogo()))).getName())
+                .doesNotContain("logo_xxx.png")
+                .contains(parameters.getMenuColor())
+                .contains("#/html/html_embed.html")
+                .contains("html_embed_txt")
+                ;
 
-        assertTrue(htmlString.contains(parameters.getMenuColor()));
-        assertFalse(htmlString.contains((new File(String.valueOf(parameters.getProjectLogo()))).getName()));
-        assertFalse(htmlString.contains("logo_xxx.png"));
-        assertTrue(htmlString.contains("#/html/html_embed.html"));
-        assertTrue(htmlString.contains("html_embed_txt"));
-
-        assertTrue(FileUtils.contentEquals(
-                new File(getClass().getResource("FolderToHTMLCompilerTest/expected-build.html").getFile()),
-                htmlFile
-        ));
+        Assertions.assertThat(htmlFile)
+                .hasSameTextualContentAs(new File(getClass()
+                        .getResource("FolderToHTMLCompilerTest/expected-build.html")
+                        .getFile()
+                ));
     }
 
     @Test
@@ -75,14 +75,14 @@ public class FolderToHTMLCompilerTest extends Common {
         File htmlFile = new File(targetFile,"html/index.html");
         assertTrue(htmlFile.isFile());
 
-        String htmlString = FileUtils.readFileToString(htmlFile, StandardCharsets.UTF_8);
+        Assertions.assertThat(FileUtils.readFileToString(htmlFile, StandardCharsets.UTF_8))
+                        .contains("YYY_MASTER_YYY");
 
-        assertTrue(htmlString.contains("YYY_MASTER_YYY"));
-
-        assertTrue(FileUtils.contentEquals(
-                new File(getClass().getResource("FolderToHTMLCompilerTest/expected-build-master.html").getFile()),
-                htmlFile
-        ));
+        Assertions.assertThat(htmlFile)
+                .hasSameTextualContentAs(new File(getClass()
+                        .getResource("FolderToHTMLCompilerTest/expected-build-master.html")
+                        .getFile()
+                ));
     }
 
     @Test
