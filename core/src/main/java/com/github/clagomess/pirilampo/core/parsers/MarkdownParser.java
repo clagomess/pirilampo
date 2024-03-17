@@ -1,5 +1,6 @@
 package com.github.clagomess.pirilampo.core.parsers;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.commonmark.node.Document;
 import org.commonmark.node.Node;
@@ -17,7 +18,10 @@ public class MarkdownParser {
     private final Parser parser = Parser.builder().build();
     private final HtmlRenderer renderer;
 
-    public MarkdownParser() {
+    @Getter
+    private static final MarkdownParser instance = new MarkdownParser();
+
+    private MarkdownParser() {
         this.renderer = HtmlRenderer.builder()
                 .nodeRendererFactory(SkipParentWrapperParagraphsRenderer::new)
                 .build();

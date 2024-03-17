@@ -1,7 +1,5 @@
 package com.github.clagomess.pirilampo.core.compilers;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.clagomess.pirilampo.core.dto.FeatureMetadataDto;
 import com.github.clagomess.pirilampo.core.dto.ParametersDto;
 import com.github.clagomess.pirilampo.core.fi.UIProgressFI;
@@ -28,10 +26,6 @@ public abstract class Compiler {
 
     @Setter
     protected float progressCount = 0;
-
-    protected final ObjectMapper mapper = new ObjectMapper() {{
-        disable(JsonGenerator.Feature.AUTO_CLOSE_TARGET);
-    }};
 
     private final Pattern pFeatureExt = Pattern.compile("\\.feature$", Pattern.CASE_INSENSITIVE);
     public String getFeatureExtension(File f){

@@ -2,6 +2,7 @@ package com.github.clagomess.pirilampo.core.parsers;
 
 import com.github.clagomess.pirilampo.core.compilers.Compiler;
 import com.github.clagomess.pirilampo.core.dto.ParametersDto;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.*;
@@ -11,6 +12,10 @@ import java.util.Base64;
 
 @Slf4j
 public class ImageParser extends Compiler {
+    @Getter
+    private static final ImageParser instance = new ImageParser();
+    private ImageParser(){}
+
     public void parse(PrintWriter out, ParametersDto parameters, File feature, String fileName){
         File file = getAbsolutePathFile(parameters, feature, fileName);
 

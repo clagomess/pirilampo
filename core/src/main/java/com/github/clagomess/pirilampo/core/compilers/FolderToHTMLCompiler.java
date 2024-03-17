@@ -5,10 +5,7 @@ import com.github.clagomess.pirilampo.core.dto.FeatureMetadataDto;
 import com.github.clagomess.pirilampo.core.dto.MenuDto;
 import com.github.clagomess.pirilampo.core.dto.ParametersDto;
 import com.github.clagomess.pirilampo.core.enums.DiffEnum;
-import com.github.clagomess.pirilampo.core.parsers.GherkinDocumentParser;
-import com.github.clagomess.pirilampo.core.parsers.ImageParser;
-import com.github.clagomess.pirilampo.core.parsers.IndexParser;
-import com.github.clagomess.pirilampo.core.parsers.MenuParser;
+import com.github.clagomess.pirilampo.core.parsers.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 
@@ -27,7 +24,6 @@ import static com.github.clagomess.pirilampo.core.enums.CompilationTypeEnum.FOLD
 @Slf4j
 public class FolderToHTMLCompiler extends Compiler implements ArtifactCompiler {
     private final PropertiesCompiler propertiesCompiler = new PropertiesCompiler();
-    private final ImageParser imageParser = new ImageParser();
     private final ParametersDto parameters;
     private final IndexParser indexParser = new IndexParser();
     protected final MenuParser menuParser;
@@ -104,7 +100,7 @@ public class FolderToHTMLCompiler extends Compiler implements ArtifactCompiler {
 
         if(parameters.getProjectLogo() != null){
             out.print("<a href=\"#/\"><img class=\"logo\" src=\"");
-            imageParser.parse(out, parameters, null, parameters.getProjectLogo().toString());
+            ImageParser.getInstance().parse(out, parameters, null, parameters.getProjectLogo().toString());
             out.print("\"></a>");
         }else{
             out.print(String.format(
@@ -134,12 +130,12 @@ public class FolderToHTMLCompiler extends Compiler implements ArtifactCompiler {
 
         if(menuParser.getMenu().getChildren().isEmpty()) {
             out.print("createMenuItem(document.getElementsByClassName('sidebar-nav')[0], ");
-            mapper.writeValue(out, menuParser.getMenu());
+            JsonParser.getInstance().writeValue(out, menuParser.getMenu());
             out.println(");");
         } else {
             for(MenuDto menu : menuParser.getMenu().getChildren()) {
                 out.print("createMenuItem(document.getElementsByClassName('sidebar-nav')[0], ");
-                mapper.writeValue(out, menu);
+                JsonParser.getInstance().writeValue(out, menu);
                 out.println(");");
             }
         }

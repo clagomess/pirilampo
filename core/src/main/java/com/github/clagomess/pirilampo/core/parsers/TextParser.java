@@ -13,8 +13,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class TextParser extends Compiler {
-    private final MarkdownParser markdownParser = new MarkdownParser();
-    private final ImageParser imageParser = new ImageParser();
     private final IndexParser indexParser;
 
     private final ParametersDto parameters;
@@ -44,7 +42,7 @@ public class TextParser extends Compiler {
             return;
         }
 
-        if(makdown) txt = markdownParser.build(txt);
+        if(makdown) txt = MarkdownParser.getInstance().build(txt);
 
         String img = "<br/><p><img src=\"$1\" $2/></p>";
         txt = txt.replaceAll("<img src=\"(.+?)\"(.*?)>", img);
@@ -96,7 +94,7 @@ public class TextParser extends Compiler {
 
             out.write(txt, position, groupPosition - position);
             out.write("src=\"");
-            imageParser.parse(out, parameters, feature, mImgSrc.group(1));
+            ImageParser.getInstance().parse(out, parameters, feature, mImgSrc.group(1));
             out.write("\"");
 
             position = groupPosition + group.length();

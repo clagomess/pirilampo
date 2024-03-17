@@ -62,12 +62,12 @@ public class IndexParser extends Compiler {
 
     public void buildIndex(PrintWriter out) throws IOException {
         out.print("let indexPhrases = ");
-        mapper.writeValue(out, phrases.entrySet().stream()
+        JsonParser.getInstance().writeValue(out, phrases.entrySet().stream()
                 .collect(Collectors.toMap(Map.Entry::getValue, Map.Entry::getKey)));
         out.println(";");
 
         out.print("let indexMap = ");
-        mapper.writeValue(out, index);
+        JsonParser.getInstance().writeValue(out, index);
         out.println(";");
     }
 }

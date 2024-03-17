@@ -14,8 +14,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Slf4j
 public class ImageParserTest extends Common {
-    private final ImageParser imageParser = new ImageParser();
-
     @ParameterizedTest
     @CsvSource(value = {
             "true$smallest.png$data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABAQAAAAA3bvkkAAAACklEQVR4AWNgAAAAAgABc3UBGAAAAABJRU5ErkJggg==",
@@ -33,7 +31,7 @@ public class ImageParserTest extends Common {
         StringWriter sw = new StringWriter();
 
         try (PrintWriter out = new PrintWriter(sw)){
-            imageParser.parse(out, parameters, featureFile, filename);
+            ImageParser.getInstance().parse(out, parameters, featureFile, filename);
 
             assertEquals(expected, sw.toString());
         }
