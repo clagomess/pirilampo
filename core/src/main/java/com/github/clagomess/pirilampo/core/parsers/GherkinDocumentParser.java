@@ -151,7 +151,9 @@ public class GherkinDocumentParser extends Compiler {
 
     private void parseHTMLScenarioPanelHead(PrintWriter out, int idx, String title) throws IOException {
         out.println("<div class=\"panel panel-default\">");
-        out.print("<div class=\"panel-heading\" style=\"cursor: pointer;\" data-toggle=\"collapse\" data-target=\"#scenario-");
+        out.print("<div class=\"panel-heading");
+        if (parameters.getHtmlPanelToggle() == HtmlPanelToggleEnum.CLOSED) out.print(" collapsed");
+        out.print("\" style=\"cursor: pointer;\" data-toggle=\"collapse\" data-target=\"#scenario-");
         out.print(idx);
         out.print("\"><h3>");
         out.print(title); // @TODO: not escaped
@@ -162,8 +164,8 @@ public class GherkinDocumentParser extends Compiler {
     private void parseHTMLScenarioPanelBody(PrintWriter out, int idx){
         out.print("<div id=\"scenario-");
         out.print(idx);
-        out.print("\" class=\"panel-body collapse ");
-        if (parameters.getHtmlPanelToggle() == HtmlPanelToggleEnum.CLOSED) out.print("in");
+        out.print("\" class=\"panel-body collapse");
+        if (parameters.getHtmlPanelToggle() == HtmlPanelToggleEnum.OPENED) out.print(" in");
         out.print("\">");
     }
 
