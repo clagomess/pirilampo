@@ -80,7 +80,7 @@ public class MainUI extends JFrame {
         getRootPane().setDefaultButton(form.btnCompile);
 
         // add events
-        form.fcProjectSource.setOnChange(this::projectSourceOnChange);
+        form.fcProjectSource.addOnChange(this::projectSourceOnChange);
 
         pack();
         setLocationRelativeTo(null);
@@ -93,7 +93,7 @@ public class MainUI extends JFrame {
 
         form.txtProjectName.setText(parameters.getProjectName());
         form.txtProjectVersion.setText(parameters.getProjectVersion());
-        form.fcProjectLogo.setValue(parameters.getProjectLogo());
+        // form.fcProjectLogo.setValue(parameters.getProjectLogo()); //@TODO: check
         form.rbLayoutPdfEnum.setSelected(parameters.getLayoutPdf());
         form.rbHtmlPanelToggle.setSelected(parameters.getHtmlPanelToggle());
         form.ccMenuColor.setValue(parameters.getMenuColor());

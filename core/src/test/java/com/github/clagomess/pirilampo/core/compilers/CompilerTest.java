@@ -4,6 +4,7 @@ import com.github.clagomess.pirilampo.core.Common;
 import com.github.clagomess.pirilampo.core.dto.ParametersDto;
 import com.github.clagomess.pirilampo.core.enums.CompilationArtifactEnum;
 import com.github.clagomess.pirilampo.core.enums.CompilationTypeEnum;
+import com.github.clagomess.pirilampo.core.enums.FileExtensionEnum;
 import lombok.extern.slf4j.Slf4j;
 import lombok.val;
 import org.apache.commons.io.FileUtils;
@@ -12,6 +13,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.EnumSource;
 
 import java.io.*;
 import java.util.Objects;
@@ -22,16 +24,17 @@ import static org.junit.jupiter.api.Assertions.*;
 public class CompilerTest extends Common {
     private final Compiler compiler = new Compiler(){};
 
-    @Test
-    public void listFolder() throws Exception {
-        val result = compiler.listFolder(featureFolder);
+    @ParameterizedTest
+    @EnumSource(FileExtensionEnum.class)
+    public void listFolder(FileExtensionEnum extension) throws Exception {
+        val result = compiler.listFolder(featureFolder, extension);
         Assertions.assertThat(result.size()).isGreaterThanOrEqualTo(0);
     }
 
     @Test
     public void listFolder_NotDir() {
-        assertThrowsExactly(Exception.class, () -> {
-            compiler.listFolder(new File(""));
+        assertThrowsExactly(FileNotFoundException.class, () -> {
+            compiler.listFolder(new File(""), FileExtensionEnum.FEATURE);
         });
     }
 
@@ -151,7 +154,7 @@ public class CompilerTest extends Common {
             "target/foo/AbC.feature.jpg,",
     })
     public void getFeatureExtension(String source, String expected){
-        assertEquals(expected, compiler.getFeatureExtension(new File(source)));
+        assertEquals(expected, compiler.getFileExtension(new File(source), FileExtensionEnum.FEATURE));
     }
 
     @ParameterizedTest

@@ -1,15 +1,13 @@
 package com.github.clagomess.pirilampo.gui.form;
 
+import com.github.clagomess.pirilampo.core.compilers.Compiler;
 import com.github.clagomess.pirilampo.core.dto.ParametersDto;
-import com.github.clagomess.pirilampo.core.enums.CompilationArtifactEnum;
-import com.github.clagomess.pirilampo.core.enums.CompilationTypeEnum;
-import com.github.clagomess.pirilampo.core.enums.HtmlPanelToggleEnum;
-import com.github.clagomess.pirilampo.core.enums.LayoutPdfEnum;
+import com.github.clagomess.pirilampo.core.enums.*;
 import com.github.clagomess.pirilampo.gui.component.ColorChooserComponent;
 import com.github.clagomess.pirilampo.gui.component.FileChooserComponent;
-import com.github.clagomess.pirilampo.gui.component.ProjectLogoChooserComponent;
 import com.github.clagomess.pirilampo.gui.component.RadioButtonGroupComponent;
 import com.github.clagomess.pirilampo.gui.util.AppenderUtil;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -24,8 +22,10 @@ import static com.github.clagomess.pirilampo.core.enums.HtmlPanelToggleEnum.OPEN
 import static com.github.clagomess.pirilampo.core.enums.LayoutPdfEnum.LANDSCAPE;
 import static com.github.clagomess.pirilampo.core.enums.LayoutPdfEnum.PORTRAIT;
 
+@Slf4j
 public class MainForm {
     private final ParametersDto defaultDto = new ParametersDto();
+    private final Compiler compiler = new Compiler(){};
 
     // source
     public final RadioButtonGroupComponent<CompilationTypeEnum> rbCompilationType = new RadioButtonGroupComponent<>(Arrays.asList(
@@ -60,8 +60,22 @@ public class MainForm {
     // project
     public final JTextField txtProjectName = new JTextField(defaultDto.getProjectName());
     public final JTextField txtProjectVersion = new JTextField(defaultDto.getProjectVersion());
-    public final ProjectLogoChooserComponent fcProjectLogo = new ProjectLogoChooserComponent() {{
-        setProjectSource(fcProjectSource::getValue);
+    public final JComboBox<String> fcProjectLogo = new JComboBox<String>() {{
+        // @TODO: fix problem with width
+
+        fcProjectSource.addOnChange(value -> {
+            fcProjectLogo.removeAllItems();
+            if(value == null) return;
+
+            try {
+                compiler.listFolder(fcProjectSource.getValue(), FileExtensionEnum.IMAGE).stream()
+                        .map(item -> compiler.getFilePathWithoutAbsolute(fcProjectSource.getValue(), item))
+                        .forEach(fcProjectLogo::addItem);
+            }catch (Throwable e){
+                log.warn(e.getMessage());
+            }
+        });
+
         rbCompilationType.addOnChange(value -> setEnabled(value != FEATURE));
     }};
 
@@ -126,7 +140,7 @@ public class MainForm {
         ParametersDto dto = new ParametersDto();
         dto.setProjectName(txtProjectName.getText());
         dto.setProjectVersion(txtProjectVersion.getText());
-        dto.setProjectLogo(fcProjectLogo.getValue());
+        dto.setProjectLogo((String) fcProjectLogo.getSelectedItem());
         dto.setLayoutPdf(rbLayoutPdfEnum.getSelectedValue());
         dto.setHtmlPanelToggle(rbHtmlPanelToggle.getSelectedValue());
         dto.setMenuColor(ccMenuColor.getValue());

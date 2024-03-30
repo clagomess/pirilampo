@@ -2,6 +2,7 @@ package com.github.clagomess.pirilampo.core.compilers;
 
 import com.github.clagomess.pirilampo.core.dto.FeatureMetadataDto;
 import com.github.clagomess.pirilampo.core.dto.ParametersDto;
+import com.github.clagomess.pirilampo.core.enums.FileExtensionEnum;
 import com.github.clagomess.pirilampo.core.fi.UIProgressFI;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,7 +14,6 @@ import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.*;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static com.github.clagomess.pirilampo.core.enums.CompilationArtifactEnum.HTML;
 import static com.github.clagomess.pirilampo.core.enums.CompilationTypeEnum.FOLDER;
@@ -26,29 +26,31 @@ public abstract class Compiler {
 
     @Setter
     protected float progressCount = 0;
-
-    private final Pattern pFeatureExt = Pattern.compile("\\.feature$", Pattern.CASE_INSENSITIVE);
-    public String getFeatureExtension(File f){
-        Matcher matcher = pFeatureExt.matcher(f.getName());
+    public String getFileExtension(File f, FileExtensionEnum extension){
+        Matcher matcher = extension.getPattern().matcher(f.getName());
         return matcher.find() ? matcher.group(0) : null;
     }
 
-    protected Set<File> listFolder(File curDir) throws Exception {
+    public Set<File> listFolder(File curDir, FileExtensionEnum extension) throws Exception {
         Set<File> buffer = new TreeSet<>();
 
-        listFolder(buffer, curDir);
+        listFolder(buffer, curDir, extension);
 
         return buffer;
     }
 
-    private void listFolder(Set<File> buffer, File curDir) throws Exception {
+    private void listFolder(Set<File> buffer, File curDir, FileExtensionEnum extension) throws Exception {
         File[] filesList = curDir.listFiles();
-        if(filesList == null) throw new Exception("*.features not found");
+        if(filesList == null) throw new FileNotFoundException();
 
         for (File f : filesList) {
-            if (f.isDirectory()) listFolder(buffer, f);
+            if (f.isDirectory()) listFolder(buffer, f, extension);
+            if(!f.isFile()) continue;
 
-            if (f.isFile() && ".feature".equalsIgnoreCase(getFeatureExtension(f))) {
+            String ext = getFileExtension(f, extension);
+            if(ext == null) continue;
+
+            if (extension.getExtensions().contains(ext.toLowerCase())) {
                 buffer.add(f);
             }
         }
@@ -67,7 +69,7 @@ public abstract class Compiler {
                 .trim();
 
         FeatureMetadataDto result = new FeatureMetadataDto();
-        result.setName(feature.getName().replace(getFeatureExtension(feature), ""));
+        result.setName(feature.getName().replace(getFileExtension(feature, FileExtensionEnum.FEATURE), ""));
         result.setId(htmlFeatureRoot + "_" + result.getName());
         result.setIdHtml(result.getId() + ".html");
         result.setIdFeature(result.getId() + ".feature");

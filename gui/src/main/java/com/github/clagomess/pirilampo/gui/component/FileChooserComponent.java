@@ -10,18 +10,18 @@ import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.io.File;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.prefs.Preferences;
 
 @Slf4j
 public class FileChooserComponent extends JPanel {
+    private final List<OnChangeFI> onChangeList = new LinkedList<>();
     final JTextField text = new JTextField();
     private final JButton button;
 
     @Setter
     private FileChooserFI config = (fc) -> {};
-
-    @Setter
-    private OnChangeFI onChange = file -> {};
 
     @Getter
     private File value = null;
@@ -57,7 +57,7 @@ public class FileChooserComponent extends JPanel {
 
             public void update(){
                 value = StringUtils.isNotBlank(text.getText()) ? new File(text.getText()) : null;
-                onChange.change(value);
+                onChangeList.forEach(ch -> ch.change(value));
             }
         });
 
@@ -84,9 +84,13 @@ public class FileChooserComponent extends JPanel {
         add(button);
     }
 
+    public void addOnChange(OnChangeFI value){
+        onChangeList.add(value);
+    }
+
     public void reset(){
         this.value = null;
-        onChange.change(null);
+        onChangeList.forEach(ch -> ch.change(null));
         this.text.setText(null);
     }
 

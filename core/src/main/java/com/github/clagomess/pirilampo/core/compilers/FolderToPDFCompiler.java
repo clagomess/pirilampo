@@ -1,6 +1,7 @@
 package com.github.clagomess.pirilampo.core.compilers;
 
 import com.github.clagomess.pirilampo.core.dto.ParametersDto;
+import com.github.clagomess.pirilampo.core.enums.FileExtensionEnum;
 import com.github.clagomess.pirilampo.core.parsers.GherkinDocumentParser;
 import com.github.clagomess.pirilampo.core.parsers.PdfParser;
 import lombok.extern.slf4j.Slf4j;
@@ -32,7 +33,7 @@ public class FolderToPDFCompiler extends Compiler implements ArtifactCompiler {
         progressCount = 0;
         progress.setProgress(-1);
 
-        Set<File> arquivos = listFolder(parameters.getProjectSource());
+        Set<File> arquivos = listFolder(parameters.getProjectSource(), FileExtensionEnum.FEATURE);
         if(arquivos.isEmpty()) return;
 
         File outArtifact = getOutArtifact(parameters);

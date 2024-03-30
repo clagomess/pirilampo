@@ -5,6 +5,7 @@ import com.github.clagomess.pirilampo.core.dto.FeatureMetadataDto;
 import com.github.clagomess.pirilampo.core.dto.MenuDto;
 import com.github.clagomess.pirilampo.core.dto.ParametersDto;
 import com.github.clagomess.pirilampo.core.enums.DiffEnum;
+import com.github.clagomess.pirilampo.core.enums.FileExtensionEnum;
 import com.github.clagomess.pirilampo.core.parsers.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -47,7 +48,7 @@ public class FolderToHTMLCompiler extends Compiler implements ArtifactCompiler {
         if(parameters.getProjectMasterSource() == null) return DiffEnum.NOT_COMPARED;
 
         if(masterFiles == null){
-            masterFiles = listFolder(parameters.getProjectMasterSource()).stream()
+            masterFiles = listFolder(parameters.getProjectMasterSource(), FileExtensionEnum.FEATURE).stream()
                     .map(item -> new FeatureMasterDto(
                             getFilePathWithoutAbsolute(parameters.getProjectMasterSource(), item),
                             item
@@ -146,7 +147,7 @@ public class FolderToHTMLCompiler extends Compiler implements ArtifactCompiler {
         progressCount = 0;
         progress.setProgress(-1);
 
-        Set<File> arquivos = listFolder(parameters.getProjectSource());
+        Set<File> arquivos = listFolder(parameters.getProjectSource(), FileExtensionEnum.FEATURE);
         if(arquivos.isEmpty()) return;
 
         File outArtifact = getOutArtifact(parameters);
