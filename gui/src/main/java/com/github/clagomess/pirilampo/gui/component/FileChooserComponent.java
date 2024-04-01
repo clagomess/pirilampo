@@ -57,7 +57,7 @@ public class FileChooserComponent extends JPanel {
 
             public void update(){
                 value = StringUtils.isNotBlank(text.getText()) ? new File(text.getText()) : null;
-                onChangeList.forEach(ch -> ch.change(value));
+                SwingUtilities.invokeLater(() -> onChangeList.forEach(ch -> ch.change(value)));
             }
         });
 
@@ -90,7 +90,7 @@ public class FileChooserComponent extends JPanel {
 
     public void reset(){
         this.value = null;
-        onChangeList.forEach(ch -> ch.change(null));
+        SwingUtilities.invokeLater(() -> onChangeList.forEach(ch -> ch.change(null)));
         this.text.setText(null);
     }
 

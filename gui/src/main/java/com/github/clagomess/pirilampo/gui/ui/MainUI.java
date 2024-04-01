@@ -93,7 +93,7 @@ public class MainUI extends JFrame {
 
         form.txtProjectName.setText(parameters.getProjectName());
         form.txtProjectVersion.setText(parameters.getProjectVersion());
-        // form.fcProjectLogo.setValue(parameters.getProjectLogo()); //@TODO: check
+        form.fcProjectLogo.setSelectedItem(parameters.getProjectLogo());
         form.rbLayoutPdfEnum.setSelected(parameters.getLayoutPdf());
         form.rbHtmlPanelToggle.setSelected(parameters.getHtmlPanelToggle());
         form.ccMenuColor.setValue(parameters.getMenuColor());

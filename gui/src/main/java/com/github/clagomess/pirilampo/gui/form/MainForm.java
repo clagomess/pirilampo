@@ -61,17 +61,18 @@ public class MainForm {
     public final JTextField txtProjectName = new JTextField(defaultDto.getProjectName());
     public final JTextField txtProjectVersion = new JTextField(defaultDto.getProjectVersion());
     public final JComboBox<String> fcProjectLogo = new JComboBox<String>() {{
-        // @TODO: fix problem with width
+        setMaximumSize(new Dimension(490, 40));
 
         fcProjectSource.addOnChange(value -> {
             fcProjectLogo.removeAllItems();
-            if(value == null) return;
+            if (value == null) return;
 
             try {
+                fcProjectLogo.addItem(null);
                 compiler.listFolder(fcProjectSource.getValue(), FileExtensionEnum.IMAGE).stream()
                         .map(item -> compiler.getFilePathWithoutAbsolute(fcProjectSource.getValue(), item))
                         .forEach(fcProjectLogo::addItem);
-            }catch (Throwable e){
+            } catch (Throwable e) {
                 log.warn(e.getMessage());
             }
         });

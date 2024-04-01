@@ -2,7 +2,6 @@ package com.github.clagomess.pirilampo.core.compilers;
 
 import com.github.clagomess.pirilampo.core.dto.ParametersDto;
 import com.github.clagomess.pirilampo.core.enums.CompilationArtifactEnum;
-import com.github.clagomess.pirilampo.core.enums.CompilationTypeEnum;
 import com.github.clagomess.pirilampo.core.enums.HtmlPanelToggleEnum;
 import com.github.clagomess.pirilampo.core.enums.LayoutPdfEnum;
 import lombok.extern.slf4j.Slf4j;
@@ -58,11 +57,6 @@ public class PropertiesCompiler extends Compiler {
             parameters.setEmbedImages(Boolean.parseBoolean(prop.getProperty(
                     "embedImages",
                     String.valueOf(parameters.isEmbedImages())
-            )));
-
-            parameters.setCompilationType(CompilationTypeEnum.valueOf(prop.getProperty(
-                    "compilationType",
-                    parameters.getCompilationType().name()
             )));
 
             parameters.setCompilationArtifact(CompilationArtifactEnum.valueOf(prop.getProperty(
