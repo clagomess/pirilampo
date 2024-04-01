@@ -5,6 +5,7 @@ import com.github.clagomess.pirilampo.core.compilers.FeatureToPDFCompiler;
 import com.github.clagomess.pirilampo.core.compilers.FolderToHTMLCompiler;
 import com.github.clagomess.pirilampo.core.compilers.FolderToPDFCompiler;
 import com.github.clagomess.pirilampo.core.dto.ParametersDto;
+import com.github.clagomess.pirilampo.core.util.RevisionUtil;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Arrays;
@@ -18,7 +19,7 @@ public class Main {
     private static final MainOptions mainOptions = new MainOptions();
 
     public static void main(String[] args) {
-        log.info("Pirilampo - Ver.: {}", Main.class.getPackage().getImplementationVersion()); //@TODO: fixcd
+        log.info(RevisionUtil.getInstance().toString());
 
         try {
             ParametersDto parameters = mainOptions.getArgs(args);

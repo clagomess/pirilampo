@@ -3,6 +3,7 @@ package com.github.clagomess.pirilampo.gui.ui;
 import com.github.clagomess.pirilampo.core.compilers.*;
 import com.github.clagomess.pirilampo.core.dto.ParametersDto;
 import com.github.clagomess.pirilampo.core.exception.FeatureException;
+import com.github.clagomess.pirilampo.core.util.RevisionUtil;
 import com.github.clagomess.pirilampo.gui.component.IconComponent;
 import com.github.clagomess.pirilampo.gui.form.MainForm;
 import lombok.extern.slf4j.Slf4j;
@@ -85,6 +86,8 @@ public class MainUI extends JFrame {
         pack();
         setLocationRelativeTo(null);
         setVisible(true);
+
+        log.info(RevisionUtil.getInstance().toString());
     }
 
     public void projectSourceOnChange(File file){
@@ -165,6 +168,4 @@ public class MainUI extends JFrame {
             }
         }).start();
     }
-
-    // @TODO: add release notes
 }
