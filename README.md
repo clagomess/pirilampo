@@ -25,7 +25,6 @@ The open source living documentation generator of features files writen in
 
 ## GUI running
 
-[//]: # (@TODO: change)
 <img src="https://raw.githubusercontent.com/clagomess/pirilampo/master/readme_assets/img_01.png" width="400">
  
 
