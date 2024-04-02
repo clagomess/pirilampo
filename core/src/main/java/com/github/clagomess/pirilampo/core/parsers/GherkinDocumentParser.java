@@ -12,6 +12,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.input.BOMInputStream;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.StringEscapeUtils;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -149,15 +150,14 @@ public class GherkinDocumentParser extends Compiler {
         out.print("</table></div>");
     }
 
-    private void parseHTMLScenarioPanelHead(PrintWriter out, int idx, String title) throws IOException {
+    protected void parseHTMLScenarioPanelHead(PrintWriter out, int idx, String title) {
         out.println("<div class=\"panel panel-default\">");
         out.print("<div class=\"panel-heading");
         if (parameters.getHtmlPanelToggle() == HtmlPanelToggleEnum.CLOSED) out.print(" collapsed");
         out.print("\" style=\"cursor: pointer;\" data-toggle=\"collapse\" data-target=\"#scenario-");
         out.print(idx);
         out.print("\"><h3>");
-        out.print(title); // @TODO: not escaped
-        // StringEscapeUtils.escapeHtml(out, title);
+        out.print(StringEscapeUtils.escapeHtml4(title));
         out.print("</h3></div>");
     }
 
