@@ -37,7 +37,7 @@ public class ImageParser extends Compiler {
                 InputStream is = Files.newInputStream(image.toPath());
                 BufferedInputStream bis = new BufferedInputStream(is);
         ){
-            byte[] buffer = new byte[1024 * 4];
+            byte[] buffer = new byte[3000];
             int n;
 
             out.print("data:");

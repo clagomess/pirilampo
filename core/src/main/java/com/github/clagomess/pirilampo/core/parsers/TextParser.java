@@ -44,7 +44,7 @@ public class TextParser extends Compiler {
 
         if(makdown) txt = MarkdownParser.getInstance().build(txt);
 
-        String img = "<br/><p><img src=\"$1\" $2/></p>";
+        String img = "<br/><p><img src=\"$1\" style=\"max-width: 100%\" $2/></p>";
         txt = txt.replaceAll("<img src=\"(.+?)\"(.*?)>", img);
         txt = txt.replaceAll("&lt;img src=&quot;(.+?)&quot;(.*?)&gt;", img);
         txt = txt.replaceAll("&lt;strike&gt;(.+?)&lt;/strike&gt;", "<strike>$1</strike>");

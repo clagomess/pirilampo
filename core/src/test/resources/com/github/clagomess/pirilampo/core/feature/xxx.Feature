@@ -17,6 +17,7 @@ E Teste
 | Link Google: [Google](https://www.google.com.br) |
 | <strike>strike</strike> |
 | <strike>strike<br>strike</strike> |
+| ![large-image](large-image.png) |
 
 
 Esquema do Cenário: JJJ
