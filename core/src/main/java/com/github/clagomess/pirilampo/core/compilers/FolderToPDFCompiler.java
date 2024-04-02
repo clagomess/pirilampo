@@ -75,14 +75,6 @@ public class FolderToPDFCompiler extends Compiler implements ArtifactCompiler {
                     parser.build(out);
 
                     out.print("<span style=\"page-break-after: always\"></span>");
-
-                    for(File html : parser.getTextParser().getPaginaHtmlAnexo()){
-                        log.info("- appending: {}", html);
-                        out.print(String.format("<h1>%s</h1>", html.getName()));
-                        writeFileToOut(html, out);
-                        out.print("<span style=\"page-break-after: always\"></span>");
-                    }
-
                     out.print("</body></html>");
                 }
 
