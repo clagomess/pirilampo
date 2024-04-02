@@ -16,7 +16,7 @@ import java.util.prefs.Preferences;
 
 @Slf4j
 public class FileChooserComponent extends JPanel {
-    private final List<OnChangeFI> onChangeList = new LinkedList<>();
+    final List<OnChangeFI> onChangeList = new LinkedList<>();
     final JTextField text = new JTextField();
     private final JButton button;
 
@@ -57,7 +57,7 @@ public class FileChooserComponent extends JPanel {
 
             public void update(){
                 value = StringUtils.isNotBlank(text.getText()) ? new File(text.getText()) : null;
-                SwingUtilities.invokeLater(() -> onChangeList.forEach(ch -> ch.change(value)));
+                triggerChange(value);
             }
         });
 
@@ -84,13 +84,17 @@ public class FileChooserComponent extends JPanel {
         add(button);
     }
 
+    protected void triggerChange(File value){
+        SwingUtilities.invokeLater(() -> onChangeList.forEach(ch -> ch.change(value)));
+    }
+
     public void addOnChange(OnChangeFI value){
         onChangeList.add(value);
     }
 
     public void reset(){
         this.value = null;
-        SwingUtilities.invokeLater(() -> onChangeList.forEach(ch -> ch.change(null)));
+        triggerChange(null);
         this.text.setText(null);
     }
 

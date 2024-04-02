@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.mockito.Mockito;
 
 import java.io.File;
 import java.util.concurrent.atomic.AtomicReference;
@@ -15,13 +16,22 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 @Slf4j
 public class FileChooserComponentTest {
 
-    // @TODO: needs mock SwingUtilities.invokeLater, to non thread run
+    private FileChooserComponent getMockedFileChooserComponent(){
+        FileChooserComponent fc = Mockito.spy(FileChooserComponent.class);
+        Mockito.doAnswer(invocation -> {
+                    fc.onChangeList.forEach(ch -> ch.change(fc.getValue()));
+                    return null;
+                })
+                .when(fc)
+                .triggerChange(Mockito.any());
+        return fc;
+    }
 
     @Test
     public void reset(){
         AtomicReference<Integer> countTriggerChange = new AtomicReference<>(0);
 
-        FileChooserComponent fc = new FileChooserComponent();
+        FileChooserComponent fc = getMockedFileChooserComponent();
         fc.addOnChange(file -> countTriggerChange.getAndSet(countTriggerChange.get() + 1));
         fc.reset();
 
@@ -41,7 +51,7 @@ public class FileChooserComponentTest {
 
         AtomicReference<Integer> countTriggerChange = new AtomicReference<>(0);
 
-        FileChooserComponent fc = new FileChooserComponent();
+        FileChooserComponent fc = getMockedFileChooserComponent();
         fc.addOnChange(f -> countTriggerChange.getAndSet(countTriggerChange.get() + 1));
         fc.setValue(file);
 
