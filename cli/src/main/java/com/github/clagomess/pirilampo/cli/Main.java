@@ -1,9 +1,6 @@
 package com.github.clagomess.pirilampo.cli;
 
-import com.github.clagomess.pirilampo.core.compilers.FeatureToHTMLCompiler;
-import com.github.clagomess.pirilampo.core.compilers.FeatureToPDFCompiler;
-import com.github.clagomess.pirilampo.core.compilers.FolderToHTMLCompiler;
-import com.github.clagomess.pirilampo.core.compilers.FolderToPDFCompiler;
+import com.github.clagomess.pirilampo.core.compilers.*;
 import com.github.clagomess.pirilampo.core.dto.ParametersDto;
 import com.github.clagomess.pirilampo.core.util.RevisionUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +14,7 @@ import static com.github.clagomess.pirilampo.core.enums.CompilationTypeEnum.*;
 @Slf4j
 public class Main {
     private static final MainOptions mainOptions = new MainOptions();
+    private static final PropertiesCompiler propertiesCompiler = new PropertiesCompiler();
 
     public static void main(String[] args) {
         log.info(RevisionUtil.getInstance().toString());
@@ -24,7 +22,7 @@ public class Main {
         try {
             ParametersDto parameters = mainOptions.getArgs(args);
 
-            // @TODO: load properties
+            propertiesCompiler.loadData(parameters);
 
             if (parameters.getCompilationType() == FEATURE &&
                     parameters.getCompilationArtifact() == HTML
