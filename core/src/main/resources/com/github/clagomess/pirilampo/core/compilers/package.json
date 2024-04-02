@@ -1,0 +1,31 @@
+{
+  "name": "pirilampo",
+  "version": "1.0.0",
+  "description": "pirilampo",
+  "main": "index.js",
+  "scripts": {
+    "build": "gulp"
+  },
+  "author": "Cláudio Gomes",
+  "license": "ISC",
+  "repository": "https://github.com/clagomess/pirilampo",
+  "dependencies": {
+    "angular": "^1.7.9",
+    "angular-resource": "1.5.8",
+    "angular-route": "1.5.8",
+    "angular-ui-router": "0.2.18",
+    "bootstrap": "3.3.7",
+    "fancybox": "2.1.6",
+    "handlebars": "^4.5.3",
+    "jquery": "2.2.1",
+    "jquery-prettytextdiff": "^1.0.4",
+    "typeahead.js": "0.11.1",
+    "googlediff": "^0.1.0"
+  },
+  "devDependencies": {
+    "files-exist": "^1.1.0",
+    "gulp": "^4.0.2",
+    "gulp-cli": "^2.3.0",
+    "gulp-concat": "^2.6.1"
+  }
+}
