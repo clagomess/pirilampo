@@ -54,9 +54,9 @@ public class FolderToHTMLCompilerTest extends Common {
                 ;
 
         Assertions.assertThat(htmlFile)
-                .hasSameTextualContentAs(new File(getClass()
-                        .getResource("FolderToHTMLCompilerTest/expected-build.html")
-                        .getFile()
+                .hasSameTextualContentAs(decompressResource(
+                        targetFile,
+                        "FolderToHTMLCompilerTest/expected-build.html.gz"
                 ));
     }
 
@@ -75,9 +75,9 @@ public class FolderToHTMLCompilerTest extends Common {
                         .contains("YYY_MASTER_YYY");
 
         Assertions.assertThat(htmlFile)
-                .hasSameTextualContentAs(new File(getClass()
-                        .getResource("FolderToHTMLCompilerTest/expected-build-master.html")
-                        .getFile()
+                .hasSameTextualContentAs(decompressResource(
+                        targetFile,
+                        "FolderToHTMLCompilerTest/expected-build-master.html.gz"
                 ));
     }
 

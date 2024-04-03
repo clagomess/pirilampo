@@ -51,9 +51,9 @@ public class FeatureToHTMLCompilerTest extends Common {
                 ;
 
         Assertions.assertThat(htmlFile)
-                .hasSameTextualContentAs(new File(getClass()
-                        .getResource("FeatureToHTMLCompilerTest/expected-build.html")
-                        .getFile()
+                .hasSameTextualContentAs(decompressResource(
+                        targetFile,
+                        "FeatureToHTMLCompilerTest/expected-build.html.gz"
                 ));
     }
 
